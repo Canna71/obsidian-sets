@@ -19,7 +19,8 @@
       "ES6",
       "ES7"
     ],
-	"jsx": "react"
+	"jsx": "preserve",
+    "jsxImportSource": "solid-js"
   },
   "include": [
     "**/*.ts","**/*.tsx","**/*.svg"
