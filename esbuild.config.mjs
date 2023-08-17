@@ -3,6 +3,7 @@ import process from "process";
 import builtins from 'builtin-modules'
 import {sassPlugin} from 'esbuild-sass-plugin'
 import svgrPlugin from 'esbuild-plugin-svgr';
+import  {solidPlugin} from "esbuild-plugin-solid";
 
 const banner =
 `/*
@@ -42,7 +43,7 @@ esbuild.build({
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
 	outfile: 'main.js',
-    plugins: [svgrPlugin()]
+    plugins: [svgrPlugin(), solidPlugin()]
 }).catch(() => process.exit(1));
 
 esbuild.build({
