@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, debounce, MarkdownView } from "obsidian";
+import { addIcon, debounce, MarkdownView, TAbstractFile, TFile } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -14,7 +14,7 @@ import {
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
-
+import { matches } from "./Query";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -23,19 +23,27 @@ const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.60
 
 let gSettings: SetsSettings;
 
-export function getSetsSettings() { return gSettings; }
+export type ObjectData = {
+    name: string;
+    file: TAbstractFile;
+    frontmatter: unknown;
+}
+
+export function getSetsSettings() {
+    return gSettings;
+}
+
 export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
 
-    hashes: Map<string,string> = new Map();
- 
+    hashes: Map<string, string> = new Map();
+
     async onload() {
         await this.loadSettings();
 
         this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf, this));
 
-        addIcon("sigma",sigma); 
- 
+        addIcon("sigma", sigma);
 
         if (this.settings.addRibbonIcon) {
             // This creates an icon in the left ribbon.
@@ -54,11 +62,10 @@ export default class SetsPlugin extends Plugin {
             id: "show-Sets-view",
             name: "Show Sets Sidebar",
             callback: () => this.activateView(),
-          });
-         
+        });
 
         this.app.workspace.onLayoutReady(() => {
-            if(this.settings.showAtStartup){
+            if (this.settings.showAtStartup) {
                 this.activateView();
             }
         });
@@ -74,7 +81,6 @@ export default class SetsPlugin extends Plugin {
                 if (leaf?.view instanceof MarkdownView) {
                     // @ts-expect-error, not typed
                     const editorView = leaf.view.editor.cm as EditorView;
-                    
                 }
             },
             this
@@ -92,19 +98,22 @@ export default class SetsPlugin extends Plugin {
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
 
-        this.updateHashes(); 
-        this.app.metadataCache.on("resolved", debounce(() => {
-			this.updateHashes();
-		},1000));
+        this.updateHashes();
+        this.app.metadataCache.on(
+            "resolved",
+            debounce(() => {
+                this.updateHashes();
+            }, 1000)
+        );
     }
 
     updateHashes() {
         this.hashes.clear();
-        for(const entry in this.app.metadataCache.fileCache) {
+        for (const entry in this.app.metadataCache.fileCache) {
             const file = this.app.metadataCache.fileCache[entry];
-            const hash = file.hash; 
-            
-            this.hashes.set(hash,entry);
+            const hash = file.hash;
+
+            this.hashes.set(hash, entry);
         }
     }
 
@@ -150,12 +159,9 @@ export default class SetsPlugin extends Plugin {
     async registerCodeBlock() {
         await loadMathJax();
         await finishRenderMath();
-        this.registerMarkdownCodeBlockProcessor(
-            "Sets",
-            (source, el, ctx) => {
-                // processCodeBlock(source, el, this.settings, ctx);
-            }
-        );
+        this.registerMarkdownCodeBlockProcessor("Sets", (source, el, ctx) => {
+            // processCodeBlock(source, el, this.settings, ctx);
+        });
     }
 
     async registerPostProcessor() {
@@ -170,30 +176,32 @@ export default class SetsPlugin extends Plugin {
     }
 
     queryVault(query: any) {
+        //@ts-ignore
         const cache = this.app.metadataCache.metadataCache;
-        const fileCache = this.app.metadataCache.fileCache;
         const ret = [];
-        for(const entry in cache) {
+        for (const entry in cache) {
             const md = cache[entry].frontmatter;
-            if(md) {
-                if(md["type"]){
-                    if(md["type"] === "note") {
-                        // finds the actual file
-                        const file = this.hashes.get(entry);
-                        const tfile = this.app.vault.getAbstractFileByPath(file);
-                        const ob = {
-                            name: file,
-                            file: tfile,
-                            frontmatter: md
-                        }
-                        ret.push(ob);
-                        // const file = fileCache
-                       
-                    }
-                }
+            if (matches(query, md)) {
+                // finds the actual file
+                const ob = this.getObjectData(entry, md);
+                ret.push(ob);
+                // const file = fileCache
             }
         }
         console.log(ret);
         return ret;
+    }
+
+    private getObjectData(entry: string, md: any):ObjectData {
+        const file = this.hashes.get(entry);
+        if(!file) throw Error(`Hash ${entry} not found!`);
+        const tfile = this.app.vault.getAbstractFileByPath(file);
+        if(!tfile) throw Error(`File ${file} not found!`);
+        const ob = {
+            name: file,
+            file: tfile,
+            frontmatter: md,
+        };
+        return ob;
     }
 }

@@ -1733,7 +1733,7 @@ declare module 'obsidian' {
 		 * Manages the gathering and updating of metadata for all files in the vault
 		 * @tutorial Use for finding tags and backlinks for specific files, grabbing frontmatter properties, ...
 		 */
-		metadataCache: EMetadataCache;
+		metadataCache: MetadataCache;
 		/**
 		 * Manages the frontmatter properties of the vault and the rendering of the properties
 		 * @tutorial Fetching properties used in all frontmatter fields, may potentially be used for adding custom frontmatter widgets
