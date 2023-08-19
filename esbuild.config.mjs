@@ -54,10 +54,21 @@ const style = await esbuild.context({
     plugins: [sassPlugin()]
 }).catch(() => process.exit(1));
 
-code.rebuild();
-style.rebuild();
+console.log("building code...")
+await code.rebuild();
+console.log("building styles...")
 
-if(!prod) code.watch();
-if(!prod) style.watch();
+await style.rebuild();
+console.log("building done.")
+
+if(!prod) {
+    console.log("watching code...")
+    code.watch();
+}
+if(!prod) {
+    console.log("watching styles...")
+    style.watch();
+}
 // style.watch();
-
+code.dispose();
+style.dispose();

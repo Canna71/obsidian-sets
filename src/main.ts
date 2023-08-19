@@ -13,6 +13,7 @@ import {
     WorkspaceLeaf,
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
+import passwordPropertyType from "./propertytypes/password";
 
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
@@ -85,9 +86,15 @@ export default class SetsPlugin extends Plugin {
             this
         );
 
-        
+        this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
+    }
+
+    registerNewTypes() {
+        this.app.metadataTypeManager.registeredTypeWidgets.password =
+            passwordPropertyType;
+        this.app.metadataTypeManager.savePropertyInfo();
     }
 
     onunload() {
