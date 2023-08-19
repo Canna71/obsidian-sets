@@ -3,7 +3,7 @@ import { debounce, ItemView,  WorkspaceLeaf } from "obsidian";
 import { render } from "solid-js/web";
 
 import { SetsSettings } from "src/Settings";
-import { getSetsSettings } from "src/main";
+import SetsPlugin, { getSetsSettings } from "src/main";
 import { MyComponent } from "./components/MyComponent";
 export const SETS_VIEW = "Sets-view";
 
@@ -14,10 +14,12 @@ export class SetsView extends ItemView {
 
     };
 
+    plugin: SetsPlugin;
     
 
-    constructor(leaf: WorkspaceLeaf) {
+    constructor(leaf: WorkspaceLeaf, plugin: SetsPlugin) {
         super(leaf);
+        this.plugin = plugin;
         // this.settings = (this.app as any).plugins.plugins["obsidian-Sets"].settings as SetsSettings;
         this.settings = getSetsSettings();
         this.state = {
@@ -61,6 +63,7 @@ export class SetsView extends ItemView {
         
         this.render();
 
+        this.plugin.queryVault({});
     }
 
     async onClose() {

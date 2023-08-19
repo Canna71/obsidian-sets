@@ -70,5 +70,7 @@ if(!prod) {
     style.watch();
 }
 // style.watch();
-code.dispose();
-style.dispose();
+if(prod) {
+    code.dispose();
+    style.dispose();
+}

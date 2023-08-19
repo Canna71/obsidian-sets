@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, MarkdownView } from "obsidian";
+import { addIcon, debounce, MarkdownView } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -26,14 +26,16 @@ let gSettings: SetsSettings;
 export function getSetsSettings() { return gSettings; }
 export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
+
+    hashes: Map<string,string> = new Map();
  
     async onload() {
         await this.loadSettings();
 
-        this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf));
+        this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf, this));
 
         addIcon("sigma",sigma); 
-
+ 
 
         if (this.settings.addRibbonIcon) {
             // This creates an icon in the left ribbon.
@@ -89,6 +91,21 @@ export default class SetsPlugin extends Plugin {
         this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
+
+        this.updateHashes(); 
+        this.app.metadataCache.on("resolved", debounce(() => {
+			this.updateHashes();
+		},1000));
+    }
+
+    updateHashes() {
+        this.hashes.clear();
+        for(const entry in this.app.metadataCache.fileCache) {
+            const file = this.app.metadataCache.fileCache[entry];
+            const hash = file.hash; 
+            
+            this.hashes.set(hash,entry);
+        }
     }
 
     registerNewTypes() {
@@ -150,5 +167,33 @@ export default class SetsPlugin extends Plugin {
 
     async registerEditorExtensions() {
         // this.registerEditorExtension([resultField, SetsConfigField]);
+    }
+
+    queryVault(query: any) {
+        const cache = this.app.metadataCache.metadataCache;
+        const fileCache = this.app.metadataCache.fileCache;
+        const ret = [];
+        for(const entry in cache) {
+            const md = cache[entry].frontmatter;
+            if(md) {
+                if(md["type"]){
+                    if(md["type"] === "note") {
+                        // finds the actual file
+                        const file = this.hashes.get(entry);
+                        const tfile = this.app.vault.getAbstractFileByPath(file);
+                        const ob = {
+                            name: file,
+                            file: tfile,
+                            frontmatter: md
+                        }
+                        ret.push(ob);
+                        // const file = fileCache
+                       
+                    }
+                }
+            }
+        }
+        console.log(ret);
+        return ret;
     }
 }

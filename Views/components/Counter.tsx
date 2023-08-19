@@ -10,6 +10,7 @@ export function Counter({ start, increment }:CounterProps) {
 
     const handleClick = (e: MouseEvent) => {
         set(val() + increment);
+        
     };
 
     return <button onClick={handleClick}>{val()}</button>;
