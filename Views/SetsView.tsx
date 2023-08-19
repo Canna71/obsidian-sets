@@ -63,7 +63,13 @@ export class SetsView extends ItemView {
         
         this.render();
 
-        this.plugin.queryVault({});
+        this.plugin.queryVault([
+            {
+                operator: "eq",
+                attribute: {tag:"metadata", attribute: "type"},
+                value: "note"
+            }
+        ]);
     }
 
     async onClose() {

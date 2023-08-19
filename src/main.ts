@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, debounce, MarkdownView, TAbstractFile, TFile } from "obsidian";
+import { addIcon, debounce, MarkdownView, TFile } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -14,7 +14,7 @@ import {
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
-import { matches } from "./Query";
+import { Query, matches } from "./Query";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -25,7 +25,7 @@ let gSettings: SetsSettings;
 
 export type ObjectData = {
     name: string;
-    file: TAbstractFile;
+    file: TFile;
     frontmatter: unknown;
 }
 
@@ -109,7 +109,9 @@ export default class SetsPlugin extends Plugin {
 
     updateHashes() {
         this.hashes.clear();
+        //@ts-ignore
         for (const entry in this.app.metadataCache.fileCache) {
+            //@ts-ignore
             const file = this.app.metadataCache.fileCache[entry];
             const hash = file.hash;
 
@@ -175,15 +177,16 @@ export default class SetsPlugin extends Plugin {
         // this.registerEditorExtension([resultField, SetsConfigField]);
     }
 
-    queryVault(query: any) {
+    queryVault(query: Query) {
         //@ts-ignore
         const cache = this.app.metadataCache.metadataCache;
         const ret = [];
-        for (const entry in cache) {
-            const md = cache[entry].frontmatter;
-            if (matches(query, md)) {
+        for (const hash in cache) {
+            const md = cache[hash].frontmatter;
+            const ob = this.getObjectData(hash, md);
+            if (matches(query, ob)) {
                 // finds the actual file
-                const ob = this.getObjectData(entry, md);
+                
                 ret.push(ob);
                 // const file = fileCache
             }
@@ -192,13 +195,14 @@ export default class SetsPlugin extends Plugin {
         return ret;
     }
 
-    private getObjectData(entry: string, md: any):ObjectData {
-        const file = this.hashes.get(entry);
-        if(!file) throw Error(`Hash ${entry} not found!`);
+    private getObjectData(hash: string, md: unknown):ObjectData {
+        const file = this.hashes.get(hash);
+        if(!file) throw Error(`Hash ${hash} not found!`);
         const tfile = this.app.vault.getAbstractFileByPath(file);
         if(!tfile) throw Error(`File ${file} not found!`);
+        if(!(tfile instanceof TFile)) throw Error(`${file} is a folder`);
         const ob = {
-            name: file,
+            name: file, 
             file: tfile,
             frontmatter: md,
         };
