@@ -15,6 +15,7 @@ import {
 import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
 import { Query, matches } from "./Query";
+import { processCodeBlock } from "./processCodeBlock";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -35,7 +36,7 @@ export function getSetsSettings() {
 
 export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
-
+    hashesInitialized = false;
     hashes: Map<string, string> = new Map();
 
     async onload() {
@@ -99,11 +100,13 @@ export default class SetsPlugin extends Plugin {
         this.addSettingTab(new SetsSettingsTab(this.app, this));
 
         this.updateHashes();
+        this.updateHashes = debounce(this.updateHashes.bind(this), 100)
+        //TODO: deregister on unload
         this.app.metadataCache.on(
             "resolved",
-            debounce(() => {
-                this.updateHashes();
-            }, 1000)
+            
+                this.updateHashes
+            
         );
     }
 
@@ -117,6 +120,8 @@ export default class SetsPlugin extends Plugin {
 
             this.hashes.set(hash, entry);
         }
+        this.hashesInitialized = true;
+        console.log(`hash updated`); 
     }
 
     registerNewTypes() {
@@ -127,6 +132,9 @@ export default class SetsPlugin extends Plugin {
 
     onunload() {
         this.app.workspace.detachLeavesOfType(SETS_VIEW);
+        this.app.metadataCache.off(
+            "resolved",this.updateHashes
+        );
     }
 
     async loadSettings() {
@@ -161,13 +169,13 @@ export default class SetsPlugin extends Plugin {
     async registerCodeBlock() {
         await loadMathJax();
         await finishRenderMath();
-        this.registerMarkdownCodeBlockProcessor("Sets", (source, el, ctx) => {
-            // processCodeBlock(source, el, this.settings, ctx);
+        this.registerMarkdownCodeBlockProcessor("set", (source, el, ctx) => {
+            processCodeBlock(source, el, this, ctx);
         });
     }
 
     async registerPostProcessor() {
-        console.log("registerPostProcessor");
+        
         // await loadMathJax();
         // await finishRenderMath();
         // this.registerMarkdownPostProcessor(getPostPrcessor(this.settings));
@@ -178,6 +186,9 @@ export default class SetsPlugin extends Plugin {
     }
 
     queryVault(query: Query) {
+        if(!this.hashesInitialized){
+            throw Error('plugin not initialized yet');
+        }
         //@ts-ignore
         const cache = this.app.metadataCache.metadataCache;
         const ret = [];
@@ -191,7 +202,7 @@ export default class SetsPlugin extends Plugin {
                 // const file = fileCache
             }
         }
-        console.log(ret);
+        
         return ret;
     }
 
@@ -209,3 +220,4 @@ export default class SetsPlugin extends Plugin {
         return ob;
     }
 }
+
