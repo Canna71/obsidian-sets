@@ -1,12 +1,30 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { debounce, ItemView,  WorkspaceLeaf } from "obsidian";
-
+import { createSignal } from "solid-js";
+import { render } from "solid-js/web";
 
 import { SetsSettings } from "src/Settings";
 import { getSetsSettings } from "src/main";
 export const SETS_VIEW = "Sets-view";
 
+function Counter({start, increment}) {
+    const [val, set] = createSignal(start);
 
+    const handleClick = (e:MouseEvent) => {
+        set(val()+increment);
+    }
+
+    return <button onClick={handleClick}>{val()}</button>
+}
+
+function MyComponent(props) {
+    return (
+        <div>
+            <h3>Hello, {props.name}</h3>
+            <Counter start={42} increment={3} />
+        </div>
+    );
+}
 
 
 export class SetsView extends ItemView {
@@ -16,7 +34,7 @@ export class SetsView extends ItemView {
 
     };
 
-
+    
 
     constructor(leaf: WorkspaceLeaf) {
         super(leaf);
@@ -26,6 +44,7 @@ export class SetsView extends ItemView {
 
         };
         this.icon = "sigma";
+        console.log(`view ${SETS_VIEW} loaded`);
     }
 
     getViewType() {
@@ -49,14 +68,16 @@ export class SetsView extends ItemView {
 
 
     render() {
-
-       
+        console.log(`rendering...`);
+        const { contentEl } = this;
+        contentEl.empty();
+        render(() => <MyComponent name="Solid!" />, contentEl)
     }
 
 
 
     async onOpen() {
-        const { contentEl } = this;
+        
 
         this.render();
 

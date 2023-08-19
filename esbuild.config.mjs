@@ -14,11 +14,12 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === 'production');
 
-esbuild.build({
+const code = await esbuild.context({
 	banner: {
 		js: banner,
 	},
 	entryPoints: ['src/main.ts'],
+    // outdir: ".",
 	bundle: true,
     minify: prod,
 	external: [
@@ -37,7 +38,7 @@ esbuild.build({
 		'@lezer/lr',
 		...builtins],
 	format: 'cjs',
-	watch: !prod,
+	// watch: !prod,
 	target: 'es2016',
 	logLevel: "info",
 	sourcemap: prod ? false : 'inline',
@@ -46,9 +47,17 @@ esbuild.build({
     plugins: [svgrPlugin(), solidPlugin()]
 }).catch(() => process.exit(1));
 
-esbuild.build({
+const style = await esbuild.context({
 	entryPoints: ['styles.scss'],
     outfile: "styles.css",
-	watch: !prod,
+	// watch: !prod,
     plugins: [sassPlugin()]
 }).catch(() => process.exit(1));
+
+code.rebuild();
+style.rebuild();
+
+if(!prod) code.watch();
+if(!prod) style.watch();
+// style.watch();
+

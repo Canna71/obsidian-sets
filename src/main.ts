@@ -85,6 +85,8 @@ export default class SetsPlugin extends Plugin {
             this
         );
 
+        
+
         this.addSettingTab(new SetsSettingsTab(this.app, this));
     }
 
