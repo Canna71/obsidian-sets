@@ -2,12 +2,17 @@ import { App, TFile, debounce } from "obsidian";
 import SetsPlugin from "./main";
 import { Query, matches } from "./Query";
 import { ObjectData } from "./ObjectData";
+import Observer from "@jalik/observer";
+
+export type DBEvent = "metadata-changed";
 
 export  class VaultDB {
-    hashesInitialized = false;
-    hashes: Map<string, string> = new Map();
-    plugin:SetsPlugin;
-    app: App;
+    private hashesInitialized = false;
+    private hashes: Map<string, string> = new Map();
+    private plugin:SetsPlugin;
+    private app: App;
+
+    private observer = new Observer();
 
     constructor(plugin: SetsPlugin) {
         this.plugin = plugin;
@@ -31,6 +36,7 @@ export  class VaultDB {
             this.hashes.set(hash, entry);
         }
         this.hashesInitialized = true;
+        this.observer.notify("metadata-changed");
         console.log(`hash updated`); 
     }
 
@@ -38,6 +44,14 @@ export  class VaultDB {
         this.app.metadataCache.off(
             "resolved",this.updateHashes
         );
+    }
+
+    on(event:DBEvent, observer: (...args: any[]) => void) {
+        this.observer.attach(event,observer);
+    }
+
+    off(event:DBEvent, observer: (...args: any[]) => void) {
+        this.observer.detach(event,observer);
     }
 
     query(query: Query) {
@@ -76,6 +90,7 @@ export  class VaultDB {
             name: file, 
             file: tfile,
             frontmatter: md,
+            db: this
         };
         return ob;
     }
