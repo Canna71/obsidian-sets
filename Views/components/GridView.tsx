@@ -59,10 +59,15 @@ const EditProp : Component<{data: ObjectData, attribute:Attribute }> = (props) =
             key, type, value
         },
         {
-            app,
+            app: app,
             key,
             onChange: (val) => {
                 console.log(`what to do now? `, val);
+                const owner = props.data.file;
+                // const fm = {...props.data.frontmatter, [key]: val}
+                app.fileManager.processFrontMatter(owner, (fm)=>{
+                    fm[key] = val
+                });
             },
             rerender: () => {
                 console.log(`re-render called`);
@@ -73,11 +78,7 @@ const EditProp : Component<{data: ObjectData, attribute:Attribute }> = (props) =
             },
             metadataEditor: null
         }
-        // {
-        //     onChange: (val) => {
-        //         console.log(`what to do now? `, val);
-        //     }
-        // }
+       
         )
     })
 

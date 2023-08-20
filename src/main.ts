@@ -27,7 +27,8 @@ let gSettings: SetsSettings;
 export type ObjectData = {
     name: string;
     file: TFile;
-    frontmatter: unknown;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    frontmatter: Record<string,any>;
 }
 
 export function getSetsSettings() {
@@ -191,7 +192,7 @@ export default class SetsPlugin extends Plugin {
         }
         //@ts-ignore
         const cache = this.app.metadataCache.metadataCache;
-        const ret = [];
+        const ret:ObjectData[] = [];
         for (const hash in cache) {
             const md = cache[hash].frontmatter;
             try {
@@ -211,7 +212,7 @@ export default class SetsPlugin extends Plugin {
         return ret;
     }
 
-    private getObjectData(hash: string, md: unknown):ObjectData {
+    private getObjectData(hash: string, md: Record<string,any>):ObjectData {
         const file = this.hashes.get(hash);
         if(!file) throw Error(`Hash ${hash} not found!`);
         const tfile = this.app.vault.getAbstractFileByPath(file);

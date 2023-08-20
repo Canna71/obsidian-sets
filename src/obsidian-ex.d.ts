@@ -1,3 +1,4 @@
+
 import {
 	App,
 	CachedMetadata,
@@ -321,11 +322,11 @@ interface CustomCSS extends Component {
 	 * Will create a corresponding dummy manifest for the theme
 	 * @remark Name will be used as the folder name for the theme
 	 */
-	installLegacyTheme: ({ name: string, repo: string, author: string }) => Promise<void>;
+	installLegacyTheme: ({ name, repo, author }:{ name: string, repo: string, author: string }) => Promise<void>;
 	/**
 	 * Install a theme using the regular theme download pipeline
 	 */
-	installTheme: ({ name: string, repo: string, author: string }, version: string) => Promise<void>;
+	installTheme: ({ name, repo, author }:{ name: string, repo: string, author: string }, version: string) => Promise<void>;
 	/**
 	 * Check whether a specific theme is installed by theme name
 	 */
@@ -764,6 +765,22 @@ interface CustomArrayDict<T, Q> {
 	count: () => number;
 }
 
+interface PropertyContext {
+    onChange: (e:any)=>void;
+
+    app?: App;
+
+    key?: string;
+
+    rerender?: () => void;
+
+    sourcePath?: string;
+
+    blur?: () => void;
+
+    metadataEditor?: unknown;
+}
+
 interface PropertyInfo {
 	/**
 	 * Name of property
@@ -778,7 +795,7 @@ interface PropertyInfo {
 	 */
 	count: number;
 
-    onChange: (e:any)=>void;
+   
 }
 
 type PropertyWidgetType = "aliases"
@@ -807,7 +824,7 @@ interface PropertyWidget {
 	/**
 	 * @internal Render function for the widget
 	 */
-	render: (element: HTMLElement, metadataField: any, property: PropertyInfo) => void;
+	render: (element: HTMLElement, metadataField: any, property: PropertyContext) => void;
 	/**
 	 * @internal Reserved keys for the widget
 	 */
