@@ -1,10 +1,16 @@
-import { App, TFile, debounce } from "obsidian";
+import { App, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
 import { Query } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 
 export type DBEvent = "metadata-changed";
+
+export type QueryResult = {
+    data: ObjectData[],
+    db: VaultDB,
+    query: Query
+}
 
 export  class VaultDB {
     private hashesInitialized = false;
@@ -54,7 +60,7 @@ export  class VaultDB {
         this.observer.detach(event,observer);
     }
 
-    query(query: Query) {
+    query(query: Query):QueryResult {
         if(!this.hashesInitialized){
             throw Error('VaultDB not initialized yet');
         }
@@ -77,7 +83,33 @@ export  class VaultDB {
             
         }
         
-        return ret;
+        return {
+            data: ret,
+            db: this,
+            query
+        };
+    }
+ 
+    async addToSet(type: string) {
+        const setsRoot = this.plugin.settings.setsRoot;
+        const typeDisplayName = type.charAt(0).toUpperCase() + type.slice(1);
+        const setFolder = `${setsRoot}/${typeDisplayName}Set`;
+         
+        let folder = this.app.vault.getAbstractFileByPath(setFolder);
+        if(!folder || !(folder instanceof TFolder)){
+            folder = await this.app.vault.createFolder(setFolder);
+        }
+        const typeFilePath = this.plugin.settings.typesFolder + "/" + `${typeDisplayName}Type.md`
+        const template = this.app.vault.getAbstractFileByPath(typeFilePath);
+        // TODO: what if it doesn't exists yet?
+        // TODO: create template by using current properties
+        if(template instanceof TFile){
+            const content = await this.app.vault.read(template);
+            const newFIle = this.app.fileManager.createNewFile(folder as TFolder,undefined,undefined,content);
+            console.log("new file created");
+        }
+
+        
     }
     
     private getObjectData(hash: string, md: Record<string,any>):ObjectData {

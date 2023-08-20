@@ -1,12 +1,17 @@
 import { Accessor, Component } from "solid-js";
-import { ObjectData } from "src/Data/ObjectData";
-import { Attribute, Query } from "src/Data/Query";
+import { Attribute } from "src/Data/Query";
 import { ViewMode } from "./CodeBlock";
+import { QueryResult } from "src/Data/VaultDB";
 
-const BlockToolbar: Component<{query: Query, data: ObjectData[], attributes: Attribute[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
+const BlockToolbar: Component<{queryResult: QueryResult, attributes: Attribute[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
 
-    const onAdd= () => {
-        
+    const onAdd= async () => {
+        //TODO: move elsewhere
+        const type = props.queryResult.query.inferSetType();
+        if(!type) return;
+        // TODO: find the right path
+        const db = props.queryResult.db;
+        db.addToSet(type);
     }
 
     return <div class="sets-codeblock-toolbar">

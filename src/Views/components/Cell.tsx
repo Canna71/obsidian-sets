@@ -2,6 +2,9 @@ import { Component, Show, createSignal } from "solid-js";
 import { Attribute, getAttribute } from "src/Data/Query";
 import { ObjectData } from "src/Data/ObjectData";
 import { EditProp } from "./EditProp";
+import clickOutside from "./clickoutside";
+
+false && clickOutside;
 
 export const Cell: Component<{ data: ObjectData; attribute: Attribute; }> = (props) => {
     const [isEdit, setEdit] = createSignal(false);
@@ -21,7 +24,7 @@ export const Cell: Component<{ data: ObjectData; attribute: Attribute; }> = (pro
             <Show when={isEdit()}
                 fallback={<div class="sets-cell-read">{value()}</div>}
             >
-                <div class="sets-cell-edit" use: clickOutside={exitEdit}>
+                <div class="sets-cell-edit" use:clickOutside={exitEdit}>
                     <EditProp data={props.data} attribute={props.attribute} />
 
                 </div>

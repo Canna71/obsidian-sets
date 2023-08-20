@@ -30,7 +30,7 @@ const renderCodeBlock =  (db:VaultDB,query:Query, el:HTMLElement) => {
         { tag: "metadata", attribute: "type", displayName: "Type" }
     ]
 
-    render(()=><CodeBlock query={query} data={data} attributes={attributes} viewMode={{
+    render(()=><CodeBlock queryResult={data} attributes={attributes} viewMode={{
         viewMode,setViewMode
     }} />, el);
 }

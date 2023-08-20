@@ -93,7 +93,7 @@ export class Query {
         return res;
     }
 
-    inferSetType() {
+    inferSetType(): string | undefined {
         const c = this._clauses.filter(clause =>clause.attribute.attribute === this._settings.typeAttributeKey);
         if(c.length === 0) return undefined;
         const s = c.filter(clause => clause.operator === "eq");

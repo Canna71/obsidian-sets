@@ -1,11 +1,10 @@
 import { Component, For, createSignal } from "solid-js";
 import { Attribute } from "src/Data/Query";
-import clickOutside from "./clickoutside";
+
 import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
 import { Header } from "./Header";
 
-false && clickOutside;
 
 // TODO: use https://github.com/minht11/solid-virtual-container
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
