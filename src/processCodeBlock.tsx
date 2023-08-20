@@ -7,7 +7,7 @@ import { Attribute } from "./Query";
 
 export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPlugin, ctx: MarkdownPostProcessorContext) {
     // TODO: actual read source
-    const data = plugin.vaultDB.queryVault([
+    const data = plugin.vaultDB.query([
         {
             operator: "eq",
             attribute: { tag: "metadata", attribute: "type" },

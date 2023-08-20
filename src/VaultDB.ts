@@ -40,7 +40,7 @@ export  class VaultDB {
         );
     }
 
-    queryVault(query: Query) {
+    query(query: Query) {
         if(!this.hashesInitialized){
             throw Error('VaultDB not initialized yet');
         }
