@@ -1,7 +1,7 @@
 import { Accessor, Component } from "solid-js";
 import GridView from "./GridView";
-import { ObjectData } from "src/ObjectData";
-import { Attribute, Query } from "src/Query";
+import { ObjectData } from "src/Data/ObjectData";
+import { Attribute, Query } from "src/Data/Query";
 import BlockToolbar from "./BlockToolbar";
 
 export type ViewMode = "grid";

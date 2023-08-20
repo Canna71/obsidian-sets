@@ -1,7 +1,7 @@
 import { MarkdownPostProcessorContext } from "obsidian";
-import SetsPlugin from "./main";
-import CodeBlock from "Views/components/renderCodeBlock";
-import { Query } from "./Query";
+import SetsPlugin from "../main";
+import CodeBlock from "src/Views/components/renderCodeBlock";
+import { Query } from "../Data/Query";
 
 
 

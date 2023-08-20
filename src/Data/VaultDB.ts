@@ -1,5 +1,5 @@
 import { App, TFile, debounce } from "obsidian";
-import SetsPlugin from "./main";
+import SetsPlugin from "../main";
 import { Query } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";

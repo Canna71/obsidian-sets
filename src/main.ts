@@ -3,7 +3,7 @@ import { addIcon, MarkdownView } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SetsView, SETS_VIEW } from "../Views/SetsView";
+import { SetsView, SETS_VIEW } from "./Views/SetsView";
 import {
     App,
     finishRenderMath,
@@ -14,9 +14,9 @@ import {
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
-import { Query } from "./Query";
-import { processCodeBlock } from "./processCodeBlock";
-import { VaultDB } from "./VaultDB";
+import { Query } from "./Data/Query";
+import { processCodeBlock } from "./Views/processCodeBlock";
+import { VaultDB } from "./Data/VaultDB";
 import linkPropertyType from "./propertytypes/link";
 import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";

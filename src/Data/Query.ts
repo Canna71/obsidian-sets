@@ -1,6 +1,8 @@
 import {  TFile } from "obsidian";
 import moment from "moment";
 import { ObjectData } from "./ObjectData";
+import { getSetsSettings } from "../main";
+import { SetsSettings } from "../Settings";
 
 export type FileAttribute = {
     tag: "file",
@@ -67,9 +69,11 @@ export type Clause = {
 export class Query {
 
     private _clauses: Clause[];
+    private _settings: SetsSettings;
 
     private constructor(clauses: Clause[]) {
         this._clauses = clauses;
+        this._settings = getSetsSettings();
     }
 
     static fromClauses(clauses: Clause[]){
@@ -87,6 +91,15 @@ export class Query {
         });
      
         return res;
+    }
+
+    inferSetType() {
+        const c = this._clauses.filter(clause =>clause.attribute.attribute === this._settings.typeAttributeKey);
+        if(c.length === 0) return undefined;
+        const s = c.filter(clause => clause.operator === "eq");
+        if(s.length === 0) return undefined;
+
+        return s[0].value;
     }
 }
 

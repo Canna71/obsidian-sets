@@ -1,7 +1,7 @@
 
 import { render } from "solid-js/web";
-import { Attribute, Query } from "src/Query";
-import { VaultDB } from "src/VaultDB";
+import { Attribute, Query } from "src/Data/Query";
+import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";

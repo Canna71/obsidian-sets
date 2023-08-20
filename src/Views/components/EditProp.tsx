@@ -1,6 +1,6 @@
 import { Component, onMount } from "solid-js";
-import { Attribute, getAttribute } from "src/Query";
-import { ObjectData } from "src/ObjectData";
+import { Attribute, getAttribute } from "src/Data/Query";
+import { ObjectData } from "src/Data/ObjectData";
 
 export const EditProp: Component<{ data: ObjectData; attribute: Attribute; }> = (props) => {
 

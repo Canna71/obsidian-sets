@@ -1,7 +1,7 @@
 import { Component, For, createSignal } from "solid-js";
-import { Attribute } from "src/Query";
+import { Attribute } from "src/Data/Query";
 import clickOutside from "./clickoutside";
-import { ObjectData } from "src/ObjectData";
+import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
 import { Header } from "./Header";
 
