@@ -1,5 +1,4 @@
-import { App, ButtonComponent, getLinkpath, parseLinktext } from "obsidian";
-import { PropertyContext, PropertyInfo } from "src/obsidian-ex";
+import { App, parseLinktext } from "obsidian";
 const linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
 
 function registerLinkPropertyType(app: App) {
@@ -14,7 +13,7 @@ function registerLinkPropertyType(app: App) {
             // this.displayErroe("Invalid Link");
             return false;
         }
-        const {path, subpath} = parseLinktext(match[1])
+        const {path} = parseLinktext(match[1])
         const file = app.metadataCache.getFirstLinkpathDest(
             path,
             ""
