@@ -194,13 +194,18 @@ export default class SetsPlugin extends Plugin {
         const ret = [];
         for (const hash in cache) {
             const md = cache[hash].frontmatter;
-            const ob = this.getObjectData(hash, md);
-            if (matches(query, ob)) {
-                // finds the actual file
-                
-                ret.push(ob);
-                // const file = fileCache
+            try {
+                const ob = this.getObjectData(hash, md);
+                if (matches(query, ob)) {
+                    // finds the actual file
+                    
+                    ret.push(ob);
+                    // const file = fileCache
+                }
+            } catch(e) {
+                console.warn(e);
             }
+            
         }
         
         return ret;

@@ -4,7 +4,8 @@ import moment from "moment";
 
 export type FileAttribute = {
     tag: "file",
-    attribute: "Name" | "CreationDate" | "ModifyDate" | "Path"
+    attribute: "Name" | "CreationDate" | "ModifyDate" | "Path",
+    displayName?: string
 }
 
 function getFileAttribute(file: TFile, attr: FileAttribute) {
@@ -25,7 +26,7 @@ function getMetadataAttribute(metadata: unknown, attr: MetadataAttribute):unknow
     return (metadata as Record<string,unknown>)[attr.attribute];
 }
 
-function getAttribute(objectData: ObjectData, attribute: Attribute) {
+export function getAttribute(objectData: ObjectData, attribute: Attribute) {
     if(attribute.tag === "file")
         return getFileAttribute(objectData.file, attribute);
     else 
@@ -34,7 +35,8 @@ function getAttribute(objectData: ObjectData, attribute: Attribute) {
 
 export type MetadataAttribute = {
     tag: "metadata",
-    attribute: string
+    attribute: string,
+    displayName?: string
 };
 
 export type OperatorName = "eq";

@@ -1,7 +1,8 @@
 import { MarkdownPostProcessorContext } from "obsidian";
 import SetsPlugin from "./main";
 import { render } from "solid-js/web";
-import { GridView } from "Views/components/GridView";
+import  GridView  from "Views/components/GridView";
+import { Attribute } from "./Query";
 
 
 export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPlugin, ctx: MarkdownPostProcessorContext) {
@@ -14,6 +15,10 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
         }
     ]);
     console.log(`data: `, data);
+    const attributes : Attribute[] = [
+        { tag: "file", attribute: "Name" },
+        { tag: "metadata", attribute: "type", displayName: "Type" }
+    ]
 
-    render(()=><GridView />, el);
+    render(()=><GridView data={data} attributes={attributes} />, el);
 }

@@ -1,0 +1,22 @@
+
+
+.sets-gridview {
+    
+
+    .sets-headers-row {
+        display: grid;
+        white-space: nowrap;
+        width: calc(100% - 4px);
+        margin-left: 2px;
+        height: 36px;
+        user-select: none;
+    }
+
+    .sets-gridview-body {
+        .sets-gridview-grid {
+            .sets-gridview-row {
+                display: grid;
+            }
+        }
+    }
+}
