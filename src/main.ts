@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, debounce, MarkdownView, TFile } from "obsidian";
+import { addIcon, MarkdownView } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -16,6 +16,7 @@ import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
 import { Query, matches } from "./Query";
 import { processCodeBlock } from "./processCodeBlock";
+import { VaultDB } from "./VaultDB";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -24,12 +25,7 @@ const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.60
 
 let gSettings: SetsSettings;
 
-export type ObjectData = {
-    name: string;
-    file: TFile;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    frontmatter: Record<string,any>;
-}
+
 
 export function getSetsSettings() {
     return gSettings;
@@ -37,9 +33,8 @@ export function getSetsSettings() {
 
 export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
-    hashesInitialized = false;
-    hashes: Map<string, string> = new Map();
 
+    _vaultDB: VaultDB;
     async onload() {
         await this.loadSettings();
 
@@ -100,30 +95,11 @@ export default class SetsPlugin extends Plugin {
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
 
-        this.updateHashes();
-        this.updateHashes = debounce(this.updateHashes.bind(this), 100)
-        //TODO: deregister on unload
-        this.app.metadataCache.on(
-            "resolved",
-            
-                this.updateHashes
-            
-        );
+        this._vaultDB = new VaultDB(this);
+        
     }
 
-    updateHashes() {
-        this.hashes.clear();
-        //@ts-ignore
-        for (const entry in this.app.metadataCache.fileCache) {
-            //@ts-ignore
-            const file = this.app.metadataCache.fileCache[entry];
-            const hash = file.hash;
-
-            this.hashes.set(hash, entry);
-        }
-        this.hashesInitialized = true;
-        console.log(`hash updated`); 
-    }
+    
 
     registerNewTypes() {
         this.app.metadataTypeManager.registeredTypeWidgets.password =
@@ -133,10 +109,16 @@ export default class SetsPlugin extends Plugin {
 
     onunload() {
         this.app.workspace.detachLeavesOfType(SETS_VIEW);
-        this.app.metadataCache.off(
-            "resolved",this.updateHashes
-        );
+        this.vaultDB.dispose();
     }
+
+    
+    
+    public get vaultDB() : VaultDB {
+        return this._vaultDB;
+    }
+   
+    
 
     async loadSettings() {
         this.settings = Object.assign(
@@ -186,44 +168,8 @@ export default class SetsPlugin extends Plugin {
         // this.registerEditorExtension([resultField, SetsConfigField]);
     }
 
-    queryVault(query: Query) {
-        if(!this.hashesInitialized){
-            throw Error('plugin not initialized yet');
-        }
-        //@ts-ignore
-        const cache = this.app.metadataCache.metadataCache;
-        const ret:ObjectData[] = [];
-        for (const hash in cache) {
-            const md = cache[hash].frontmatter;
-            try {
-                const ob = this.getObjectData(hash, md);
-                if (matches(query, ob)) {
-                    // finds the actual file
-                    
-                    ret.push(ob);
-                    // const file = fileCache
-                }
-            } catch(e) {
-                console.warn(e);
-            }
-            
-        }
-        
-        return ret;
-    }
 
-    private getObjectData(hash: string, md: Record<string,any>):ObjectData {
-        const file = this.hashes.get(hash);
-        if(!file) throw Error(`Hash ${hash} not found!`);
-        const tfile = this.app.vault.getAbstractFileByPath(file);
-        if(!tfile) throw Error(`File ${file} not found!`);
-        if(!(tfile instanceof TFile)) throw Error(`${file} is a folder`);
-        const ob = {
-            name: file, 
-            file: tfile,
-            frontmatter: md,
-        };
-        return ob;
-    }
+
+
 }
 

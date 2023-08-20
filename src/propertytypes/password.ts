@@ -1,5 +1,5 @@
 import { ButtonComponent } from "obsidian";
-import { PropertyInfo } from "src/obsidian-ex";
+import { PropertyContext, PropertyInfo } from "src/obsidian-ex";
 
 const passwordPropertyType = {
     name: () => "password",
@@ -7,7 +7,7 @@ const passwordPropertyType = {
     default: () => "",
     icon: "lucide-key",
     validate: (e:unknown) => "string" == typeof e,
-    render: (element: HTMLElement, metadataField: any, property: PropertyInfo) => {
+    render: (element: HTMLElement, metadataField: any, property: PropertyContext) => {
         
         const passfield = document.createElement("input");
 

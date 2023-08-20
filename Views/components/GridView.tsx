@@ -1,7 +1,7 @@
 import { Component, For, Show, createSignal, onMount } from "solid-js";
 import { Attribute, getAttribute } from "src/Query";
-import { ObjectData } from "src/main";
 import clickOutside from "./clickoutside";
+import { ObjectData } from "src/ObjectData";
 
 false && clickOutside;
 

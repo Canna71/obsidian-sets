@@ -1,6 +1,6 @@
 import {  TFile } from "obsidian";
-import { ObjectData } from "./main";
 import moment from "moment";
+import { ObjectData } from "./ObjectData";
 
 export type FileAttribute = {
     tag: "file",
