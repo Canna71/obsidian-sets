@@ -1,4 +1,4 @@
-import { App, TFile, TFolder, debounce } from "obsidian";
+import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
 import { Query } from "./Query";
 import { ObjectData } from "./ObjectData";
@@ -14,7 +14,7 @@ export type QueryResult = {
 
 export  class VaultDB {
     private hashesInitialized = false;
-    private hashes: Map<string, string> = new Map();
+    private hashes: Map<string, string[]> = new Map();
     private plugin:SetsPlugin;
     private app: App;
 
@@ -38,8 +38,10 @@ export  class VaultDB {
             //@ts-ignore
             const file = this.app.metadataCache.fileCache[entry];
             const hash = file.hash;
+            const list = this.hashes.get(hash) || [];
+            list.push(entry);
 
-            this.hashes.set(hash, entry);
+            this.hashes.set(hash, list);
         }
         this.hashesInitialized = true;
         this.observer.notify("metadata-changed");
@@ -65,24 +67,35 @@ export  class VaultDB {
             throw Error('VaultDB not initialized yet');
         }
         //@ts-ignore
-        const cache = this.app.metadataCache.metadataCache;
+        // const cache = this.app.metadataCache.metadataCache;
         const ret:ObjectData[] = [];
-        for (const hash in cache) {
-            const md = cache[hash].frontmatter;
-            try {
-                const ob = this.getObjectData(hash, md);
-                if (query.matches(ob)) {
-                    // finds the actual file
+        // for (const hash in cache) {
+        //     const md = cache[hash].frontmatter;
+        //     try {
+        //         const ob = this.getObjectData(hash, md);
+        //         if (query.matches(ob)) {
+        //             // finds the actual file
                     
-                    ret.push(ob);
-                    // const file = fileCache
-                }
-            } catch(e) {
-                console.warn(e);
-            }
+        //             ret.push(ob);
+        //             // const file = fileCache
+        //         }
+        //     } catch(e) {
+        //         console.warn(e);
+        //     }
             
+        // }
+        //@ts-ignore
+        const files : string[] = this.app.metadataCache.getCachedFiles()
+        for(const filePath of files) {
+            const fileCache = this.app.metadataCache.getCache(filePath);
+            if(fileCache){
+                const ob = this.getObjectData(filePath, fileCache);
+                if(query.matches(ob)){
+                    ret.push(ob);
+                }
+            }
+
         }
-        
         return {
             data: ret,
             db: this,
@@ -105,23 +118,23 @@ export  class VaultDB {
         // TODO: create template by using current properties
         if(template instanceof TFile){
             const content = await this.app.vault.read(template);
-            const newFIle = this.app.fileManager.createNewFile(folder as TFolder,undefined,undefined,content);
-            console.log("new file created");
+            const newFIle = await this.app.fileManager.createNewFile(folder as TFolder,undefined,undefined,content);
+            console.log("new file created:", newFIle.path);
         }
 
         
     }
     
-    private getObjectData(hash: string, md: Record<string,any>):ObjectData {
-        const file = this.hashes.get(hash);
-        if(!file) throw Error(`Hash ${hash} not found!`);
-        const tfile = this.app.vault.getAbstractFileByPath(file);
-        if(!tfile) throw Error(`File ${file} not found!`);
-        if(!(tfile instanceof TFile)) throw Error(`${file} is a folder`);
+    private getObjectData(filePath: string, metadata: CachedMetadata):ObjectData {
+        
+        const tfile = this.app.vault.getAbstractFileByPath(filePath);
+        if(!tfile) throw Error(`File ${filePath} not found!`);
+        if(!(tfile instanceof TFile)) throw Error(`${filePath} is a folder`);
         const ob = {
-            name: file, 
+            name: filePath, 
             file: tfile,
-            frontmatter: md,
+            //@ts-ignore
+            frontmatter: metadata.frontmatter,
             db: this
         };
         return ob;

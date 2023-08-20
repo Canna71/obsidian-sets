@@ -99,7 +99,7 @@ export class Query {
         const s = c.filter(clause => clause.operator === "eq");
         if(s.length === 0) return undefined;
 
-        return s[0].value;
+        return s[0].value as string;
     }
 }
 
