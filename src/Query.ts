@@ -62,17 +62,32 @@ export type Clause = {
     operator: OperatorName,
     value: unknown
 }
-export type Query = Clause[];
+// export type Query = Clause[];
 
-export function matches(query: Query, data: ObjectData) {
-    if(!data) return false;
-    
-    const res = query.every(clause => {
-        const attr = getAttribute(data, clause.attribute);
-        const op = operators[clause.operator];
-        const val = clause.value;
-        return op.matches(attr,val);
-    });
- 
-    return res;
+export class Query {
+
+    private _clauses: Clause[];
+
+    private constructor(clauses: Clause[]) {
+        this._clauses = clauses;
+    }
+
+    static fromClauses(clauses: Clause[]){
+        return new Query(clauses);
+    }
+
+    matches(data: ObjectData) {
+        if(!data) return false;
+        
+        const res = this._clauses.every(clause => {
+            const attr = getAttribute(data, clause.attribute);
+            const op = operators[clause.operator];
+            const val = clause.value;
+            return op.matches(attr,val);
+        });
+     
+        return res;
+    }
 }
+
+

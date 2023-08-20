@@ -1,6 +1,6 @@
 import { App, TFile, debounce } from "obsidian";
 import SetsPlugin from "./main";
-import { Query, matches } from "./Query";
+import { Query } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 
@@ -65,7 +65,7 @@ export  class VaultDB {
             const md = cache[hash].frontmatter;
             try {
                 const ob = this.getObjectData(hash, md);
-                if (matches(query, ob)) {
+                if (query.matches(ob)) {
                     // finds the actual file
                     
                     ret.push(ob);

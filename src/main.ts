@@ -14,7 +14,7 @@ import {
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
 import passwordPropertyType from "./propertytypes/password";
-import { Query, matches } from "./Query";
+import { Query } from "./Query";
 import { processCodeBlock } from "./processCodeBlock";
 import { VaultDB } from "./VaultDB";
 import linkPropertyType from "./propertytypes/link";
