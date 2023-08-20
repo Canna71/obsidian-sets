@@ -1,7 +1,9 @@
 import { ButtonComponent } from "obsidian";
 import { PropertyContext, PropertyInfo } from "src/obsidian-ex";
 
-const passwordPropertyType = {
+function  registerPasswordPropertyType(app: App)  {
+
+    app.metadataTypeManager.registeredTypeWidgets.password = {
     name: () => "password",
     type: "password",
     default: () => "",
@@ -59,6 +61,8 @@ const passwordPropertyType = {
         });
 
     }
+    }
+    return app.metadataTypeManager.registeredTypeWidgets.password;
 };
 
-export default passwordPropertyType;
+export default registerPasswordPropertyType;

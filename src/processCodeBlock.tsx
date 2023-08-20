@@ -1,6 +1,6 @@
 import { MarkdownPostProcessorContext } from "obsidian";
 import SetsPlugin from "./main";
-import CodeBlock from "Views/components/CodeBlock";
+import CodeBlock from "Views/components/renderCodeBlock";
 
 
 

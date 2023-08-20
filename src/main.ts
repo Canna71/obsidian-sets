@@ -17,6 +17,9 @@ import passwordPropertyType from "./propertytypes/password";
 import { Query, matches } from "./Query";
 import { processCodeBlock } from "./processCodeBlock";
 import { VaultDB } from "./VaultDB";
+import linkPropertyType from "./propertytypes/link";
+import registerPasswordPropertyType from "./propertytypes/password";
+import registerLinkPropertyType from "./propertytypes/link";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -102,8 +105,8 @@ export default class SetsPlugin extends Plugin {
     
 
     registerNewTypes() {
-        this.app.metadataTypeManager.registeredTypeWidgets.password =
-            passwordPropertyType;
+        registerPasswordPropertyType(this.app);
+        registerLinkPropertyType(this.app);
         this.app.metadataTypeManager.savePropertyInfo();
     }
 
