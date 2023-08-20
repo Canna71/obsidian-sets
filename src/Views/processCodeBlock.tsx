@@ -13,7 +13,7 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
         {
             operator: "eq",
             attribute: { tag: "metadata", attribute: "type" },
-            value: "note"
+            value: "meeting"
         }
     ]);
 

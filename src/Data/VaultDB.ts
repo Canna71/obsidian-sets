@@ -13,8 +13,8 @@ export type QueryResult = {
 }
 
 export  class VaultDB {
-    private hashesInitialized = false;
-    private hashes: Map<string, string[]> = new Map();
+    private dbInitialized = false;
+    // private hashes: Map<string, string[]> = new Map();
     private plugin:SetsPlugin;
     private app: App;
 
@@ -23,34 +23,34 @@ export  class VaultDB {
     constructor(plugin: SetsPlugin) {
         this.plugin = plugin;
         this.app = plugin.app;
-        this.updateHashes();
-        this.updateHashes = debounce(this.updateHashes.bind(this), 100)
+        this.onMetadataChanged();
+        this.onMetadataChanged = debounce(this.onMetadataChanged.bind(this), 100)
         //TODO: deregister on unload
         this.app.metadataCache.on(
-            "resolved", this.updateHashes
+            "resolved", this.onMetadataChanged
         );
     }
 
-    private updateHashes() {
-        this.hashes.clear();
+    private onMetadataChanged() {
+        // this.hashes.clear();
         //@ts-ignore
-        for (const entry in this.app.metadataCache.fileCache) {
-            //@ts-ignore
-            const file = this.app.metadataCache.fileCache[entry];
-            const hash = file.hash;
-            const list = this.hashes.get(hash) || [];
-            list.push(entry);
+        // for (const entry in this.app.metadataCache.fileCache) {
+        //     //@ts-ignore
+        //     const file = this.app.metadataCache.fileCache[entry];
+        //     const hash = file.hash;
+        //     const list = this.hashes.get(hash) || [];
+        //     list.push(entry);
 
-            this.hashes.set(hash, list);
-        }
-        this.hashesInitialized = true;
+        //     this.hashes.set(hash, list);
+        // }
+        this.dbInitialized = true;
         this.observer.notify("metadata-changed");
-        console.log(`hash updated`); 
+        console.log(`metadata changed`); 
     }
 
     dispose() {
         this.app.metadataCache.off(
-            "resolved",this.updateHashes
+            "resolved",this.onMetadataChanged
         );
     }
 
@@ -63,7 +63,7 @@ export  class VaultDB {
     }
 
     query(query: Query):QueryResult {
-        if(!this.hashesInitialized){
+        if(!this.dbInitialized){
             throw Error('VaultDB not initialized yet');
         }
         //@ts-ignore
@@ -102,29 +102,101 @@ export  class VaultDB {
             query
         };
     }
+
+    queryType(type: string) {
+        const query = Query.fromClauses([
+            {
+                operator: "eq",
+                attribute: { tag: "metadata", attribute: this.plugin.settings.typeAttributeKey },
+                value: type
+            }
+        ]);
+        return this.query(query);
+    }
  
     async addToSet(type: string) {
-        const setsRoot = this.plugin.settings.setsRoot;
-        const typeDisplayName = type.charAt(0).toUpperCase() + type.slice(1);
-        const setFolder = `${setsRoot}/${typeDisplayName}Set`;
-         
-        let folder = this.app.vault.getAbstractFileByPath(setFolder);
-        if(!folder || !(folder instanceof TFolder)){
-            folder = await this.app.vault.createFolder(setFolder);
+        const typeDisplayName = this.getTypeDisplayName(type);        
+        const folder = await this.getSetFolder(type);
+        let template = this.getArchetypeFile(typeDisplayName);
+
+
+        if(!template) {
+            template = await this.inferType(type);
         }
-        const typeFilePath = this.plugin.settings.typesFolder + "/" + `${typeDisplayName}Type.md`
-        const template = this.app.vault.getAbstractFileByPath(typeFilePath);
-        // TODO: what if it doesn't exists yet?
-        // TODO: create template by using current properties
+
         if(template instanceof TFile){
             const content = await this.app.vault.read(template);
             const newFIle = await this.app.fileManager.createNewFile(folder as TFolder,undefined,undefined,content);
             console.log("new file created:", newFIle.path);
-        }
+        } 
+   
+    }
 
-        
+    private getArchetypeFile(typeDisplayName: string) {
+        const typeFilePath = this.getArchetypePath(typeDisplayName);
+        return this.app.vault.getAbstractFileByPath(typeFilePath);
+    }
+
+    private getArchetypePath(typeDisplayName: string) {
+        return this.plugin.settings.typesFolder + "/" + this.getArchetypeName(typeDisplayName);
+    }
+
+    private getArchetypeName(typeDisplayName: string) {
+        return `${typeDisplayName}Type.md`;
+    }
+
+    private getTypeDisplayName(type: string) {
+        return  type.charAt(0).toUpperCase() + type.slice(1);
     }
     
+    private async getSetFolder(type: string) {
+        const setsRoot = this.plugin.settings.setsRoot;
+        const typeDisplayName = this.getTypeDisplayName(type);
+        const setFolder = `${setsRoot}/${typeDisplayName}Set`;
+
+        let folder = this.app.vault.getAbstractFileByPath(setFolder);
+        if (!folder || !(folder instanceof TFolder)) {
+            folder = await this.app.vault.createFolder(setFolder);
+        }
+        return folder;
+    }
+
+    private async inferType(type: string) {
+        const typeDisplayName = this.getTypeDisplayName(type);
+        const subsum: Record<string, any[]> = {};
+        const instances = this.queryType(type);
+        for (const inst of instances.data) {
+            if (inst.frontmatter) {
+                for (const key in inst.frontmatter) {
+                    subsum[key] = subsum[key] || [];
+                    if (!subsum[key].contains(inst.frontmatter[key])) {
+                        subsum[key].push(inst.frontmatter[key]);
+                    }
+                }
+            }
+
+        }
+        const archeType = {};
+        // now in subsum we have all possible keys with all possible values
+        for (const key in subsum) {
+            const values = subsum[key];
+            if (values.length === 1) {
+                archeType[key] = values[0];
+            } else {
+                archeType[key] = null;
+            }
+        }
+
+        console.log('inferred type: ', archeType);
+        const archetypeName = this.getArchetypeName(typeDisplayName);
+        const archetypeFolder = this.app.vault.getAbstractFileByPath(this.plugin.settings.typesFolder);
+        const newFIle = await this.app.fileManager.createNewFile(archetypeFolder as TFolder,archetypeName,undefined,`${typeDisplayName} Archetype Inferred`);
+        await this.app.fileManager.processFrontMatter(newFIle,fm=>{
+            Object.assign(fm, archeType);
+        })
+        return newFIle;
+    }
+
     private getObjectData(filePath: string, metadata: CachedMetadata):ObjectData {
         
         const tfile = this.app.vault.getAbstractFileByPath(filePath);
