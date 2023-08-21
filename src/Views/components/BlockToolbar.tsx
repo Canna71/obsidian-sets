@@ -1,9 +1,9 @@
 import { Accessor, Component } from "solid-js";
-import { Attribute } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/Query";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 
-const BlockToolbar: Component<{queryResult: QueryResult, attributes: Attribute[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
+const BlockToolbar: Component<{queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
 
     const onAdd= async () => {
         //TODO: move elsewhere

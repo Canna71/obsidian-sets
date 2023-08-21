@@ -1,5 +1,5 @@
 import { Component, For, createSignal } from "solid-js";
-import { Attribute } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/Query";
 
 import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
@@ -8,7 +8,7 @@ import { Header } from "./Header";
 
 // TODO: use https://github.com/minht11/solid-virtual-container
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
-const GridView: Component<{ data: ObjectData[], attributes: Attribute[] }> = (props) => {
+const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[] }> = (props) => {
 
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,7 +19,7 @@ const GridView: Component<{ data: ObjectData[], attributes: Attribute[] }> = (pr
     >
         <div class="sets-headers-row" style={{ "grid-template-columns": colSizes() }}>
             <For each={props.attributes}>{
-                (attribute, i) => <Header name={attribute.displayName || attribute.attribute} />
+                (attribute, i) => <Header name={attribute.displayName || attribute.key} />
             }
             </For>
             

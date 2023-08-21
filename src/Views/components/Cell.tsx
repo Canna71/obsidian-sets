@@ -1,12 +1,12 @@
 import { Component, Show, createSignal } from "solid-js";
-import { Attribute, getAttribute } from "src/Data/Query";
+import {  AttributeDefinition, getAttribute } from "src/Data/Query";
 import { ObjectData } from "src/Data/ObjectData";
 import { EditProp } from "./EditProp";
 import clickOutside from "./clickoutside";
 
 false && clickOutside;
 
-export const Cell: Component<{ data: ObjectData; attribute: Attribute; }> = (props) => {
+export const Cell: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
     const [isEdit, setEdit] = createSignal(false);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const value = () => getAttribute(props.data, props.attribute) as any;

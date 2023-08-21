@@ -106,9 +106,9 @@ export  class VaultDB {
     queryType(type: string) {
         const query = Query.fromClauses([
             {
-                operator: "eq",
-                attribute: { tag: "metadata", attribute: this.plugin.settings.typeAttributeKey },
-                value: type
+                op: "eq",
+                at: { tag: "md", key: this.plugin.settings.typeAttributeKey },
+                val: type
             }
         ]);
         return this.query(query);

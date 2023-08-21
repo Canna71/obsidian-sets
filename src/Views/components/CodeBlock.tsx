@@ -1,12 +1,12 @@
 import { Accessor, Component } from "solid-js";
 import GridView from "./GridView";
-import { Attribute } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/Query";
 import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 
 export type ViewMode = "grid";
 
-const CodeBlock: Component<{queryResult: QueryResult, attributes: Attribute[], 
+const CodeBlock: Component<{queryResult: QueryResult, attributes: AttributeDefinition[], 
     viewMode: {viewMode: Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}
 }> = (props) => {
 

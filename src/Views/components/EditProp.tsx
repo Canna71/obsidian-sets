@@ -1,10 +1,10 @@
 import { Component, onMount } from "solid-js";
-import { Attribute, getAttribute } from "src/Data/Query";
+import { AttributeDefinition, getAttribute } from "src/Data/Query";
 import { ObjectData } from "src/Data/ObjectData";
 
-export const EditProp: Component<{ data: ObjectData; attribute: Attribute; }> = (props) => {
+export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
 
-    const key = props.attribute.attribute;
+    const key = props.attribute.key;
     const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
     const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
     const widget = app.metadataTypeManager.registeredTypeWidgets[type];
