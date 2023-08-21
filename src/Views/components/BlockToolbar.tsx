@@ -1,5 +1,5 @@
 import { Accessor, Component } from "solid-js";
-import { AttributeDefinition } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 

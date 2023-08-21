@@ -1,6 +1,6 @@
 import { Accessor, Component } from "solid-js";
 import GridView from "./GridView";
-import { AttributeDefinition } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 

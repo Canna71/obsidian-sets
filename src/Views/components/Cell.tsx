@@ -1,5 +1,5 @@
 import { Component, Show, createSignal } from "solid-js";
-import {  AttributeDefinition } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 import { EditProp } from "./EditProp";
 import clickOutside from "./clickoutside";

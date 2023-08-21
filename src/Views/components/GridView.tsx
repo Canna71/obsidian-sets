@@ -1,5 +1,5 @@
 import { Component, For, createSignal } from "solid-js";
-import { AttributeDefinition } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
 
 import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
@@ -10,9 +10,9 @@ import { Header } from "./Header";
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
 const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[] }> = (props) => {
 
-
+    const autoSize = props.attributes.map(attr => "200px").join(" ")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [colSizes, setColSizes] = createSignal("200px auto")
+    const [colSizes, setColSizes] = createSignal(autoSize)
 
     return <div
         class="sets-codeblock sets-gridview"

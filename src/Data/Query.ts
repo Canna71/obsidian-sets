@@ -1,48 +1,43 @@
 
-import {  TFile } from "obsidian";
-import moment from "moment";
 import { ObjectData } from "./ObjectData";
 import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
-import {  PropertyWidget } from "src/obsidian-ex";
 
-export interface FileAttributeClause  {
-    tag: "file",
-    key: "Name" | "CreationDate" | "ModifyDate" | "Path",
+export enum IntrinsicAttributeKey {
+    FileName = "FileName",
+    FileCreationDate = "FileCreationDate" ,
+    FileModificationDate = "FileModificationDate",
+    FilePath = "FilePath",
+  }
+
+// export type IntrinsicAttributeKey = "FileName" | "FileCreationDate" | "FileModificationDate" | "FilePath"
+
+export interface IntrinsicAttributeClause  {
+    cl: "int",
+    key: IntrinsicAttributeKey,
 }
 
-export interface FileAttributeDefinition extends FileAttributeClause {
+export interface InstrinsicAttributeDefinition extends IntrinsicAttributeClause {
     
     displayName: string
 }
 
-function getFileAttribute(file: TFile, attr: FileAttributeClause) {
-    switch(attr.key){
-        case "CreationDate":
-            return moment(file.stat.ctime);
-        case "ModifyDate":
-            return moment(file.stat.mtime);
-        case "Name":
-            return file.name;
-        case "Path":
-            return file.path;
-    }
-}
 
-function getMetadataAttribute(metadata: unknown, attr: MetadataAttributeClause):unknown {
-    if(!metadata) return undefined;
-    return (metadata as Record<string,unknown>)[attr.key];
-}
 
-export function getAttribute(objectData: ObjectData, attribute: AttributeClause) {
-    if(attribute.tag === "file")
-        return getFileAttribute(objectData.file, attribute);
-    else 
-        return getMetadataAttribute(objectData.frontmatter, attribute);
-}
+// function getMetadataAttribute(metadata: unknown, attr: ExtrinsicAttributeClause):unknown {
+//     if(!metadata) return undefined;
+//     return (metadata as Record<string,unknown>)[attr.key];
+// }
 
-export interface MetadataAttributeClause {
-    tag: "md",
+// export function getAttribute(objectData: ObjectData, attribute: AttributeClause) {
+//     if(attribute.cl === "int")
+//         return getFileAttribute(objectData.file, attribute);
+//     else 
+//         return getMetadataAttribute(objectData.frontmatter, attribute);
+// }
+
+export interface ExtrinsicAttributeClause {
+    cl: "ext",
     key: string,
 }
 
@@ -65,47 +60,7 @@ const operators : Record<OperatorName,Operator> = {
     }
 }
 
-export type AttributeClause = FileAttributeClause | MetadataAttributeClause;
-
-export interface AttributeDefinition  {
-    displayName: () => string,
-    getValue: (data: ObjectData) => any,
-    getPropertyWidget?: () => PropertyWidget,
-    getPropertyInfo?: () => {
-        key: string;
-        type: string;
-    }
-}
-
-export class MetadataAttributeDefinition implements AttributeDefinition {
-    _key: string;
-    _displayName: string;
-    constructor(key: string, displayName?: string){
-        this._key = key;
-        this._displayName = this._displayName || 
-            key[0].toUpperCase() + key.slice(1);
-    }
-    displayName() { return this._displayName }
-    getValue(data: ObjectData) {return getAttribute(data,{"tag":"md", "key": this._key})}
-    // TODO: remove dependency from app
-    getPropertyWidget() {
-        const key = this._key;
-        const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
-        const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
-        const widget = app.metadataTypeManager.registeredTypeWidgets[type];
-        return widget;
-    }
-
-    getPropertyInfo() {
-        const key = this._key;
-        const propertyInfo = app.metadataTypeManager.getPropertyInfo(this._key);
-        const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
-        return {key, type};
-    }
-
-    
-}
-
+export type AttributeClause = IntrinsicAttributeClause | ExtrinsicAttributeClause;
 
 export type Clause = {
     at: AttributeClause,
@@ -135,7 +90,8 @@ export class Query {
         if(!data) return false;
         
         const res = this._clauses.every(clause => {
-            const attr = getAttribute(data, clause.at);
+            // const attr = getAttribute(data, clause.at);
+            const attr = data.db.getAttributeDefinition(clause.at.key).getValue(data);
             const op = operators[clause.op];
             const val = clause.val;
             return op.matches(attr,val);
