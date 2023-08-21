@@ -6,9 +6,9 @@ import { IntrinsicAttributeKey } from "./Query";
 function getFileAttribute(file: TFile, key: IntrinsicAttributeKey) {
     switch(key){
         case "FileCreationDate":
-            return moment(file.stat.ctime);
+            return moment(file.stat.ctime).format("LL");
         case "FileModificationDate":
-            return moment(file.stat.mtime);
+            return moment(file.stat.mtime).format("LL");
         case "FileName":
             return file.name;
         case "FilePath":
