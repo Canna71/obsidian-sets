@@ -1,20 +1,25 @@
 import { Component, onMount } from "solid-js";
-import { AttributeDefinition, getAttribute } from "src/Data/Query";
+import { AttributeDefinition } from "src/Data/Query";
 import { ObjectData } from "src/Data/ObjectData";
 
 export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
 
-    const key = props.attribute.key;
-    const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
-    const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
-    const widget = app.metadataTypeManager.registeredTypeWidgets[type];
+    // const key = props.attribute.key;
+    // const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
+    // const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
+    // const widget = app.metadataTypeManager.registeredTypeWidgets[type];
 
-    const value = getAttribute(props.data, props.attribute);
+    const widget = props.attribute.getPropertyWidget?.();
+
+    // const value = getAttribute(props.data, props.attribute);
+    const value = props.attribute.getValue(props.data);
+    if(!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
+    const {key, type} = props.attribute.getPropertyInfo();
     // eslint-disable-next-line prefer-const
     let div: HTMLDivElement | undefined = undefined;
 
     onMount(() => {
-        widget.render(div!, {
+        widget && widget.render(div!, {
             key, type, value
         },
             {

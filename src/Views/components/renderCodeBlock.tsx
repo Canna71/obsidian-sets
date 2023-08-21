@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  AttributeDefinition, Query } from "src/Data/Query";
+import {  AttributeDefinition, MetadataAttributeDefinition, Query, getAttribute } from "src/Data/Query";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
@@ -27,8 +27,13 @@ const renderCodeBlock =  (db:VaultDB,query:Query, el:HTMLElement) => {
 
     // TODO: rework since most attributes will be dynamic
     const attributes : AttributeDefinition[] = [
-        { tag: "file", key: "Name", displayName: "Name" },
-        { tag: "md", key: "type", displayName: "Type" }
+        {  displayName:()=> "Name", getValue: (data)=>getAttribute(data,
+                {"tag":"file","key":"Name"}
+            ) },
+        // {  displayName:()=> "Type", getValue: (data)=>getAttribute(data,
+        //     {"tag":"md","key":"type"}
+        // ) }
+        new MetadataAttributeDefinition("type")
     ]
 
     render(()=><CodeBlock queryResult={data} attributes={attributes} viewMode={{

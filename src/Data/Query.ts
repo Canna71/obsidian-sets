@@ -1,9 +1,10 @@
-import { Clause } from './../Query';
+
 import {  TFile } from "obsidian";
 import moment from "moment";
 import { ObjectData } from "./ObjectData";
 import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
+import {  PropertyWidget } from "src/obsidian-ex";
 
 export interface FileAttributeClause  {
     tag: "file",
@@ -45,10 +46,7 @@ export interface MetadataAttributeClause {
     key: string,
 }
 
-export interface MetadataAttributeDefinition extends MetadataAttributeClause {
-    
-    displayName: string
-};
+
 
 export type OperatorName = "eq";
 
@@ -62,12 +60,51 @@ const operators : Record<OperatorName,Operator> = {
     "eq": {
         op: "eq",
         compatibleTypes: "*",
+
         matches: (a:unknown, b:unknown) => a == b
     }
 }
 
 export type AttributeClause = FileAttributeClause | MetadataAttributeClause;
-export type AttributeDefinition = FileAttributeDefinition | MetadataAttributeDefinition;
+
+export interface AttributeDefinition  {
+    displayName: () => string,
+    getValue: (data: ObjectData) => any,
+    getPropertyWidget?: () => PropertyWidget,
+    getPropertyInfo?: () => {
+        key: string;
+        type: string;
+    }
+}
+
+export class MetadataAttributeDefinition implements AttributeDefinition {
+    _key: string;
+    _displayName: string;
+    constructor(key: string, displayName?: string){
+        this._key = key;
+        this._displayName = this._displayName || 
+            key[0].toUpperCase() + key.slice(1);
+    }
+    displayName() { return this._displayName }
+    getValue(data: ObjectData) {return getAttribute(data,{"tag":"md", "key": this._key})}
+    // TODO: remove dependency from app
+    getPropertyWidget() {
+        const key = this._key;
+        const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
+        const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
+        const widget = app.metadataTypeManager.registeredTypeWidgets[type];
+        return widget;
+    }
+
+    getPropertyInfo() {
+        const key = this._key;
+        const propertyInfo = app.metadataTypeManager.getPropertyInfo(this._key);
+        const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
+        return {key, type};
+    }
+
+    
+}
 
 
 export type Clause = {
