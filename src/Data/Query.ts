@@ -1,3 +1,4 @@
+import { Clause } from './../Query';
 import {  TFile } from "obsidian";
 import moment from "moment";
 import { ObjectData } from "./ObjectData";
@@ -86,8 +87,11 @@ export class Query {
         this._settings = getSetsSettings();
     }
 
-    static fromClauses(clauses: Clause[]){
-        return new Query(clauses);
+    static fromClauses(clauses: Clause[]|Clause){
+        if(Array.isArray(clauses))
+            return new Query(clauses);
+        else
+            return new Query([clauses]);
     }
 
     matches(data: ObjectData) {
