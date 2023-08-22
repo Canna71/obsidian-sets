@@ -22,5 +22,5 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
     //     }
     // ]);
 
-    CodeBlock(plugin.vaultDB,query, el);
+    CodeBlock(plugin.app, plugin.vaultDB,query, el);
 }

@@ -6,8 +6,10 @@ import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
+import { App } from "obsidian";
+import { AppProvider } from "./AppProvider";
 
-const renderCodeBlock =  (db:VaultDB,query:Query, el:HTMLElement) => {
+const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
     const initialdata = db.query(query);
     console.log(`data: `, initialdata);
 
@@ -40,9 +42,12 @@ const renderCodeBlock =  (db:VaultDB,query:Query, el:HTMLElement) => {
 
     ]
 
-    render(()=><CodeBlock queryResult={data} attributes={attributes} viewMode={{
-        viewMode,setViewMode
-    }} />, el);
+    render(()=>
+    <AppProvider app={app}>
+        <CodeBlock queryResult={data} attributes={attributes} viewMode={{
+            viewMode,setViewMode
+        }} />
+    </AppProvider>, el);
 }
 
 export default renderCodeBlock;

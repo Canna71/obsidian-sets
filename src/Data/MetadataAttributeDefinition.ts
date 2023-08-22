@@ -17,6 +17,11 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
         return data.frontmatter?.[this._key];
         // return getMetadataAttribute(data, { "tag": "md", "key": this._key }); 
     }
+
+    format(data: ObjectData) { 
+        return this.getValue(data).toString();
+        // return getMetadataAttribute(data, { "tag": "md", "key": this._key }); 
+    }
     // TODO: remove dependency from app
     getPropertyWidget() {
         const key = this._key;
@@ -34,7 +39,7 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
     }
 
     get readonly() {return false;}
-
+    get isIntrinsic() { return false; }
 }
 
 
