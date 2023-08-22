@@ -12,15 +12,17 @@ export enum IntrinsicAttributeKey {
 
 // export type IntrinsicAttributeKey = "FileName" | "FileCreationDate" | "FileModificationDate" | "FilePath"
 
-export interface IntrinsicAttributeClause  {
-    cl: "int",
-    key: IntrinsicAttributeKey,
-}
+// export interface IntrinsicAttributeClause  {
+//     cl: "int",
+//     key: IntrinsicAttributeKey,
+// }
 
-export interface InstrinsicAttributeDefinition extends IntrinsicAttributeClause {
+
+
+// export interface InstrinsicAttributeDefinition extends IntrinsicAttributeClause {
     
-    displayName: string
-}
+//     displayName: string
+// }
 
 
 
@@ -36,11 +38,12 @@ export interface InstrinsicAttributeDefinition extends IntrinsicAttributeClause 
 //         return getMetadataAttribute(objectData.frontmatter, attribute);
 // }
 
-export interface ExtrinsicAttributeClause {
-    cl: "ext",
-    key: string,
-}
+// export interface ExtrinsicAttributeClause {
+//     cl: "ext",
+//     key: string,
+// }
 
+export type ExtrinsicAttribute = string;
 
 
 export type OperatorName = "eq";
@@ -60,7 +63,7 @@ const operators : Record<OperatorName,Operator> = {
     }
 }
 
-export type AttributeClause = IntrinsicAttributeClause | ExtrinsicAttributeClause;
+export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
 
 export type Clause = {
     at: AttributeClause,
@@ -91,7 +94,7 @@ export class Query {
         
         const res = this._clauses.every(clause => {
             // const attr = getAttribute(data, clause.at);
-            const attr = data.db.getAttributeDefinition(clause.at.key).getValue(data);
+            const attr = data.db.getAttributeDefinition(clause.at).getValue(data);
             const op = operators[clause.op];
             const val = clause.val;
             return op.matches(attr,val);
@@ -101,7 +104,7 @@ export class Query {
     }
 
     inferSetType(): string | undefined {
-        const c = this._clauses.filter(clause =>clause.at.key === this._settings.typeAttributeKey);
+        const c = this._clauses.filter(clause =>clause.at === this._settings.typeAttributeKey);
         if(c.length === 0) return undefined;
         const s = c.filter(clause => clause.op === "eq");
         if(s.length === 0) return undefined;

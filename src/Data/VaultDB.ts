@@ -100,7 +100,7 @@ export class VaultDB {
         const query = Query.fromClauses([
             {
                 op: "eq",
-                at: { cl: "ext", key: this.plugin.settings.typeAttributeKey },
+                at:  this.plugin.settings.typeAttributeKey ,
                 val: type,
             },
         ]);
