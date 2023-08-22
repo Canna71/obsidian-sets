@@ -47,7 +47,17 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
 
     const onEdit = (e: MouseEvent) => {
         if (!isEdit()) setEdit(true);
+        if(isEdit()) {
+            const range = document.createRange();
+            editor.focus();
+            range.selectNodeContents(editor);
+            const selection = window.getSelection();
+            selection!.removeAllRanges();
+            selection!.addRange(range);
+        }
     };
+
+    
 
     const renameFile = (name: string) => {
         const file = props.data.file;
@@ -109,14 +119,15 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
         <Show when={!isEdit()}>
             <div class="sets-cell-filename">
                 <div class="sets-cell-filename-link" onClick={onClick}>{text()}</div>
-                <div ref={pencil!} class="sets-cell-filename-edit" onClick={onEdit} ></div>
+                <div ref={pencil!} class="sets-cell-filename-edit clickable-icon" onClick={onEdit} ></div>
                 
             </div>
         </Show>
         <Show when={isEdit()}>
             <div ref={editor!} classList={
                 {"sets-cell-filename":true,
-                "invalid": !!msg()
+                "invalid": !!msg(),
+                "editing": true
                 }
             } contentEditable={true} 
                 autocapitalize="on"
