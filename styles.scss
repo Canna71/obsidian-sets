@@ -34,6 +34,11 @@
                         .sets-cell-content {
                             .sets-cell-filename {
                                 display: flex;
+
+                                &.invalid {
+                                    background-color: var(--background-modifier-error);
+                                }
+
                                 .sets-cell-filename-link {
                                     cursor: pointer;
                                     flex: 1;

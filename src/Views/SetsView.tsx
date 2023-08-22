@@ -50,7 +50,6 @@ export class SetsView extends ItemView {
 
 
     render() {
-        console.log(`rendering...`);
         const { contentEl } = this;
         contentEl.empty();
         render(() => <MyComponent name="Solid!" />, contentEl)
