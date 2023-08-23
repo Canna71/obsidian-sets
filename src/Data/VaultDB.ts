@@ -117,15 +117,13 @@ export class VaultDB {
         if(!type) {
             throw Error("Could not infer type.")
         }
-        const typeDisplayName = this.getTypeDisplayName(type);
+        // const typeDisplayName = this.getTypeDisplayName(type);
         const folder = await this.getSetFolder(type);
         let template = this.getArchetypeFile(type);
         if (!template) {
             template = await this.inferType(type);
         }
-        let defaults = this.inferProperties(results);
-
-        
+        const defaults = this.inferProperties(results);
 
         if (template instanceof TFile) {
             const content = await this.app.vault.read(template);

@@ -1,23 +1,18 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, MarkdownView } from "obsidian";
+import { addIcon, MarkdownView, TFile } from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SetsView, SETS_VIEW } from "./Views/SetsView";
 import {
-    App,
     finishRenderMath,
     loadMathJax,
-    Modal,
     Plugin,
     WorkspaceLeaf,
 } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
-import passwordPropertyType from "./propertytypes/password";
-import { Query } from "./Data/Query";
 import { processCodeBlock } from "./Views/processCodeBlock";
 import { VaultDB } from "./Data/VaultDB";
-import linkPropertyType from "./propertytypes/link";
 import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";
 
@@ -100,9 +95,27 @@ export default class SetsPlugin extends Plugin {
 
         this._vaultDB = new VaultDB(this);
         
+        // this.patchView(tmp);
     }
 
     
+
+    private patchView() {
+        const tmp = MarkdownView.prototype.getDisplayText;
+        const app = this.app;
+        MarkdownView.prototype.getDisplayText =
+            function () {
+                const file = this.file as TFile;
+                let prefix = "";
+                if (file) {
+                    const md = app.metadataCache.getFileCache(file);
+                    if (md?.frontmatter?.__icon) prefix = md?.frontmatter?.__icon;
+                    console.log(file);
+                }
+
+                return prefix + tmp.call(this);
+            };
+    }
 
     registerNewTypes() {
         registerPasswordPropertyType(this.app);
