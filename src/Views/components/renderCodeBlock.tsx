@@ -40,6 +40,8 @@ const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
         // ) }new MetadataAttributeDefinition("type")
         db.getAttributeDefinition(IntrinsicAttributeKey.FileModificationDate),
         db.getAttributeDefinition(getSetsSettings().typeAttributeKey),
+        db.getAttributeDefinition("relatedto"),
+
 
     ]
 

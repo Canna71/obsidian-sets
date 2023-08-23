@@ -1,12 +1,13 @@
 
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { IntrinsicAttributeKey, Query, getOperatorById } from "./Query";
+import { IntrinsicAttributeKey, Query } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
 import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 import { AttributeDefinition } from "./AttributeDefinition";
+import { getOperatorById } from "./Operator";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export type DBEvent = "metadata-changed";
@@ -141,11 +142,15 @@ export class VaultDB {
     }
     inferProperties(results: QueryResult) : Record<string,any> {
         const constraints = results.query.clauses.filter(c => c.at !== this.plugin.settings.typeAttributeKey)
-        .filter(c => getOperatorById(c.op).isConstraint)
+        // .filter(c => getOperatorById(c.op).isConstraint)
         .filter(c => !this.getAttributeDefinition(c.at).isIntrinsic)
         ;
         const defaults = constraints.reduce((def, clause)=>{
-            return {...def, [clause.at]: clause.val}
+            const operator = getOperatorById(clause.op);
+            const val = clause.val;
+            const curDefault = def[clause.at];
+            const okDefault = operator.enforce(curDefault, val);
+            return {...def, [clause.at]: okDefault}
         },{} as Record<string,any>);
         return defaults; 
     }
@@ -157,8 +162,7 @@ export class VaultDB {
             return this.accessors.get(key)!;
         }
         let ret:AttributeDefinition;
-        // TODO: fix this since actual keys are in values!!!
-        if (key in IntrinsicAttributeKey) {
+        if (Object.values(IntrinsicAttributeKey).includes(key as IntrinsicAttributeKey) ) {
             ret = new IntrinsicAttributeDefinition(this.app, key as IntrinsicAttributeKey);
         } else {
             ret = new MetadataAttributeDefinition(this.app, key);

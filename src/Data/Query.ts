@@ -2,6 +2,7 @@
 import { ObjectData } from "./ObjectData";
 import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
+import {  OperatorName, getOperatorById } from "./Operator";
 
 export enum IntrinsicAttributeKey {
     FileName = "__bname",
@@ -13,28 +14,6 @@ export enum IntrinsicAttributeKey {
 
 export type ExtrinsicAttribute = string;
 
-
-export type OperatorName = "eq";
-
-export type Operator = {
-    op: OperatorName;
-    compatibleTypes: string[] | string;
-    isConstraint: boolean;
-    matches:(a:unknown, b:unknown) => boolean;
-}
-
-const operators : Record<OperatorName,Operator> = {
-    "eq": {
-        op: "eq",
-        compatibleTypes: "*",
-        isConstraint: true,
-        matches: (a:unknown, b:unknown) => a == b
-    }
-}
-
-export const getOperatorById = (op: OperatorName) => {
-    return operators[op];
-}
 
 
 export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
@@ -69,7 +48,7 @@ export class Query {
         const res = this._clauses.every(clause => {
             // const attr = getAttribute(data, clause.at);
             const attr = data.db.getAttributeDefinition(clause.at).getValue(data);
-            const op = operators[clause.op];
+            const op = getOperatorById(clause.op);
             const val = clause.val;
             return op.matches(attr,val);
         });
