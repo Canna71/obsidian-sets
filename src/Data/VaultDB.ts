@@ -99,11 +99,7 @@ export class VaultDB {
 
     queryType(type: string) {
         const query = Query.fromClauses([
-            {
-                op: "eq",
-                at:  this.plugin.settings.typeAttributeKey ,
-                val: type,
-            },
+            [this.plugin.settings.typeAttributeKey,"eq",type]
         ]);
         return this.query(query);
     }
@@ -141,16 +137,15 @@ export class VaultDB {
         }
     }
     inferProperties(results: QueryResult) : Record<string,any> {
-        const constraints = results.query.clauses.filter(c => c.at !== this.plugin.settings.typeAttributeKey)
+        const constraints = results.query.clauses.filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
         // .filter(c => getOperatorById(c.op).isConstraint)
-        .filter(c => !this.getAttributeDefinition(c.at).isIntrinsic)
+        .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic)
         ;
-        const defaults = constraints.reduce((def, clause)=>{
-            const operator = getOperatorById(clause.op);
-            const val = clause.val;
-            const curDefault = def[clause.at];
+        const defaults = constraints.reduce((def, [at,op,val])=>{
+            const operator = getOperatorById(op);
+            const curDefault = def[at];
             const okDefault = operator.enforce(curDefault, val);
-            return {...def, [clause.at]: okDefault}
+            return {...def, [at]: okDefault}
         },{} as Record<string,any>);
         return defaults; 
     }

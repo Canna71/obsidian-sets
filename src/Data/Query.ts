@@ -18,11 +18,13 @@ export type ExtrinsicAttribute = string;
 
 export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
 
-export type Clause = {
-    at: AttributeClause,
-    op: OperatorName,
-    val: any
-}
+export type Clause = [AttributeClause,OperatorName,any];
+
+// export type Clause = {
+//     at: AttributeClause,
+//     op: OperatorName,
+//     val: any
+// }
 // export type Query = Clause[];
 
 export class Query {
@@ -47,10 +49,11 @@ export class Query {
         
         const res = this._clauses.every(clause => {
             // const attr = getAttribute(data, clause.at);
-            const attr = data.db.getAttributeDefinition(clause.at).getValue(data);
-            const op = getOperatorById(clause.op);
-            const val = clause.val;
-            return op.matches(attr,val);
+            const [at,op,val] = clause;
+            const attr = data.db.getAttributeDefinition(at).getValue(data);
+            const operator = getOperatorById(op);
+            // const val = clause.val;
+            return operator.matches(attr,val);
         });
      
         return res;
@@ -59,13 +62,13 @@ export class Query {
     inferSetType(): string | undefined {
         const typeClauses = this.getTypeClauses();
         if(typeClauses.length>0)
-            return typeClauses[0].val as string;
+            return typeClauses[0][2] as string;
     }
 
     getTypeClauses(): Clause[]  {
-        const clauses =  this._clauses.filter(clause =>
-            (clause.at === this._settings.typeAttributeKey) 
-            && (clause.op === "eq") );
+        const clauses =  this._clauses.filter(([at,op,_]) =>
+            (at === this._settings.typeAttributeKey) 
+            && (op === "eq") );
         return clauses;
     }
 
