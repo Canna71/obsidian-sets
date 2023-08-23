@@ -30,8 +30,12 @@ const operators : Record<OperatorName,Operator> = {
         op: "hasall",
         compatibleTypes: "list",
         isConstraint: true,
-        matches: (list:unknown, item:unknown) => 
-            (Array.isArray(item)?item as any[]:[item] ).every(el => (list as any[]).includes(el)),
+        matches: (list:unknown, item:unknown) => {
+            if (list === undefined) list = []
+            if (item === undefined) item = []
+            
+            return (Array.isArray(item)?item as any[]:[item] ).every(el => (list as any[]).includes(el))
+        },
         enforce: (list:unknown, item:unknown) => {
             const items = Array.isArray(item) ? item : [item];
             const ret = items.slice();

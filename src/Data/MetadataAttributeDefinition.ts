@@ -1,6 +1,7 @@
 import { ObjectData } from "./ObjectData";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { App } from "obsidian";
+import { prettify } from "src/Utils/prettify";
 
 
 
@@ -10,7 +11,7 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
     constructor(app: App, key: string, displayName?: string) {
         this._key = key;
         this._displayName = this._displayName ||
-            key[0].toUpperCase() + key.slice(1);
+            prettify(this._key);
     }
     displayName() { return this._displayName; }
     getValue(data: ObjectData) { 
