@@ -1,7 +1,6 @@
 import { MarkdownPostProcessorContext, parseYaml } from "obsidian";
 import SetsPlugin from "../main";
-import CodeBlock from "src/Views/components/renderCodeBlock";
-import { Query } from "../Data/Query";
+import renderCodeBlock, { SetDefinition } from "src/Views/components/renderCodeBlock";
 
 
 
@@ -10,18 +9,9 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
     // and create Query with filters
     // TODO: write iterface
     // const code = JSON.parse(source);
-    const code = parseYaml(source);
-    const clauses = code.filter;
+    const definition = parseYaml(source) as SetDefinition;
+    
 
-    const query = Query.fromClauses(clauses);
 
-    // const query = Query.fromClauses([
-    //     {
-    //         operator: "eq",
-    //         attribute: { tag: "metadata", attribute: "type" },
-    //         value: "meeting"
-    //     }
-    // ]);
-
-    CodeBlock(plugin.app, plugin.vaultDB,query, el);
+    renderCodeBlock(plugin.app, plugin.vaultDB,definition, el);
 }

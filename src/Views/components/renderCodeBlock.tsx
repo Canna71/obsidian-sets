@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  IntrinsicAttributeKey, Query } from "src/Data/Query";
+import {  Clause, IntrinsicAttributeKey, Query } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -10,9 +10,15 @@ import { App } from "obsidian";
 import { AppProvider } from "./AppProvider";
 import { getSetsSettings } from "src/main";
 
-const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
+export interface SetDefinition {
+    filter? : Clause[]
+}
+
+const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement) => {
+    const clauses = definition.filter || [];
+    
+    const query = Query.fromClauses(clauses);
     const initialdata = db.query(query);
-    console.log(`data: `, initialdata);
 
     const [data, setData] = createStore(initialdata);
 
