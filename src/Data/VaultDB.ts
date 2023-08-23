@@ -1,7 +1,7 @@
 
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { IntrinsicAttributeKey, Query } from "./Query";
+import { IntrinsicAttributeKey, Query, getOperatorById } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
@@ -107,14 +107,25 @@ export class VaultDB {
         return this.query(query);
     }
 
-    async addToSet(type: string) {
+    canAdd(results: QueryResult) {
+        const type = results.query.inferSetType();
+        return type !== undefined;
+    }
+
+    async addToSet(results: QueryResult) {
+        const type = results.query.inferSetType();
+        if(!type) {
+            throw Error("Could not infer type.")
+        }
         const typeDisplayName = this.getTypeDisplayName(type);
         const folder = await this.getSetFolder(type);
-        let template = this.getArchetypeFile(typeDisplayName);
-
+        let template = this.getArchetypeFile(type);
         if (!template) {
             template = await this.inferType(type);
         }
+        let defaults = this.inferProperties(results);
+
+        
 
         if (template instanceof TFile) {
             const content = await this.app.vault.read(template);
@@ -125,7 +136,20 @@ export class VaultDB {
                 content
             );
             console.log("new file created:", newFIle.path);
+            this.app.fileManager.processFrontMatter(newFIle, (frontMatter)=>{
+                Object.assign(frontMatter, defaults);
+            })
         }
+    }
+    inferProperties(results: QueryResult) : Record<string,any> {
+        const constraints = results.query.clauses.filter(c => c.at !== this.plugin.settings.typeAttributeKey)
+        .filter(c => getOperatorById(c.op).isConstraint)
+        .filter(c => !this.getAttributeDefinition(c.at).isIntrinsic)
+        ;
+        const defaults = constraints.reduce((def, clause)=>{
+            return {...def, [clause.at]: clause.val}
+        },{} as Record<string,any>);
+        return defaults; 
     }
 
     
@@ -144,9 +168,23 @@ export class VaultDB {
         return ret;
     }
 
-    private getArchetypeFile(typeDisplayName: string) {
-        const typeFilePath = this.getArchetypePath(typeDisplayName);
-        return this.app.vault.getAbstractFileByPath(typeFilePath);
+    private getArchetypeFile(type: string) {
+        // TODO: search for type, not for name
+        const typesFolder = this.app.vault.getAbstractFileByPath("Sets/Types") as TFolder;
+        if(!typesFolder) return undefined;
+        const availableTypes = typesFolder.children;
+
+        const typeFile = availableTypes.find(file=>{
+            if(file instanceof TFile){
+                const cache = this.app.metadataCache.getFileCache(file);
+                if(cache) {
+                    if(cache.frontmatter?.[this.plugin.settings.typeAttributeKey] === type) return true;
+                }
+            }
+        })
+        return typeFile;
+        // const typeFilePath = this.getArchetypePath(typeDisplayName);
+        // return this.app.vault.getAbstractFileByPath(typeFilePath);
     }
 
     private getArchetypePath(typeDisplayName: string) {
@@ -186,7 +224,7 @@ export class VaultDB {
                 for (const key in inst.frontmatter) {
                     subsum[key] = subsum[key] || [];
                     if (!subsum[key].contains(inst.frontmatter[key])) {
-                        subsum[key].push(inst.frontmatter[key]);
+                        inst.frontmatter[key] && subsum[key].push(inst.frontmatter[key]);
                     }
                 }
             }
@@ -204,11 +242,11 @@ export class VaultDB {
 
         console.log("inferred type: ", archeType);
         const archetypeName = this.getArchetypeName(typeDisplayName);
-        const archetypeFolder = this.app.vault.getAbstractFileByPath(
+        const archetypeFolder = await this.ensureFolder(
             this.plugin.settings.typesFolder
         );
         const newFIle = await this.app.fileManager.createNewFile(
-            archetypeFolder as TFolder,
+            archetypeFolder,
             archetypeName,
             undefined,
             `${typeDisplayName} Archetype Inferred`
@@ -234,5 +272,13 @@ export class VaultDB {
             db: this,
         };
         return ob;
+    }
+
+    private async ensureFolder(path: string) {
+        let folder = this.app.vault.getAbstractFileByPath(path);
+        if(!folder || !(folder instanceof TFolder)){
+            folder = await this.app.vault.createFolder(path)
+        }
+        return folder as TFolder;
     }
 }

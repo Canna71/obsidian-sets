@@ -51,6 +51,7 @@ export type OperatorName = "eq";
 export type Operator = {
     op: OperatorName;
     compatibleTypes: string[] | string;
+    isConstraint: boolean;
     matches:(a:unknown, b:unknown) => boolean;
 }
 
@@ -58,10 +59,15 @@ const operators : Record<OperatorName,Operator> = {
     "eq": {
         op: "eq",
         compatibleTypes: "*",
-
+        isConstraint: true,
         matches: (a:unknown, b:unknown) => a == b
     }
 }
+
+export const getOperatorById = (op: OperatorName) => {
+    return operators[op];
+}
+
 
 export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
 
@@ -104,12 +110,20 @@ export class Query {
     }
 
     inferSetType(): string | undefined {
-        const c = this._clauses.filter(clause =>clause.at === this._settings.typeAttributeKey);
-        if(c.length === 0) return undefined;
-        const s = c.filter(clause => clause.op === "eq");
-        if(s.length === 0) return undefined;
+        const typeClauses = this.getTypeClauses();
+        if(typeClauses.length>0)
+            return typeClauses[0].val as string;
+    }
 
-        return s[0].val as string;
+    getTypeClauses(): Clause[]  {
+        const clauses =  this._clauses.filter(clause =>
+            (clause.at === this._settings.typeAttributeKey) 
+            && (clause.op === "eq") );
+        return clauses;
+    }
+
+    get clauses() {
+        return this._clauses;
     }
 }
 

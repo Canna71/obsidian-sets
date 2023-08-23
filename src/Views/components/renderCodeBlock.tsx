@@ -8,6 +8,7 @@ import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
 import { App } from "obsidian";
 import { AppProvider } from "./AppProvider";
+import { getSetsSettings } from "src/main";
 
 const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
     const initialdata = db.query(query);
@@ -38,7 +39,7 @@ const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
         //     {"tag":"md","key":"type"}
         // ) }new MetadataAttributeDefinition("type")
         db.getAttributeDefinition("FileCreationDate"),
-        db.getAttributeDefinition("type"),
+        db.getAttributeDefinition(getSetsSettings().typeAttributeKey),
 
     ]
 

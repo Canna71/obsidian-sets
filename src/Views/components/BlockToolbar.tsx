@@ -1,4 +1,4 @@
-import { Accessor, Component } from "solid-js";
+import { Accessor, Component, Show } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
@@ -7,16 +7,21 @@ const BlockToolbar: Component<{queryResult: QueryResult, attributes: AttributeDe
 
     const onAdd= async () => {
         //TODO: move elsewhere
-        const type = props.queryResult.query.inferSetType();
-        if(!type) return;
+        
         // TODO: find the right path
         const db = props.queryResult.db;
-        db.addToSet(type);
+        db.addToSet(props.queryResult);
+    }
+
+    const canAdd = () => {
+        return props.queryResult.db.canAdd(props.queryResult);
     }
 
     return <div class="sets-codeblock-toolbar">
-        <button onClick={onAdd}>Add</button>
+        <Show when={canAdd()}>
+            <button onClick={onAdd}>Add</button>
+        </Show>
     </div>
-}
+} 
 
 export default BlockToolbar;
