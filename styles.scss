@@ -32,13 +32,17 @@
 
                         position: relative;
 
-                        &:focus-within .sets-cell-content {
+                        &:focus-within {
+                            
+                            overflow: visible;
+                            .sets-cell-content {
                             position: absolute;
-                            top: -10px;
-                            left: -10px;
-                            right: -10px;
-                            bottom: -10px;
+                            // top: -10px;
+                            // left: -10px;
+                            // right: -10px;
+                            // bottom: -10px;
                             z-index: 1;
+                            }
                         }
 
                         &:hover .editable {

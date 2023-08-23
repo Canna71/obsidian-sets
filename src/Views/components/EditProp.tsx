@@ -18,6 +18,14 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
     // eslint-disable-next-line prefer-const
     let div: HTMLDivElement | undefined = undefined;
 
+    const onClick = (e:MouseEvent) => {
+        console.log(e);
+        const msc = e.target as HTMLDivElement;
+        if(msc && msc.classList.contains("multi-select-container")){
+            msc.querySelector(".multi-select-input")?.focus();
+        }
+    }
+
     onMount(() => {
         widget && widget.render(div!, {
             key, type, value
@@ -46,5 +54,5 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
         );
     });
 
-    return <div ref={div}></div>;
+    return <div ref={div} onClick={onClick}></div>;
 };
