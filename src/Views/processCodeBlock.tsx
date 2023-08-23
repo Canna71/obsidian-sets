@@ -12,6 +12,9 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
     const definition = parseYaml(source) as SetDefinition;
     
 
-
-    renderCodeBlock(plugin.app, plugin.vaultDB,definition, el);
+    try {
+        renderCodeBlock(plugin.app, plugin.vaultDB,definition, el);
+    } catch(e) {
+        console.error(e);
+    }
 }

@@ -56,7 +56,6 @@ export class VaultDB {
         this.dbInitialized = true;
 
         this.observer.notify("metadata-changed");
-        console.log(`metadata changed`);
     }
 
     dispose() {

@@ -8,10 +8,15 @@ import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
 import { App } from "obsidian";
 import { AppProvider } from "./AppProvider";
-import { getSetsSettings } from "src/main";
+
+export interface FieldDefinition {
+    key: string;
+    width?: string;
+}
 
 export interface SetDefinition {
-    filter? : Clause[]
+    filter? : Clause[];
+    fields?: FieldDefinition[];
 }
 
 const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement) => {
@@ -35,21 +40,13 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
         db.off("metadata-changed", onDataChanged);
     })
 
+    const fieldDefinitions = definition.fields || [];
+    const attributes : AttributeDefinition[] =  fieldDefinitions.map(fd=>fd.key)
+    .map(key=>db.getAttributeDefinition(key));
     // TODO: rework since most attributes will be dynamic
-    const attributes : AttributeDefinition[] = [
-        // {  displayName:()=> "Name", getValue: (data)=>getAttribute(data,
-        //         {"cl":"int","key":"Name"}
-        //     ) } ,
-        db.getAttributeDefinition(IntrinsicAttributeKey.FileName),
-        // {  displayName:()=> "Type", getValue: (data)=>getAttribute(data,
-        //     {"tag":"md","key":"type"}
-        // ) }new MetadataAttributeDefinition("type")
-        db.getAttributeDefinition(IntrinsicAttributeKey.FileModificationDate),
-        db.getAttributeDefinition(getSetsSettings().typeAttributeKey),
-        db.getAttributeDefinition("relatedto"),
-
-
-    ]
+    if (attributes.length === 0) {
+        attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
+    }
 
     render(()=>
     <AppProvider app={app}>

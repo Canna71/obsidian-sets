@@ -12,7 +12,8 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
     const widget = props.attribute.getPropertyWidget?.();
 
     // const value = getAttribute(props.data, props.attribute);
-    const value = props.attribute.getValue(props.data);
+    let value = props.attribute.getValue(props.data);
+    if(Array.isArray(value)) value = value.slice();
     if(!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
     const {key, type} = props.attribute.getPropertyInfo();
     // eslint-disable-next-line prefer-const

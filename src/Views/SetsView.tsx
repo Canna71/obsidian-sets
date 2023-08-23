@@ -26,7 +26,6 @@ export class SetsView extends ItemView {
 
         };
         this.icon = "sigma";
-        console.log(`view ${SETS_VIEW} loaded`);
     }
 
     getViewType() {

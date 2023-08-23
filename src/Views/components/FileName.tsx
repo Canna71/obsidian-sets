@@ -43,7 +43,6 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
     let editor : HTMLDivElement;
     let pencil : HTMLDivElement;
 
-    console.log("Rendering FileName")
 
     const onEdit = (e: MouseEvent) => {
         if (!isEdit()) setEdit(true);
