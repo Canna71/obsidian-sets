@@ -27,13 +27,13 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
     displayName() { 
 
         switch(this._key){
-            case "FileCreationDate":
+            case IntrinsicAttributeKey.FileCreationDate:
                 return "Creation Date";
-            case "FileModificationDate":
+            case IntrinsicAttributeKey.FileModificationDate:
                 return "Modification Date";
-            case "FileName":
+            case IntrinsicAttributeKey.FileName:
                 return "Name";
-            case "FilePath":
+            case IntrinsicAttributeKey.FilePath:
                 return "Path";
             default:
                 return "Unknown";
@@ -41,13 +41,13 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
      }
     getValue(data: ObjectData) {
         switch(this._key){
-            case "FileCreationDate":
+            case IntrinsicAttributeKey.FileCreationDate:
                 return moment(data.file.stat.ctime);
-            case "FileModificationDate":
+            case IntrinsicAttributeKey.FileModificationDate:
                 return moment(data.file.stat.mtime);
-            case "FileName":
+            case IntrinsicAttributeKey.FileName:
                 return data.file.basename;
-            case "FilePath":
+            case IntrinsicAttributeKey.FilePath:
                 return data.file.path;
         }
     }
@@ -66,8 +66,8 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
     format(data: ObjectData) { 
         const value = this.getValue(data)
         switch(this._key){
-            case "FileCreationDate":
-            case "FileModificationDate":
+            case IntrinsicAttributeKey.FileCreationDate:
+            case IntrinsicAttributeKey.FileModificationDate:
                 return (value as moment.Moment).format("LL");
             default:
                 return value?.toString() || "";

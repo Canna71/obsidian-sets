@@ -4,44 +4,12 @@ import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
 
 export enum IntrinsicAttributeKey {
-    FileName = "FileName",
-    FileCreationDate = "FileCreationDate" ,
-    FileModificationDate = "FileModificationDate",
-    FilePath = "FilePath",
+    FileName = "__bname",
+    FileCreationDate = "__ctime" ,
+    FileModificationDate = "__mtime",
+    FilePath = "__path",
   }
 
-// export type IntrinsicAttributeKey = "FileName" | "FileCreationDate" | "FileModificationDate" | "FilePath"
-
-// export interface IntrinsicAttributeClause  {
-//     cl: "int",
-//     key: IntrinsicAttributeKey,
-// }
-
-
-
-// export interface InstrinsicAttributeDefinition extends IntrinsicAttributeClause {
-    
-//     displayName: string
-// }
-
-
-
-// function getMetadataAttribute(metadata: unknown, attr: ExtrinsicAttributeClause):unknown {
-//     if(!metadata) return undefined;
-//     return (metadata as Record<string,unknown>)[attr.key];
-// }
-
-// export function getAttribute(objectData: ObjectData, attribute: AttributeClause) {
-//     if(attribute.cl === "int")
-//         return getFileAttribute(objectData.file, attribute);
-//     else 
-//         return getMetadataAttribute(objectData.frontmatter, attribute);
-// }
-
-// export interface ExtrinsicAttributeClause {
-//     cl: "ext",
-//     key: string,
-// }
 
 export type ExtrinsicAttribute = string;
 

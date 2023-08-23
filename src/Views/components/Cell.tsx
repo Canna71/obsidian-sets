@@ -3,7 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 import { EditProp } from "./EditProp";
 import clickOutside from "./clickoutside";
-import FileName from "./FileName";
+import FileName from "./FileName"; 
 
 false && clickOutside;
 

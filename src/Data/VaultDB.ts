@@ -159,6 +159,7 @@ export class VaultDB {
             return this.accessors.get(key)!;
         }
         let ret:AttributeDefinition;
+        // TODO: fix this since actual keys are in values!!!
         if (key in IntrinsicAttributeKey) {
             ret = new IntrinsicAttributeDefinition(this.app, key as IntrinsicAttributeKey);
         } else {

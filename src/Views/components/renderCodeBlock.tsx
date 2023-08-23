@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  Query } from "src/Data/Query";
+import {  IntrinsicAttributeKey, Query } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -34,11 +34,11 @@ const renderCodeBlock =  (app:App, db:VaultDB,query:Query, el:HTMLElement) => {
         // {  displayName:()=> "Name", getValue: (data)=>getAttribute(data,
         //         {"cl":"int","key":"Name"}
         //     ) } ,
-        db.getAttributeDefinition("FileName"),
+        db.getAttributeDefinition(IntrinsicAttributeKey.FileName),
         // {  displayName:()=> "Type", getValue: (data)=>getAttribute(data,
         //     {"tag":"md","key":"type"}
         // ) }new MetadataAttributeDefinition("type")
-        db.getAttributeDefinition("FileCreationDate"),
+        db.getAttributeDefinition(IntrinsicAttributeKey.FileModificationDate),
         db.getAttributeDefinition(getSetsSettings().typeAttributeKey),
 
     ]
