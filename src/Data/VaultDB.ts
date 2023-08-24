@@ -74,6 +74,8 @@ export class VaultDB {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
+        const archetypeFolder = this.getArchetypeFolder();
+        const types = archetypeFolder?.children || [];
         //@ts-ignore
         // const cache = this.app.metadataCache.metadataCache;
         const ret: ObjectData[] = [];
@@ -84,6 +86,7 @@ export class VaultDB {
             const fileCache = this.app.metadataCache.getCache(filePath);
             if (fileCache) {
                 const ob = this.getObjectData(filePath, fileCache);
+                if(types.contains(ob.file)) continue;
                 if (query.matches(ob)) {
                     ret.push(ob);
                 }
@@ -165,9 +168,12 @@ export class VaultDB {
         return ret;
     }
 
+
+    
+
     private getArchetypeFile(type: string) {
-        // TODO: search for type, not for name
-        const typesFolder = this.app.vault.getAbstractFileByPath("Sets/Types") as TFolder;
+
+        const typesFolder = this.getArchetypeFolder();
         if(!typesFolder) return undefined;
         const availableTypes = typesFolder.children;
 
@@ -182,6 +188,10 @@ export class VaultDB {
         return typeFile;
         // const typeFilePath = this.getArchetypePath(typeDisplayName);
         // return this.app.vault.getAbstractFileByPath(typeFilePath);
+    }
+
+    private getArchetypeFolder() {
+        return this.app.vault.getAbstractFileByPath(this.plugin.settings.typesFolder) as TFolder;
     }
 
     private getArchetypePath(typeDisplayName: string) {

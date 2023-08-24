@@ -117,7 +117,7 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
     return <>
         <Show when={!isEdit()}>
             <div class="sets-cell-filename">
-                <div class="sets-cell-filename-link" onClick={onClick}>{text()}</div>
+                <div class="sets-cell-filename-link" onClick={onClick} onauxclick={onClick}>{text()}</div>
                 <div ref={pencil!} class="sets-cell-filename-edit clickable-icon" onClick={onEdit} ></div>
                 
             </div>
