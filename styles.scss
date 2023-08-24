@@ -27,26 +27,29 @@
         }
 
         .sets-gridview-body {
+            margin-bottom: 16px;
+            margin-left: 16px;
+            margin-right: 16px;
             .sets-gridview-grid {
                 .sets-gridview-row {
                     display: grid;
-                    height: 36px;
+                    min-height: 36px;
                     column-gap: 4px;
                     row-gap: 4px;
 
                     .sets-grid-cell {
                         white-space: nowrap;
                         overflow: hidden;
+                        height: 36px;
 
-
-                        position: relative;
+                        // position: relative;
 
                         &:focus-within {
                             
-                            overflow: visible;
-
+                            // overflow: visible;
+                            height: auto;
                             .sets-cell-content {
-                                position: absolute;
+                                // position: absolute;
                                 // top: -10px;
                                 // left: -10px;
                                 // right: -10px;
