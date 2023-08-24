@@ -56,5 +56,5 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
         );
     });
 
-    return <div ref={div} onClick={onClick}></div>;
+    return <div ref={div} onClick={onClick} class="metadata-property"></div>;
 };
