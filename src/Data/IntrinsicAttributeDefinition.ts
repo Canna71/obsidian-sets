@@ -24,6 +24,8 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
         this._displayName = this._displayName ||
             key[0].toUpperCase() + key.slice(1);
     }
+    get key() { return this._key; }
+
     displayName() { 
 
         switch(this._key){

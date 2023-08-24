@@ -1,5 +1,5 @@
-import { App, PaneType, TFile } from "obsidian";
-import { createSignal, createContext, useContext, JSX } from "solid-js";
+import { App } from "obsidian";
+import { createContext, useContext, JSX } from "solid-js";
 
 const AppContext = createContext<App>();
 

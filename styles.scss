@@ -23,13 +23,19 @@
             height: 36px;
             user-select: none;
             color: var(--text-muted);
-            column-gap: 4px;
-            row-gap: 4px;
+            column-gap: 2px;
+            row-gap: 2px;
             border-bottom: 2px solid var(--divider-color);
+            margin-left: 16px;
+            margin-right: 16px;
 
             .sets-header-cell {
                 text-align: center;
                 cursor: grab;
+
+                &.hovered {
+                    background-color: var(--background-modifier-hover);
+                }
             }
         }
 
@@ -51,6 +57,10 @@
                         height: 40px;
                         padding: var(--size-4-1);
                         // position: relative;
+
+                        &.hovered {
+                            background-color: var(--background-modifier-hover);
+                        }
 
                         &:focus-within {
                             

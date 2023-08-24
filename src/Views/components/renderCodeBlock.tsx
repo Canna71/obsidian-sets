@@ -41,8 +41,9 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
     })
 
     const fieldDefinitions = definition.fields || [];
-    const attributes : AttributeDefinition[] =  fieldDefinitions.map(fd=>fd.key)
-    .map(key=>db.getAttributeDefinition(key));
+    const attributes : AttributeDefinition[] =  
+        fieldDefinitions.map(fd=>fd.key)
+        .map(key=>db.getAttributeDefinition(key));
     // TODO: rework since most attributes will be dynamic
     if (attributes.length === 0) {
         attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))

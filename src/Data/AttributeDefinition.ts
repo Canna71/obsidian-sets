@@ -13,4 +13,5 @@ export interface AttributeDefinition {
     };
     readonly: boolean;
     isIntrinsic: boolean;
+    key: string;
 }

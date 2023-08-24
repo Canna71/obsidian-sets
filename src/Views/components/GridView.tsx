@@ -19,7 +19,7 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     >
         <div class="sets-headers-row" style={{ "grid-template-columns": colSizes() }}>
             <For each={props.attributes}>{
-                (attribute, i) => <Header name={attribute.displayName()} />
+                (attribute, i) => <Header name={attribute.displayName()} key={attribute.key} />
             }
             </For>
             

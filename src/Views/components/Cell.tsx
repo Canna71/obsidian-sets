@@ -4,20 +4,28 @@ import { ObjectData } from "src/Data/ObjectData";
 import { EditProp } from "./EditProp";
 import clickOutside from "./clickoutside";
 import FileName from "./FileName"; 
+import { useGrid } from "./GridProvider";
 
 false && clickOutside;
 
 export const Cell: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // const value = () => getAttribute(props.data, props.attribute) as any;
+    const gridContext = useGrid();
 
-    // const value = () => props.attribute.getValue(props.data);
+    const {state} = gridContext!;
+
+    const isHovering = () => {
+        return state?.().hovering === props.attribute.key;
+    }
     const text = () => props.attribute.format(props.data);
 
   
 
-    return (<div class="sets-grid-cell" >
+    return (<div class="sets-grid-cell" 
+                classList={{
+                    "hovered": isHovering()
+                }}
+            >
         <div classList={
             {
                 "sets-cell-content": true,

@@ -13,6 +13,7 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
         this._displayName = this._displayName ||
             prettify(this._key);
     }
+    get key() { return this._key; }
     displayName() { return this._displayName; }
     getValue(data: ObjectData) { 
         return data.frontmatter?.[this._key];
