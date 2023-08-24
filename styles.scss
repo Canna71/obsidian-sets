@@ -4,12 +4,15 @@
 }
 
 .sets-codeblock {
-
     padding: 12px;
 
     .sets-gridview {
         /* temporarily */
         overflow-x: auto;
+
+        // &:focus-within {
+        //     overflow-y: visible;
+        // }
 
         .sets-headers-row {
             display: grid;
@@ -18,6 +21,9 @@
             margin-left: 2px;
             height: 36px;
             user-select: none;
+            color: var(--text-muted);
+            column-gap: 4px;
+            row-gap: 4px;
         }
 
         .sets-gridview-body {
@@ -25,6 +31,8 @@
                 .sets-gridview-row {
                     display: grid;
                     height: 36px;
+                    column-gap: 4px;
+                    row-gap: 4px;
 
                     .sets-grid-cell {
                         white-space: nowrap;
@@ -36,13 +44,14 @@
                         &:focus-within {
                             
                             overflow: visible;
+
                             .sets-cell-content {
-                            position: absolute;
-                            // top: -10px;
-                            // left: -10px;
-                            // right: -10px;
-                            // bottom: -10px;
-                            z-index: 1;
+                                position: absolute;
+                                // top: -10px;
+                                // left: -10px;
+                                // right: -10px;
+                                // bottom: -10px;
+                                z-index: 1;
                             }
                         }
 
