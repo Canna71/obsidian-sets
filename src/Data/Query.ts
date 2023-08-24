@@ -38,10 +38,10 @@ export class Query {
     }
 
     static fromClauses(clauses: Clause[]|Clause){
-        if(Array.isArray(clauses))
+        if(Array.isArray(clauses) &&  Array.isArray(clauses[0]))
             return new Query(clauses);
         else
-            return new Query([clauses]);
+            return new Query([clauses as Clause]);
     }
 
     matches(data: ObjectData) {
