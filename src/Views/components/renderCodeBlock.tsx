@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  Clause, IntrinsicAttributeKey, Query } from "src/Data/Query";
+import {  Clause, Query } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -40,18 +40,18 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
         db.off("metadata-changed", onDataChanged);
     })
 
-    const fieldDefinitions = definition.fields || [];
+    const fieldDefinitions = definition.fields || [{"key": "__bname"}];
     const attributes : AttributeDefinition[] =  
         fieldDefinitions.map(fd=>fd.key)
         .map(key=>db.getAttributeDefinition(key));
-    // TODO: rework since most attributes will be dynamic
-    if (attributes.length === 0) {
-        attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
-    }
+    
+    // if (attributes.length === 0) {
+    //     attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
+    // }
 
     render(()=>
     <AppProvider app={app}>
-        <CodeBlock queryResult={data} attributes={attributes} viewMode={{
+        <CodeBlock queryResult={data} attributes={attributes} fields={fieldDefinitions} viewMode={{
             viewMode,setViewMode
         }} />
     </AppProvider>, el);

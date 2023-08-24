@@ -3,8 +3,7 @@ import { useGrid } from "./GridProvider";
 
 export const Header: Component<{ name: string; key: string; }> = (props) => {
     const gridContext = useGrid();
-
-    const { state, onHover, onExit } = gridContext!;
+    const { state, onHover, onExit, shift } = gridContext!;
 
     const onMouseOver = (e) => {
         if (gridContext !== undefined) {
@@ -39,6 +38,7 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
         const data = e.dataTransfer?.getData("text");
         console.log(`drop`, data);
         e.preventDefault();
+        data && shift(data, props.key)
     }
 
     return (<div class="sets-header-cell"
