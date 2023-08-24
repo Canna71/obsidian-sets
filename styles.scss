@@ -5,6 +5,7 @@
 
 .sets-codeblock {
     padding: 12px;
+    user-select: none;
 
     .sets-gridview {
         /* temporarily */
@@ -24,6 +25,11 @@
             color: var(--text-muted);
             column-gap: 4px;
             row-gap: 4px;
+            border-bottom: 2px solid var(--divider-color);
+
+            .sets-header-cell {
+                text-align: center;
+            }
         }
 
         .sets-gridview-body {
@@ -34,14 +40,15 @@
                 .sets-gridview-row {
                     display: grid;
                     min-height: 36px;
-                    column-gap: 4px;
-                    row-gap: 4px;
+                    column-gap: 2px;
+                    row-gap: 2px;
+                    border-bottom: 1px solid var(--divider-color);
 
                     .sets-grid-cell {
                         white-space: nowrap;
                         overflow: hidden;
-                        height: 36px;
-
+                        height: 40px;
+                        padding: var(--size-4-1);
                         // position: relative;
 
                         &:focus-within {
@@ -64,6 +71,10 @@
                             box-shadow: 0 0 0 1px var(--background-modifier-border);
                         }
                         .sets-cell-content {
+
+                            input.metadata-input-text {
+                                border: none;
+                            }
                             .sets-cell-filename {
                                 display: flex;
 
