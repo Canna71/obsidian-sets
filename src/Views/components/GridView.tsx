@@ -3,9 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 
 import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
-import { Header } from "./Header";
 import { useGrid } from "./GridProvider";
-import { DragDropProvider, DragDropSensors } from "@thisbeyond/solid-dnd";
 import HeaderRow from "./HeaderRow";
 import { useBlock } from "./BlockProvider";
 

@@ -10,7 +10,6 @@ import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
 import { BlockProvider } from "./BlockProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
-import { stat } from "fs";
 
 export interface FieldDefinition {
     key: string;

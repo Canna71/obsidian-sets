@@ -8,6 +8,7 @@ import {
 export const Header: Component<{ name: string; key: string; }> = (props) => {
     const gridContext = useGrid();
     const { state, onHover, onExit } = gridContext!;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const sortable = createSortable(props.key);
 
     const onMouseOver = (e) => {
