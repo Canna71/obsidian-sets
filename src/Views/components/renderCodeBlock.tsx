@@ -6,10 +6,11 @@ import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
-import { App } from "obsidian";
+import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
 import { BlockProvider } from "./BlockProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
+import { stat } from "fs";
 
 export interface FieldDefinition {
     key: string;
@@ -19,7 +20,12 @@ export interface FieldDefinition {
 export interface SetDefinition {
     filter? : Clause[];
     fields?: FieldDefinition[];
+    transientState?: any;
 }
+
+const stateMap = new Map<string,any>();
+
+
 
 const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
@@ -52,9 +58,16 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
     // }
 
     const updateDefinition = (def: SetDefinition) => {
+        const scrollLeft = el.querySelector(".sets-codeblock.sets-gridview")?.scrollLeft;
+        // def.scroll = scrollLeft;
+        stateMap.set("TODO",{scroll: scrollLeft});
+        delete def.transientState;
         saveDataIntoBlock<SetDefinition>(def,ctx)
     }
 
+    console.log(`scroll from map:`, stateMap.get("TODO"))
+    definition.transientState = stateMap.get("TODO");
+    stateMap.delete("TODO");
     render(()=>
     <AppProvider app={app}>
         <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >

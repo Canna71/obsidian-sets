@@ -1,4 +1,4 @@
-import { Component, For } from "solid-js";
+import { Component, For, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 
 import { ObjectData } from "src/Data/ObjectData";
@@ -7,12 +7,17 @@ import { Header } from "./Header";
 import { useGrid } from "./GridProvider";
 import { DragDropProvider, DragDropSensors } from "@thisbeyond/solid-dnd";
 import HeaderRow from "./HeaderRow";
+import { useBlock } from "./BlockProvider";
 
 
 // TODO: use https://github.com/minht11/solid-virtual-container
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
 const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[] }> = (props) => {
     const gridContext = useGrid();
+
+
+    const {definition} = useBlock()!;
+
     const { state } = gridContext!;
     const fields = () => state().fields!;
     const colSizes = () => {
@@ -20,6 +25,7 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
             field.width || "200px" 
         ).join(" ")
     }
+    let div:HTMLDivElement;
 
     // const orderedAttributes = () => {
     //     return fields().map(field => props.attributes.find(att => att.key === field.key)!);
@@ -27,9 +33,16 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     // const autoSize = attributes.map(attr => "200px").join(" ")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
    
+    onMount(() => {
+        // div.scrollLeft = definition().scroll || 0;
+        //TODO: get saved scroll position from somewhere
+        requestAnimationFrame(()=>{div.scroll(definition()?.transientState?.scroll || 0, 0);})
+        // console.log(ctx.)
+    });
 
-    return <div
+    return <div ref={div!}
         class="sets-codeblock sets-gridview"
+       
     >
         
        <HeaderRow colSizes={colSizes()} attributes={props.attributes} />

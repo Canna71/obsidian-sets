@@ -20,7 +20,6 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
     const blockState = {
         definition,
         reorder: (from: number, to: number) => {
-            console.log("TODO");
             let updatedItems = definition().fields?.slice();
             if (updatedItems) {
                 updatedItems.splice(to, 0, ...updatedItems.splice(from, 1));

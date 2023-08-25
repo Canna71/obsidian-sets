@@ -20,7 +20,6 @@ export function saveDataIntoBlock<T>(
                 { line: sec?.lineEnd, ch: 0 },
                 "*"
             );
-            console.info("Data saved on code block");
             return true;
         }
     } 
