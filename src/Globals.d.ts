@@ -9,6 +9,9 @@ declare module "solid-js" {
         interface Directives {
             // use:clickOutside
             clickOutside: ()=>void;
+            
+            draggable: boolean;
+            sortable: boolean;
         }
     }
 }

@@ -5,6 +5,8 @@ import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
 import { Header } from "./Header";
 import { useGrid } from "./GridProvider";
+import { DragDropProvider, DragDropSensors } from "@thisbeyond/solid-dnd";
+import HeaderRow from "./HeaderRow";
 
 
 // TODO: use https://github.com/minht11/solid-virtual-container
@@ -29,14 +31,9 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     return <div
         class="sets-codeblock sets-gridview"
     >
-        <div class="sets-headers-row" style={{ "grid-template-columns": colSizes() }}>
-            <For each={orderedAttributes()}>{
-                (attribute, i) => <Header name={attribute.displayName()} key={attribute.key} />
-            }
-            </For>
-            
-
-        </div>
+       <HeaderRow colSizes={colSizes()} attributes={orderedAttributes()} />
+        
+        
         <div class="sets-gridview-body">
                 <div class="sets-gridview-grid" >
                     <For each={props.data}>{(item, i) =>
@@ -53,3 +50,6 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
 }
 
 export default GridView;
+
+
+

@@ -1,9 +1,14 @@
 import { Component } from "solid-js";
 import { useGrid } from "./GridProvider";
+import {
+   
+    createSortable,
+} from "@thisbeyond/solid-dnd";
 
 export const Header: Component<{ name: string; key: string; }> = (props) => {
     const gridContext = useGrid();
     const { state, onHover, onExit, shift } = gridContext!;
+    const sortable = createSortable(props.key);
 
     const onMouseOver = (e) => {
         if (gridContext !== undefined) {
@@ -21,48 +26,24 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
     const isHovering = () => {
         return state?.().hovering === props.key;
     }
-    const drag = (e:DragEvent) => {
-        if(e.dataTransfer){
-            e.dataTransfer.setData("text", props.key);
-            
-        }
-        
-    }
 
-    const dragover = (e:DragEvent) => {
-        if(e.dataTransfer){
-            e.dataTransfer.dropEffect = "move";
-            const data = e.dataTransfer?.getData("text");
-            if(data !== props.key){
-                e.preventDefault();
-            } else {
-                console.log(data, props.key)
-            }
-        }
-        
-        
-    }
 
-    const drop = (e:DragEvent) => {
-        const data = e.dataTransfer?.getData("text");
-        e.preventDefault();
-        data && shift(data, props.key)
-    }
+    return (
 
-    return (<div class="sets-header-cell"
-        draggable={true}
-        classList={{
-            hovered: isHovering()
-        }}
-        ondragover={dragover}
-        ondragstart={drag}
-        onmouseover={onMouseOver} 
-        onmouseleave={onMouseLeave}
-        ondrop={drop}
-        >
-        <div class="sets-cell-content">
-            <div>{props.name}</div>
-            <div class="sets-column-resizer"></div>
-        </div>
-    </div>);
+            <div class="sets-header-cell"
+                classList={{
+                    hovered: isHovering()
+                }}
+                // use: draggable
+                use:sortable
+                onmouseover={onMouseOver}
+                onmouseleave={onMouseLeave}
+
+            >
+                <div class="sets-cell-content">
+                    <div>{props.name}</div>
+                    <div class="sets-column-resizer"></div>
+                </div>
+            </div>
+        );
 };

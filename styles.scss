@@ -3,6 +3,15 @@
     box-shadow: initial;
 }
 
+.sets-header-draggable {
+    text-align: center;
+    background-color: var(--background-modifier-hover);
+    height: 36px;
+    font-family: var(--font-text);
+    line-height: var(--line-height-normal);
+        font-size: var(--font-text-size);
+}
+
 .sets-codeblock {
     padding: 12px;
     user-select: none;
@@ -31,14 +40,12 @@
             margin-left: 16px;
             margin-right: 16px;
 
+           
+
             .sets-header-cell {
                 text-align: center;
                 cursor: grab;
-                // margin-left: 2px;
-
-                &:first-child {
-                    // margin-left: 2px;
-                }
+                
 
                 &.hovered {
                     background-color: var(--background-modifier-hover);
