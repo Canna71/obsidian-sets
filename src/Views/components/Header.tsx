@@ -40,9 +40,9 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
                 onmouseleave={onMouseLeave}
 
             >
-                <div class="sets-cell-content">
-                    <div>{props.name}</div>
-                    <div class="sets-column-resizer"></div>
+                <div class="sets-header-cell-content">
+                    <div class="sets-column-name">{props.name}</div>
+                    <div class="sets-column-resizer">&nbsp;</div>
                 </div>
             </div>
         );

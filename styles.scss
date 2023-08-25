@@ -50,6 +50,19 @@
                 &.hovered {
                     background-color: var(--background-modifier-hover);
                 }
+
+                .sets-header-cell-content {
+                    display: flex;
+                    .sets-column-name {
+                        flex: 1;
+                        padding-left: 4px;
+                    }
+
+                    .sets-column-resizer {
+                        flex-basis: 4px;
+                        cursor: ew-resize;
+                    }
+                }
             }
         }
 
