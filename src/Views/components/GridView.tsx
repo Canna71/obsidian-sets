@@ -3,7 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 
 import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
-import { useGrid } from "./GridProvider";
+// import { useGrid } from "./GridProvider";
 import HeaderRow from "./HeaderRow";
 import { useBlock } from "./BlockProvider";
 
@@ -11,13 +11,13 @@ import { useBlock } from "./BlockProvider";
 // TODO: use https://github.com/minht11/solid-virtual-container
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
 const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[] }> = (props) => {
-    const gridContext = useGrid();
+    // const gridContext = useGrid();
 
 
     const {definition} = useBlock()!;
 
-    const { state } = gridContext!;
-    const fields = () => state().fields!;
+    // const { state } = gridContext!;
+    const fields = () => definition().fields!;
     const colSizes = () => {
         return fields().map(field =>
             field.width || "200px" 
