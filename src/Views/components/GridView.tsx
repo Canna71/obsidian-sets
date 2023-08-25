@@ -21,9 +21,9 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
         ).join(" ")
     }
 
-    const orderedAttributes = () => {
-        return fields().map(field => props.attributes.find(att => att.key === field.key)!);
-    }
+    // const orderedAttributes = () => {
+    //     return fields().map(field => props.attributes.find(att => att.key === field.key)!);
+    // }
     // const autoSize = attributes.map(attr => "200px").join(" ")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
    
@@ -31,14 +31,15 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     return <div
         class="sets-codeblock sets-gridview"
     >
-       <HeaderRow colSizes={colSizes()} attributes={orderedAttributes()} />
+        
+       <HeaderRow colSizes={colSizes()} attributes={props.attributes} />
         
         
         <div class="sets-gridview-body">
                 <div class="sets-gridview-grid" >
                     <For each={props.data}>{(item, i) =>
                         <div class="sets-gridview-row" style={{ "grid-template-columns": colSizes() }}>
-                            <For each={orderedAttributes()}>{
+                            <For each={props.attributes}>{
                                 (attribute, i) => <Cell data={item} attribute={attribute} />
                             }
                             </For>

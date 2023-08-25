@@ -8,6 +8,8 @@ import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
 import { App } from "obsidian";
 import { AppProvider } from "./AppProvider";
+import { BlockProvider } from "./BlockProvider";
+import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
 
 export interface FieldDefinition {
     key: string;
@@ -19,7 +21,7 @@ export interface SetDefinition {
     fields?: FieldDefinition[];
 }
 
-const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement) => {
+const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
     
     const query = Query.fromClauses(clauses);
@@ -49,11 +51,18 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
     //     attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
     // }
 
+    const updateDefinition = (def: SetDefinition) => {
+        saveDataIntoBlock<SetDefinition>(def,ctx)
+    }
+
     render(()=>
     <AppProvider app={app}>
-        <CodeBlock queryResult={data} attributes={attributes} fields={fieldDefinitions} viewMode={{
-            viewMode,setViewMode
-        }} />
+        <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >
+            <CodeBlock queryResult={data} attributes={attributes}  viewMode={{
+                viewMode,setViewMode
+            }} />
+        </BlockProvider>
+        
     </AppProvider>, el);
 }
 

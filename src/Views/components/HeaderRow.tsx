@@ -3,10 +3,13 @@ import { Header } from "./Header";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { DragDropProvider, DragDropSensors, DragOverlay,SortableProvider,closestCenter
  } from "@thisbeyond/solid-dnd";
+import { useBlock } from "./BlockProvider";
 
 
 const HeaderRow:Component<{colSizes: string, attributes: AttributeDefinition[]}> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
+
+    const block = useBlock()!;
 
     const onDragStart = ({ draggable }) => {
 
@@ -16,14 +19,15 @@ const HeaderRow:Component<{colSizes: string, attributes: AttributeDefinition[]}>
 
     const onDragEnd = ({ draggable, droppable }) => {
         if (draggable && droppable) {
-        const currentItems = props.attributes;
+        const currentItems = props.attributes.map(attr => attr.key);
         const fromIndex = currentItems.indexOf(draggable.id);
         const toIndex = currentItems.indexOf(droppable.id);
-        console.log(`reorder`,draggable, droppable);
+        // console.log(`reorder`,draggable, droppable);
         if (fromIndex !== toIndex) {
             // const updatedItems = currentItems.slice();
             // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
             // setItems(updatedItems);
+            block.reorder(fromIndex, toIndex);
         }
         }
         setActiveItem(null);

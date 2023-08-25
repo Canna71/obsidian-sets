@@ -7,7 +7,7 @@ import {
 
 export const Header: Component<{ name: string; key: string; }> = (props) => {
     const gridContext = useGrid();
-    const { state, onHover, onExit, shift } = gridContext!;
+    const { state, onHover, onExit } = gridContext!;
     const sortable = createSortable(props.key);
 
     const onMouseOver = (e) => {

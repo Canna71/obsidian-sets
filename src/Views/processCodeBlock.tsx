@@ -13,7 +13,7 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
     
 
     try {
-        renderCodeBlock(plugin.app, plugin.vaultDB,definition, el);
+        renderCodeBlock(plugin.app, plugin.vaultDB,definition, el, ctx);
     } catch(e) {
         console.error(e);
     }

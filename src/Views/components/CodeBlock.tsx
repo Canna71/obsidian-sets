@@ -5,19 +5,21 @@ import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 import { GridProvider } from "./GridProvider";
 import { FieldDefinition } from "./renderCodeBlock";
+import { useBlock } from "./BlockProvider";
 
 export type ViewMode = "grid";
 
 const CodeBlock: Component<{queryResult: QueryResult, attributes: AttributeDefinition[], 
-    fields: FieldDefinition[],
+    
     viewMode: {viewMode: Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}
 }> = (props) => {
+    const {definition} = useBlock()!;
 
     return <div class="sets-codeblock">
         <BlockToolbar queryResult={props.queryResult}  attributes={props.attributes} viewMode={props.viewMode} />
         <GridProvider gridState={{
             hovering: undefined,
-            fields: props.fields
+            fields: definition().fields
         }}>
             <GridView data={props.queryResult.data} attributes={props.attributes} />
         </GridProvider>

@@ -8,7 +8,6 @@ export interface GridStateContext {
     state: Accessor<GridState>;
     onHover: (what: string) => void;
     onExit: () => void;
-    shift: (key: string, place: string) => void;
 }
 const GridContext = createContext<GridStateContext>();
 export interface GridState {
