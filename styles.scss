@@ -11,6 +11,8 @@
         /* temporarily */
         overflow-x: auto;
 
+        --sets-gridview-col-gap: 0;
+
         // &:focus-within {
         //     overflow-y: visible;
         // }
@@ -23,7 +25,7 @@
             height: 36px;
             user-select: none;
             color: var(--text-muted);
-            column-gap: 2px;
+            column-gap: var(--sets-gridview-col-gap);
             row-gap: 2px;
             border-bottom: 2px solid var(--divider-color);
             margin-left: 16px;
@@ -32,6 +34,11 @@
             .sets-header-cell {
                 text-align: center;
                 cursor: grab;
+                // margin-left: 2px;
+
+                &:first-child {
+                    // margin-left: 2px;
+                }
 
                 &.hovered {
                     background-color: var(--background-modifier-hover);
@@ -47,7 +54,7 @@
                 .sets-gridview-row {
                     display: grid;
                     min-height: 36px;
-                    column-gap: 2px;
+                    column-gap: var(--sets-gridview-col-gap);
                     row-gap: 2px;
                     border-bottom: 1px solid var(--divider-color);
 

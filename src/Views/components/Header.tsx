@@ -22,21 +22,29 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
         return state?.().hovering === props.key;
     }
     const drag = (e:DragEvent) => {
-        e.dataTransfer?.setData("text", props.key);
+        if(e.dataTransfer){
+            e.dataTransfer.setData("text", props.key);
+            
+        }
+        
     }
 
-    const allowDrop = (e:DragEvent) => {
-        
-        const data = e.dataTransfer?.getData("text");
-        console.log(`allowDrop`, data);
-        if(data !== props.key){
-            e.preventDefault();
+    const dragover = (e:DragEvent) => {
+        if(e.dataTransfer){
+            e.dataTransfer.dropEffect = "move";
+            const data = e.dataTransfer?.getData("text");
+            if(data !== props.key){
+                e.preventDefault();
+            } else {
+                console.log(data, props.key)
+            }
         }
+        
+        
     }
 
     const drop = (e:DragEvent) => {
         const data = e.dataTransfer?.getData("text");
-        console.log(`drop`, data);
         e.preventDefault();
         data && shift(data, props.key)
     }
@@ -46,7 +54,7 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
         classList={{
             hovered: isHovering()
         }}
-        ondragover={allowDrop}
+        ondragover={dragover}
         ondragstart={drag}
         onmouseover={onMouseOver} 
         onmouseleave={onMouseLeave}
