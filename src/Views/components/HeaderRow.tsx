@@ -7,7 +7,7 @@ import {
 import { useBlock } from "./BlockProvider";
 
 export interface ResizeEvent {
-    action: "resize" | "done",
+    action: "resize" | "done" | "reset",
     index: number,
     size: number
 }
@@ -49,15 +49,23 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
         window.removeEventListener("mouseup", onMouseUp);
     }
 
-    el.addEventListener("mousedown", (e: MouseEvent) => {
+    const getResizing = (e:MouseEvent):Element|undefined => {
         const resizer = (e.target as HTMLDivElement);
         if (resizer.classList.contains("sets-column-resizer")) {
+            return resizer!.closest(".sets-header-cell")!;
+        }
+    } 
+
+    el.addEventListener("mousedown", (e: MouseEvent) => {
+
+        const resizing = getResizing(e);
+        if (resizing) {
+            state.resizing = resizing;
             // $0.parentElement.indexOf($0)
-            state.resizing = resizer!.closest(".sets-header-cell")!;
+            // state.resizing = resizer!.closest(".sets-header-cell")!;
             // const gridRow = state.resizing.closest(".sets-headers-row");
             state.index = state.resizing.parentElement!.indexOf(state.resizing);
             state.originalSize = state.resizing.clientWidth;
-            console.log(`resizing`, state.resizing)
             state.mousex = e.clientX;
 
             window.addEventListener("mousemove", onMouseMove, true)
@@ -67,7 +75,15 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
 
     })
 
+    el.addEventListener("dblclick", (e:MouseEvent)=>{
+        const resizing = getResizing(e);
+        if(resizing){
+            const index = resizing.parentElement!.indexOf(resizing);
+            onResize()?.({ action: "reset", size: undefined, index });
+        }
+    })
 
+    // el.addEventListener("dblclick")
 
     // TODO: cleanup
 }
@@ -115,8 +131,15 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
                     ({ ...f, width: `${ev.size}px` })
             })
             updateFields(newFields);
-        }
-        else if (ev.action === "done") {
+        } else if (ev.action === "done") {
+            block.save()
+        } else if (ev.action === "reset") {
+            const fields = definition().fields!;
+            const newFields = fields.map((f, i) => {
+                return i !== ev.index ? f :
+                    ({ ...f, width: undefined })
+            })
+            updateFields(newFields);
             block.save()
         }
         // console.log(`todo`, size);
