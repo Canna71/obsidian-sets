@@ -5,8 +5,10 @@ import {
     createSortable,
 } from "@thisbeyond/solid-dnd";
 
+
 export const Header: Component<{ name: string; key: string; }> = (props) => {
     const gridContext = useGrid();
+    
     const { state, onHover, onExit } = gridContext!;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const sortable = createSortable(props.key);
@@ -28,6 +30,7 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
         return state?.().hovering === props.key;
     }
 
+   
 
     return (
 
@@ -43,7 +46,9 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
             >
                 <div class="sets-header-cell-content">
                     <div class="sets-column-name">{props.name}</div>
-                    <div class="sets-column-resizer">&nbsp;</div>
+                    <div class="sets-column-resizer"
+                        
+                    >&nbsp;</div>
                 </div>
             </div>
         );

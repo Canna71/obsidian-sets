@@ -1,14 +1,13 @@
 
 import { createSignal, createContext, useContext, JSX, Accessor } from "solid-js";
 import { FieldDefinition, SetDefinition } from "./renderCodeBlock";
-import { Clause } from "src/Data/Query";
 
 
 
 export interface BlockStateContext {
-    definition: Accessor<SetDefinition>
-    reorder: (from: number, to: number) => void
-
+    definition: Accessor<SetDefinition>;
+    reorder: (from: number, to: number) => void;
+    updateFields: (fields: FieldDefinition[]) => void;
 }
 const BlockContext = createContext<BlockStateContext>();
 
@@ -20,13 +19,17 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
     const blockState = {
         definition,
         reorder: (from: number, to: number) => {
-            let updatedItems = definition().fields?.slice();
+            const updatedItems = definition().fields?.slice();
             if (updatedItems) {
                 updatedItems.splice(to, 0, ...updatedItems.splice(from, 1));
             }
             const newDef = {...definition(), fields: updatedItems}
             props.updateDefinition(newDef)
             // setItems(updatedItems);
+        }, 
+        updateFields: (fields: FieldDefinition[]) => {
+            console.log(`updateFields`, fields)
+            setState(state => ({...state, fields}))
         }
     };
 

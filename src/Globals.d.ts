@@ -12,6 +12,7 @@ declare module "solid-js" {
             
             draggable: boolean;
             sortable: boolean;
+            headerResize: (size:number|string, index:number)=>void;
         }
     }
 }
