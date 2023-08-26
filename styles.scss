@@ -50,13 +50,14 @@
                             color: var(--text-muted);
                             column-gap: var(--sets-gridview-col-gap);
                             row-gap: 2px;
-                            border-bottom: 2px solid var(--divider-color);
+
                             margin-left: 16px;
                             margin-right: 16px;
 
                             .sets-header-cell {
                                 text-align: center;
                                 cursor: grab;
+                                border-bottom: 2px solid var(--divider-color);
 
                                 &.hovered {
                                     background-color: var(
@@ -102,7 +103,11 @@
                                 height: 40px;
                                 padding: var(--size-4-1);
                                 // position: relative;
-
+                                border-bottom: 1px solid var(--divider-color);
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                             
                                 &.hovered {
                                     background-color: var(
                                         --background-modifier-hover

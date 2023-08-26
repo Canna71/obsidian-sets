@@ -20,7 +20,7 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     const fields = () => definition().fields!;
     const colSizes = () => {
         return fields().map(field =>
-            field.width || "minmax(max-content,250px)"
+            field.width || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
         ).join(" ")
     }
     let div: HTMLDivElement;
