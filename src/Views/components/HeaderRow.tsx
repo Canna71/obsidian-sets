@@ -66,7 +66,7 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
 }
 
 
-const HeaderRow:Component<{colSizes: string, attributes: AttributeDefinition[]}> = (props) => {
+const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
     const {definition, updateFields} = useBlock()!;
     const block = useBlock()!;
@@ -123,10 +123,10 @@ const HeaderRow:Component<{colSizes: string, attributes: AttributeDefinition[]}>
       onDragEnd={onDragEnd}
       collisionDetector={closestCenter}
     >
-      <DragDropSensors />
-        <div class="sets-headers-row" 
+      <DragDropSensors /><thead class="sets-gridview-head"> 
+        <tr class="sets-headers-row" 
         
-        style={{ "grid-template-columns": props.colSizes }}
+        
         use:headerResize={onResize}
         >
             <SortableProvider ids={ids()}>
@@ -141,7 +141,7 @@ const HeaderRow:Component<{colSizes: string, attributes: AttributeDefinition[]}>
                     <div class="sets-cell-content">{activeHeader()}</div>
             </div>
         </DragOverlay>
-        </div>
+        </tr></thead>
        
     </DragDropProvider>
     );

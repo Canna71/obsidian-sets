@@ -21,7 +21,7 @@ export const Cell: Component<{ data: ObjectData; attribute: AttributeDefinition;
 
   
 
-    return (<div class="sets-grid-cell" 
+    return (<td class="sets-grid-cell" 
                 classList={{
                     "hovered": isHovering()
                 }}
@@ -44,5 +44,5 @@ export const Cell: Component<{ data: ObjectData; attribute: AttributeDefinition;
             </Show>
             
         </div>
-    </div>);
+    </td>);
 };

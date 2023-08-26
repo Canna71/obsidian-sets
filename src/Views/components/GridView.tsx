@@ -14,51 +14,57 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     // const gridContext = useGrid();
 
 
-    const {definition} = useBlock()!;
+    const { definition } = useBlock()!;
 
     // const { state } = gridContext!;
     const fields = () => definition().fields!;
     const colSizes = () => {
         return fields().map(field =>
-            field.width || "200px" 
+            field.width || "max-content"
         ).join(" ")
     }
-    let div:HTMLDivElement;
+    let div: HTMLDivElement;
 
     // const orderedAttributes = () => {
     //     return fields().map(field => props.attributes.find(att => att.key === field.key)!);
     // }
     // const autoSize = attributes.map(attr => "200px").join(" ")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   
+
     onMount(() => {
         // div.scrollLeft = definition().scroll || 0;
         //TODO: get saved scroll position from somewhere
-        requestAnimationFrame(()=>{div.scroll(definition()?.transientState?.scroll || 0, 0);})
+        requestAnimationFrame(() => { div.scroll(definition()?.transientState?.scroll || 0, 0); })
         // console.log(ctx.)
     });
 
-    return <div ref={div!}
-        class="sets-codeblock sets-gridview"
-       
-    >
-        
-       <HeaderRow colSizes={colSizes()} attributes={props.attributes} />
-        
-        
-        <div class="sets-gridview-body">
-                <div class="sets-gridview-grid" >
-                    <For each={props.data}>{(item, i) =>
-                        <div class="sets-gridview-row" style={{ "grid-template-columns": colSizes() }}>
-                            <For each={props.attributes}>{
-                                (attribute, i) => <Cell data={item} attribute={attribute} />
-                            }
-                            </For>
-                        </div>
-                    }</For>
+    return (
+        <div
+            ref={div!}
+            class="sets-gridview"
+        >
+            <div class="sets-gridview-scroller">
+                <div class="sets-gridview-scrollwrapper">
+                    <table class="sets-gridview-table"
+                    style={{ "grid-template-columns": colSizes() }}
+                    >
+                        <HeaderRow attributes={props.attributes} />
+
+
+                        <tbody class="sets-gridview-body">
+                                <For each={props.data}>{(item, i) =>
+                                    <tr class="sets-gridview-row" >
+                                        <For each={props.attributes}>{
+                                            (attribute, i) => <Cell data={item} attribute={attribute} />
+                                        }
+                                        </For>
+                                    </tr>
+                                }</For>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-    </div>
+        </div>);
 }
 
 export default GridView;
