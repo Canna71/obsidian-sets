@@ -33,7 +33,7 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
 
 
     return (
-            <th class="sets-header-cell"
+            <div class="sets-header-cell"
                 classList={{
                     hovered: isHovering()
                 }}
@@ -51,6 +51,6 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
 
                     >&nbsp;</div>
                 </div>
-            </th>
+            </div>
     );
 };

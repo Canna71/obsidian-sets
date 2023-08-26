@@ -123,8 +123,8 @@ const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
       onDragEnd={onDragEnd}
       collisionDetector={closestCenter}
     >
-      <DragDropSensors /><thead class="sets-gridview-head"> 
-        <tr class="sets-headers-row" 
+      <DragDropSensors /><div class="sets-gridview-head"> 
+        <div class="sets-headers-row" 
         
         
         use:headerResize={onResize}
@@ -141,7 +141,7 @@ const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
                     <div class="sets-cell-content">{activeHeader()}</div>
             </div>
         </DragOverlay>
-        </tr></thead>
+        </div></div>
        
     </DragDropProvider>
     );

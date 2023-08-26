@@ -20,7 +20,7 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     const fields = () => definition().fields!;
     const colSizes = () => {
         return fields().map(field =>
-            field.width || "max-content"
+            field.width || "minmax(max-content,250px)"
         ).join(" ")
     }
     let div: HTMLDivElement;
@@ -45,23 +45,23 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
         >
             <div class="sets-gridview-scroller">
                 <div class="sets-gridview-scrollwrapper">
-                    <table class="sets-gridview-table"
+                    <div class="sets-gridview-table"
                     style={{ "grid-template-columns": colSizes() }}
                     >
                         <HeaderRow attributes={props.attributes} />
 
 
-                        <tbody class="sets-gridview-body">
+                        <div class="sets-gridview-body">
                                 <For each={props.data}>{(item, i) =>
-                                    <tr class="sets-gridview-row" >
+                                    <div class="sets-gridview-row" >
                                         <For each={props.attributes}>{
                                             (attribute, i) => <Cell data={item} attribute={attribute} />
                                         }
                                         </For>
-                                    </tr>
+                                    </div>
                                 }</For>
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>);
