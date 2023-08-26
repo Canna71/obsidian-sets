@@ -18,6 +18,30 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
         mousex: undefined,
         originalSize: undefined
     }
+
+    const onMouseMove = (e:MouseEvent)=>{
+        
+        if(state.resizing){
+            const delta = e.clientX-state.mousex!;
+            console.log(`delta:`, delta)
+            const newSize = Math.max(0,  state.originalSize!+delta);
+            onResize()?.(newSize, state.index);
+        }
+        
+    }
+
+    const onMouseUp = (e:MouseEvent)=>{
+        console.log('mouseup ');
+        if(state.resizing){
+            state.resizing = undefined;
+            onResize()?.("done",state.index);
+            state.index = -1;
+        }
+        // state.mousex = e.clientX;
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+    }
+
     el.addEventListener("mousedown",(e:MouseEvent)=>{
         const resizer = (e.target as HTMLDivElement);
         if(resizer.classList.contains("sets-column-resizer")){
@@ -28,29 +52,17 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
             state.originalSize = state.resizing.clientWidth;
             console.log(`resizing`, state.resizing)
             state.mousex = e.clientX;
-        }
-        
-    })
-    el.addEventListener("mousemove", (e:MouseEvent)=>{
-        
-        if(state.resizing){
-            const delta = e.clientX-state.mousex!;
-            console.log(`delta:`, delta)
-            const newSize = Math.max(0,  state.originalSize!+delta);
-            onResize()?.(newSize, state.index);
-        }
-        
-    }, true)
-    el.addEventListener("mouseup", (e:MouseEvent)=>{
-        if(state.resizing){
-            console.log(`mouse up`)
-            state.resizing = undefined;
-            onResize()?.("done",state.index);
-            state.index = -1;
-        }
-        // state.mousex = e.clientX;
-    })
 
+            window.addEventListener("mousemove", onMouseMove, true)
+            window.addEventListener("mouseup", onMouseUp)
+
+        }
+        
+    })
+    
+    
+
+    // TODO: cleanup
 }
 
 

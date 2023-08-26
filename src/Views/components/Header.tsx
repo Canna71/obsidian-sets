@@ -39,13 +39,15 @@ export const Header: Component<{ name: string; key: string; }> = (props) => {
                     hovered: isHovering()
                 }}
                 // use: draggable
-                use:sortable
+                
                 onmouseover={onMouseOver}
                 onmouseleave={onMouseLeave}
 
             >
                 <div class="sets-header-cell-content">
-                    <div class="sets-column-name">{props.name}</div>
+                    <div class="sets-column-name"
+                    use:sortable
+                    >{props.name}</div>
                     <div class="sets-column-resizer"
                         
                     >&nbsp;</div>
