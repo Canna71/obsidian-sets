@@ -1,4 +1,5 @@
 import "solid-js" ;
+import { ResizeEvent } from "./Views/components/HeaderRow";
 
 declare module "*.module.css";
 declare module "*.module.scss";
@@ -12,7 +13,7 @@ declare module "solid-js" {
             
             draggable: boolean;
             sortable: boolean;
-            headerResize: (size:number|string, index:number)=>void;
+            headerResize: (ev:ResizeEvent)=>void;
         }
     }
 }

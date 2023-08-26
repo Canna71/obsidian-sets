@@ -57,12 +57,12 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
     // }
 
     const updateDefinition = (def: SetDefinition) => {
-        const scrollLeft = el.querySelector(".sets-codeblock.sets-gridview")?.scrollLeft;
+        const scrollLeft = el.querySelector(".sets-gridview-scroller")?.scrollLeft;
         // def.scroll = scrollLeft;
         stateMap.set("TODO",{scroll: scrollLeft});
         delete def.transientState;
         saveDataIntoBlock<SetDefinition>(def,ctx)
-    }
+    } 
 
     console.log(`scroll from map:`, stateMap.get("TODO"))
     definition.transientState = stateMap.get("TODO");

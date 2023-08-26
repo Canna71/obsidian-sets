@@ -1,13 +1,20 @@
 import { Accessor, Component, For, createSignal } from "solid-js";
 import { Header } from "./Header";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { DragDropProvider, DragDropSensors, DragOverlay,SortableProvider,closestCenter
- } from "@thisbeyond/solid-dnd";
+import {
+    DragDropProvider, DragDropSensors, DragOverlay, SortableProvider, closestCenter
+} from "@thisbeyond/solid-dnd";
 import { useBlock } from "./BlockProvider";
 
+export interface ResizeEvent {
+    action: "resize" | "done",
+    index: number,
+    size: number
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function headerResize(el:Element, onResize:Accessor<(size:number|string, index:number)=>void>) {
-    const state:{
+function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
+    const state: {
         resizing?: Element,
         index: number,
         originalSize?: number,
@@ -19,22 +26,22 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
         originalSize: undefined
     }
 
-    const onMouseMove = (e:MouseEvent)=>{
-        
-        if(state.resizing){
-            const delta = e.clientX-state.mousex!;
+    const onMouseMove = (e: MouseEvent) => {
+
+        if (state.resizing) {
+            const delta = e.clientX - state.mousex!;
             console.log(`delta:`, delta)
-            const newSize = Math.max(0,  state.originalSize!+delta);
-            onResize()?.(newSize, state.index);
+            const newSize = Math.max(0, state.originalSize! + delta);
+            onResize()?.({ action: "resize", size: newSize, index: state.index });
         }
-        
+
     }
 
-    const onMouseUp = (e:MouseEvent)=>{
+    const onMouseUp = (e: MouseEvent) => {
         console.log('mouseup ');
-        if(state.resizing){
+        if (state.resizing) {
             state.resizing = undefined;
-            onResize()?.("done",state.index);
+            onResize()?.({ action: "done", size: undefined, index: state.index });
             state.index = -1;
         }
         // state.mousex = e.clientX;
@@ -42,9 +49,9 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
         window.removeEventListener("mouseup", onMouseUp);
     }
 
-    el.addEventListener("mousedown",(e:MouseEvent)=>{
+    el.addEventListener("mousedown", (e: MouseEvent) => {
         const resizer = (e.target as HTMLDivElement);
-        if(resizer.classList.contains("sets-column-resizer")){
+        if (resizer.classList.contains("sets-column-resizer")) {
             // $0.parentElement.indexOf($0)
             state.resizing = resizer!.closest(".sets-header-cell")!;
             // const gridRow = state.resizing.closest(".sets-headers-row");
@@ -57,18 +64,18 @@ function headerResize(el:Element, onResize:Accessor<(size:number|string, index:n
             window.addEventListener("mouseup", onMouseUp)
 
         }
-        
+
     })
-    
-    
+
+
 
     // TODO: cleanup
 }
 
 
-const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
+const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
-    const {definition, updateFields} = useBlock()!;
+    const { definition, updateFields } = useBlock()!;
     const block = useBlock()!;
 
     const onDragStart = ({ draggable }) => {
@@ -79,16 +86,16 @@ const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
 
     const onDragEnd = ({ draggable, droppable }) => {
         if (draggable && droppable) {
-        const currentItems = props.attributes.map(attr => attr.key);
-        const fromIndex = currentItems.indexOf(draggable.id);
-        const toIndex = currentItems.indexOf(droppable.id);
-        // console.log(`reorder`,draggable, droppable);
-        if (fromIndex !== toIndex) {
-            // const updatedItems = currentItems.slice();
-            // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
-            // setItems(updatedItems);
-            block.reorder(fromIndex, toIndex);
-        }
+            const currentItems = props.attributes.map(attr => attr.key);
+            const fromIndex = currentItems.indexOf(draggable.id);
+            const toIndex = currentItems.indexOf(droppable.id);
+            // console.log(`reorder`,draggable, droppable);
+            if (fromIndex !== toIndex) {
+                // const updatedItems = currentItems.slice();
+                // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
+                // setItems(updatedItems);
+                block.reorder(fromIndex, toIndex);
+            }
         }
         setActiveItem(null);
     };
@@ -99,17 +106,18 @@ const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
         return attr?.displayName()
     }
 
-    const onResize = (size:number|string, index:number) => {
-        if(Number.isNumber(size)){
+    const onResize = (ev: ResizeEvent) => {
+
+        if (Number.isNumber(ev.size)) {
             const fields = definition().fields!;
-            // const field = fields[index];
-            // TODO: initial sizes should be better handled
-            console.log(size, index);
-            const newFields = fields.map((f,i)=>{
-                return i !== index ? f :
-                ({...f, width: `${size}px`})
+            const newFields = fields.map((f, i) => {
+                return i !== ev.index ? f :
+                    ({ ...f, width: `${ev.size}px` })
             })
             updateFields(newFields);
+        }
+        else if (ev.action === "done") {
+            block.save()
         }
         // console.log(`todo`, size);
 
@@ -118,32 +126,32 @@ const HeaderRow:Component<{attributes: AttributeDefinition[]}> = (props) => {
     const ids = () => props.attributes.map(at => at.key)
 
     return (
-    <DragDropProvider
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      collisionDetector={closestCenter}
-    >
-      <DragDropSensors /><div class="sets-gridview-head"> 
-        <div class="sets-headers-row" 
-        
-        
-        use:headerResize={onResize}
+        <DragDropProvider
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            collisionDetector={closestCenter}
         >
-            <SortableProvider ids={ids()}>
-                <For each={props.attributes}>{(attribute, i) => <Header name={attribute.displayName()} key={attribute.key} />}
-                </For>
-            </SortableProvider>
-            <DragOverlay>
-            {/* <Header name={"TODO"} key={activeItem()||""} /> */}
-            {/* <div class="sortable">{activeItem()}</div> */}
-            <div class="sets-header-draggable">
-                
-                    <div class="sets-cell-content">{activeHeader()}</div>
-            </div>
-        </DragOverlay>
-        </div></div>
-       
-    </DragDropProvider>
+            <DragDropSensors /><div class="sets-gridview-head">
+                <div class="sets-headers-row"
+
+
+                    use: headerResize={onResize}
+                >
+                    <SortableProvider ids={ids()}>
+                        <For each={props.attributes}>{(attribute, i) => <Header name={attribute.displayName()} key={attribute.key} />}
+                        </For>
+                    </SortableProvider>
+                    <DragOverlay>
+                        {/* <Header name={"TODO"} key={activeItem()||""} /> */}
+                        {/* <div class="sortable">{activeItem()}</div> */}
+                        <div class="sets-header-draggable">
+
+                            <div class="sets-cell-content">{activeHeader()}</div>
+                        </div>
+                    </DragOverlay>
+                </div></div>
+
+        </DragDropProvider>
     );
 }
 

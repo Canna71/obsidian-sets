@@ -8,6 +8,7 @@ export interface BlockStateContext {
     definition: Accessor<SetDefinition>;
     reorder: (from: number, to: number) => void;
     updateFields: (fields: FieldDefinition[]) => void;
+    save: () => void;
 }
 const BlockContext = createContext<BlockStateContext>();
 
@@ -30,7 +31,8 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
         updateFields: (fields: FieldDefinition[]) => {
             console.log(`updateFields`, fields)
             setState(state => ({...state, fields}))
-        }
+        },
+        save: () => props.updateDefinition(definition())
     };
 
 

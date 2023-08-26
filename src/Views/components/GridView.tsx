@@ -23,7 +23,7 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
             field.width || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
         ).join(" ")
     }
-    let div: HTMLDivElement;
+    let scroller: HTMLDivElement;
 
     // const orderedAttributes = () => {
     //     return fields().map(field => props.attributes.find(att => att.key === field.key)!);
@@ -34,16 +34,16 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     onMount(() => {
         // div.scrollLeft = definition().scroll || 0;
         //TODO: get saved scroll position from somewhere
-        requestAnimationFrame(() => { div.scroll(definition()?.transientState?.scroll || 0, 0); })
+        requestAnimationFrame(() => { scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
         // console.log(ctx.)
     });
 
     return (
         <div
-            ref={div!}
+            
             class="sets-gridview"
         >
-            <div class="sets-gridview-scroller">
+            <div class="sets-gridview-scroller" ref={scroller!}>
                 <div class="sets-gridview-scrollwrapper">
                     <div class="sets-gridview-table"
                     style={{ "grid-template-columns": colSizes() }}
