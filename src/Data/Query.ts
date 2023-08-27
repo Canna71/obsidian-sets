@@ -38,9 +38,10 @@ export class Query {
     private _attributes: AttributeDefinition[];
     private _db: VaultDB;
     private _canCreate: boolean;
+    private _context?: ObjectData;
     private _sortBy: SortField[];
 
-    private constructor(db: VaultDB, clauses: Clause[], sort: SortField[]) {
+    private constructor(db: VaultDB, clauses: Clause[], context?: ObjectData, context?: ObjectData) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -56,14 +57,14 @@ export class Query {
         this._canCreate = operators.every(op => {
             return op.enforce !== undefined;
         })
+        this._context = context;
         this._sortBy = sort;
     }
 
-    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[]) {
-        
+    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, context?: ObjectData, sort: SortField[]) {
         if (Array.isArray(clauses) && Array.isArray(clauses[0]))
-            return new Query(db,clauses, sort);
-        else return new Query(db, [clauses as Clause], sort);
+            return new Query(db,clauses, context, sort);
+        else return new Query(db, [clauses as Clause], context, sort);
     }
 
     matches(data: ObjectData) {
@@ -76,10 +77,10 @@ export class Query {
         const res = this._clauses.every((clause) => {
             // const attr = getAttribute(data, clause.at);
             const [at, op, val] = clause;
-            const attr = this._db.getAttributeDefinition(at).getValue(data);
+            const attr = this._db.getAttributeDefinition(at);
             const operator = getOperatorById(op);
-            // const val = clause.val;
-            return operator.matches(attr, val);
+            // const val = clause.val; 
+            return operator.matches(attr, data, val, this._context);
         });
 
         return res;
@@ -104,5 +105,9 @@ export class Query {
 
     get canCreate() {
         return this._canCreate;
+    }
+
+    get context() {
+        return this._context;
     }
 }
