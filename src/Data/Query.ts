@@ -72,10 +72,10 @@ export class Query {
         const res = this._clauses.every((clause) => {
             // const attr = getAttribute(data, clause.at);
             const [at, op, val] = clause;
-            const attr = this._db.getAttributeDefinition(at).getValue(data);
+            const attr = this._db.getAttributeDefinition(at);
             const operator = getOperatorById(op);
             // const val = clause.val;
-            return operator.matches(attr, val);
+            return operator.matches(attr, data, val);
         });
 
         return res;

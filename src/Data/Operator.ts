@@ -1,3 +1,5 @@
+import { AttributeDefinition } from "./AttributeDefinition";
+import { ObjectData } from "./ObjectData";
 
 
 export type OperatorName = "eq" | "neq" | "isnull" | "notnull" | "hasall" | 
@@ -6,8 +8,8 @@ export type OperatorName = "eq" | "neq" | "isnull" | "notnull" | "hasall" |
 export type Operator = {
     op: OperatorName;
     compatibleTypes: string[] | string;
-    matches: (a: unknown, b: unknown) => boolean;
-    enforce?: (a: unknown, b: unknown) => unknown;
+    matches: (a: AttributeDefinition, data:ObjectData, val:unknown) => boolean;
+    enforce?: (current: unknown, val: unknown) => unknown;
     selectiveness: number;
 };
 
@@ -23,28 +25,28 @@ const operators : Record<OperatorName,Operator> = {
     "eq": {
         op: "eq",
         compatibleTypes: "*",
-        matches: (a:unknown, b:unknown) => a == b,
-        enforce: (a:unknown, b:unknown) => b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) == val,
+        enforce: (current: unknown, val: unknown) => val,
         selectiveness: 0
     },
     "neq": {
         op: "neq",
         compatibleTypes: "*",
-        matches: (a:unknown, b:unknown) => a != b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) != val,
         // enforce: (a:unknown, b:unknown) => b
         selectiveness: Number.MAX_VALUE
     },
     "isnull": {
         op: "isnull",
         compatibleTypes: "*",
-        matches: (a:unknown, b:unknown) => a === null,
-        enforce: (a:unknown, b:unknown) => null,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) === null,
+        enforce: (current: unknown, val: unknown) => null,
         selectiveness: 10
     },
     "notnull": {
         op: "notnull",
         compatibleTypes: "*",
-        matches: (a:unknown, b:unknown) => a !== null,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) !== null,
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 10
     },
@@ -52,16 +54,20 @@ const operators : Record<OperatorName,Operator> = {
     "hasall": {
         op: "hasall",
         compatibleTypes: "list",
-        matches: (list:unknown, item:unknown) => {
-            if (list === undefined) list = []
-            if (item === undefined) item = []
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+            const list = a.getValue(data);
+            if(!list) return false;
+            if(!Array.isArray(list)) return false;
+            if (val === undefined) val = []
+            if (!Array.isArray(val)) val=[val];
             
-            return (Array.isArray(item)?item as any[]:[item] ).every(el => (list as any[]).includes(el))
+            return (val as any[]).every(el => (list as any[]).includes(el))
         },
-        enforce: (list:unknown, item:unknown) => {
-            const items = Array.isArray(item) ? item : [item];
-            const ret = items.slice();
-            items.forEach(i => !ret.includes(i) && ret.push(i));
+        enforce: (current:unknown, val:unknown) => {
+            const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
+            const items = Array.isArray(val) ? val : [val];
+            
+            items.forEach(item => !ret.includes(item) && ret.push(item));
             return ret;
         },
         selectiveness: 5
@@ -69,29 +75,29 @@ const operators : Record<OperatorName,Operator> = {
     "gt": {
         op: "gt",
         compatibleTypes: "*",
-        matches: (a:any, b:any) => a > b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) > (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5
     },
     "gte": {
         op: "gte",
         compatibleTypes: "*",
-        matches: (a:any, b:any) => a >= b,
-        enforce: (a:unknown, b:unknown) => b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) >= (val as any),
+        enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5
     },
     "lt": {
         op: "lt",
         compatibleTypes: "*",
-        matches: (a:any, b:any) => a < b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) < (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5
     },
     "lte": {
         op: "lte",
         compatibleTypes: "*",
-        matches: (a:any, b:any) => a <= b,
-        enforce: (a:unknown, b:unknown) => b,
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) <= (val as any),
+        enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5
     },
 }
