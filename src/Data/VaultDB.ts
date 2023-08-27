@@ -1,7 +1,7 @@
 
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { IntrinsicAttributeKey, Query, isIntrinsicAttribute } from "./Query";
+import { Clause, IntrinsicAttributeKey, Query, isIntrinsicAttribute } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
@@ -70,7 +70,11 @@ export class VaultDB {
         this.observer.detach(event, observer);
     }
 
-    query(query: Query): QueryResult {
+    fromClauses(clauses: Clause[]): Query {
+        return Query.__fromClauses(this, clauses);
+    }
+
+    execute(query: Query): QueryResult {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
@@ -100,10 +104,10 @@ export class VaultDB {
     }
 
     queryType(type: string) {
-        const query = Query.fromClauses([
+        const query = this.fromClauses([
             [this.plugin.settings.typeAttributeKey,"eq",type]
         ]);
-        return this.query(query);
+        return this.execute(query);
     }
 
     canAdd(results: QueryResult) {

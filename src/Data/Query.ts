@@ -2,6 +2,8 @@ import { ObjectData } from "./ObjectData";
 import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
+import { AttributeDefinition } from "./AttributeDefinition";
+import { VaultDB } from "./VaultDB";
 
 export enum IntrinsicAttributeKey {
     FileName = "__bname",
@@ -31,19 +33,23 @@ export class Query {
     private _clauses: Clause[];
     private _settings: SetsSettings;
     private _hasExtrinsic: boolean;
+    private _attributes: AttributeDefinition[];
+    private _db: VaultDB;
 
-    private constructor(clauses: Clause[]) {
+    private constructor(db: VaultDB, clauses: Clause[]) {
+        this._db = db;
         this._clauses = clauses;
         this._settings = getSetsSettings();
         const attributes = clauses.map(([key]) => key);
         this._hasExtrinsic = attributes.some(key => !isIntrinsicAttribute(key));
-        
+        this._attributes = attributes.map(key => this._db.getAttributeDefinition(key))
     }
 
-    static fromClauses(clauses: Clause[] | Clause) {
+    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause) {
+        
         if (Array.isArray(clauses) && Array.isArray(clauses[0]))
-            return new Query(clauses);
-        else return new Query([clauses as Clause]);
+            return new Query(db,clauses);
+        else return new Query(db, [clauses as Clause]);
     }
 
     matches(data: ObjectData) {
@@ -56,7 +62,7 @@ export class Query {
         const res = this._clauses.every((clause) => {
             // const attr = getAttribute(data, clause.at);
             const [at, op, val] = clause;
-            const attr = data.db.getAttributeDefinition(at).getValue(data);
+            const attr = this._db.getAttributeDefinition(at).getValue(data);
             const operator = getOperatorById(op);
             // const val = clause.val;
             return operator.matches(attr, val);

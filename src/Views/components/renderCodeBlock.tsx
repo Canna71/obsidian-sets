@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  Clause, Query } from "src/Data/Query";
+import {  Clause } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -29,15 +29,15 @@ const stateMap = new Map<string,any>();
 const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
     
-    const query = Query.fromClauses(clauses);
-    const initialdata = db.query(query);
+    const query = db.fromClauses(clauses);
+    const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);
 
     const [viewMode, setViewMode] = createSignal<ViewMode>("grid" as ViewMode);
 
     const onDataChanged = () => {
-        const newData = db.query(query);
+        const newData = db.execute(query);
         setData(newData);
     }
 
