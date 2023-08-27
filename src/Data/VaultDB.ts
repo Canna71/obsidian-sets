@@ -112,7 +112,7 @@ export class VaultDB {
 
     canAdd(results: QueryResult) {
         const type = results.query.inferSetType();
-        return type !== undefined;
+        return type !== undefined && results.query.canCreate;
     }
 
     async addToSet(results: QueryResult) {

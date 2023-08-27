@@ -35,6 +35,7 @@ export class Query {
     private _hasExtrinsic: boolean;
     private _attributes: AttributeDefinition[];
     private _db: VaultDB;
+    private _canCreate: boolean;
 
     private constructor(db: VaultDB, clauses: Clause[]) {
         this._db = db;
@@ -42,7 +43,11 @@ export class Query {
         this._settings = getSetsSettings();
         const attributes = clauses.map(([key]) => key);
         this._hasExtrinsic = attributes.some(key => !isIntrinsicAttribute(key));
-        this._attributes = attributes.map(key => this._db.getAttributeDefinition(key))
+        this._attributes = attributes.map(key => this._db.getAttributeDefinition(key));
+        this._canCreate = this._clauses.every(clause => {
+            const op = getOperatorById(clause[1]);
+            return op.enforce !== undefined;
+        })
     }
 
     static __fromClauses(db: VaultDB, clauses: Clause[] | Clause) {
@@ -86,5 +91,9 @@ export class Query {
 
     get clauses() {
         return this._clauses;
+    }
+
+    get canCreate() {
+        return this._canCreate;
     }
 }
