@@ -1,13 +1,13 @@
 
 
-export type OperatorName = "eq" | "hasall";
+export type OperatorName = "eq" | "neq" | "isnull" | "notnull" | "hasall" | 
+    "gt" | "gte" | "lt" | "lte";
 
 export type Operator = {
     op: OperatorName;
     compatibleTypes: string[] | string;
-    isConstraint: boolean;
     matches: (a: unknown, b: unknown) => boolean;
-    enforce: (a: unknown, b: unknown) => unknown;
+    enforce?: (a: unknown, b: unknown) => unknown;
 };
 
 
@@ -22,14 +22,30 @@ const operators : Record<OperatorName,Operator> = {
     "eq": {
         op: "eq",
         compatibleTypes: "*",
-        isConstraint: true,
         matches: (a:unknown, b:unknown) => a == b,
         enforce: (a:unknown, b:unknown) => b
+    },
+    "neq": {
+        op: "neq",
+        compatibleTypes: "*",
+        matches: (a:unknown, b:unknown) => a != b,
+        // enforce: (a:unknown, b:unknown) => b
+    },
+    "isnull": {
+        op: "isnull",
+        compatibleTypes: "*",
+        matches: (a:unknown, b:unknown) => a === null,
+        enforce: (a:unknown, b:unknown) => null
+    },
+    "notnull": {
+        op: "notnull",
+        compatibleTypes: "*",
+        matches: (a:unknown, b:unknown) => a !== null,
+        // enforce: (a:unknown, b:unknown) => b
     },
     "hasall": {
         op: "hasall",
         compatibleTypes: "list",
-        isConstraint: true,
         matches: (list:unknown, item:unknown) => {
             if (list === undefined) list = []
             if (item === undefined) item = []
@@ -42,5 +58,29 @@ const operators : Record<OperatorName,Operator> = {
             items.forEach(i => !ret.includes(i) && ret.push(i));
             return ret;
         }
-    }
+    },
+    "gt": {
+        op: "gt",
+        compatibleTypes: "*",
+        matches: (a:any, b:any) => a > b,
+        // enforce: (a:unknown, b:unknown) => b
+    },
+    "gte": {
+        op: "gte",
+        compatibleTypes: "*",
+        matches: (a:any, b:any) => a >= b,
+        enforce: (a:unknown, b:unknown) => b
+    },
+    "lt": {
+        op: "lt",
+        compatibleTypes: "*",
+        matches: (a:any, b:any) => a < b,
+        // enforce: (a:unknown, b:unknown) => b
+    },
+    "lte": {
+        op: "lte",
+        compatibleTypes: "*",
+        matches: (a:any, b:any) => a <= b,
+        enforce: (a:unknown, b:unknown) => b
+    },
 }

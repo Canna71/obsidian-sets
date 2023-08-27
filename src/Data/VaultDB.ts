@@ -146,7 +146,8 @@ export class VaultDB {
         const defaults = constraints.reduce((def, [at,op,val])=>{
             const operator = getOperatorById(op);
             const curDefault = def[at];
-            const okDefault = operator.enforce(curDefault, val);
+
+            const okDefault = operator.enforce?.(curDefault, val);
             return {...def, [at]: okDefault}
         },{} as Record<string,any>);
         return defaults; 
