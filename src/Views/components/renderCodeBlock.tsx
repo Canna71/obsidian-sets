@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  Clause } from "src/Data/Query";
+import {  Clause, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -19,6 +19,7 @@ export interface FieldDefinition {
 export interface SetDefinition {
     filter? : Clause[];
     fields?: FieldDefinition[];
+    sortby?: SortField[];
     transientState?: any;
 }
 
@@ -28,8 +29,8 @@ const stateMap = new Map<string,any>();
 
 const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
-    
-    const query = db.fromClauses(clauses);
+    const sortby = definition.sortby || [];
+    const query = db.fromClauses(clauses, sortby);
     const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);

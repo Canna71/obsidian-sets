@@ -22,6 +22,8 @@ export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
 
 export type Clause = [AttributeClause, OperatorName, any];
 
+export type SortField = [AttributeClause, boolean];
+
 // export type Clause = {
 //     at: AttributeClause,
 //     op: OperatorName,
@@ -36,8 +38,9 @@ export class Query {
     private _attributes: AttributeDefinition[];
     private _db: VaultDB;
     private _canCreate: boolean;
+    private _sortBy: SortField[];
 
-    private constructor(db: VaultDB, clauses: Clause[]) {
+    private constructor(db: VaultDB, clauses: Clause[], sort: SortField[]) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -53,13 +56,14 @@ export class Query {
         this._canCreate = operators.every(op => {
             return op.enforce !== undefined;
         })
+        this._sortBy = sort;
     }
 
-    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause) {
+    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[]) {
         
         if (Array.isArray(clauses) && Array.isArray(clauses[0]))
-            return new Query(db,clauses);
-        else return new Query(db, [clauses as Clause]);
+            return new Query(db,clauses, sort);
+        else return new Query(db, [clauses as Clause], sort);
     }
 
     matches(data: ObjectData) {

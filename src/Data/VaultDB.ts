@@ -1,7 +1,7 @@
 
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { Clause, IntrinsicAttributeKey, Query, isIntrinsicAttribute } from "./Query";
+import { Clause, IntrinsicAttributeKey, Query, SortField, isIntrinsicAttribute } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
@@ -70,8 +70,8 @@ export class VaultDB {
         this.observer.detach(event, observer);
     }
 
-    fromClauses(clauses: Clause[]): Query {
-        return Query.__fromClauses(this, clauses);
+    fromClauses(clauses: Clause[], sort?: SortField[]): Query {
+        return Query.__fromClauses(this, clauses, sort || []);
     }
 
     execute(query: Query): QueryResult {
