@@ -43,6 +43,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:unknown, b:unknown) => a !== null,
         // enforce: (a:unknown, b:unknown) => b
     },
+    
     "hasall": {
         op: "hasall",
         compatibleTypes: "list",

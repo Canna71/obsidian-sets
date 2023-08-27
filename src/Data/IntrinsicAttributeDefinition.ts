@@ -44,9 +44,9 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
     getValue(data: ObjectData) {
         switch(this._key){
             case IntrinsicAttributeKey.FileCreationDate:
-                return moment(data.file.stat.ctime);
+                return moment(data.file.stat.ctime).toISOString();
             case IntrinsicAttributeKey.FileModificationDate:
-                return moment(data.file.stat.mtime);
+                return moment(data.file.stat.mtime).toISOString();
             case IntrinsicAttributeKey.FileName:
                 return data.file.basename;
             case IntrinsicAttributeKey.FilePath:
@@ -70,7 +70,7 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
         switch(this._key){
             case IntrinsicAttributeKey.FileCreationDate:
             case IntrinsicAttributeKey.FileModificationDate:
-                return (value as moment.Moment).format("LL");
+                return moment(value).format("LL");
             default:
                 return value?.toString() || "";
         }
