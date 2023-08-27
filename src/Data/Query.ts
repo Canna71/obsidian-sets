@@ -39,13 +39,18 @@ export class Query {
 
     private constructor(db: VaultDB, clauses: Clause[]) {
         this._db = db;
-        this._clauses = clauses;
+        const operators = clauses.map(clause => getOperatorById(clause[1]))
+        this._clauses = clauses.sort((a,b)=>{
+            const aSelectiveness = getOperatorById(a[1]).selectiveness;
+            const bSelectiveness = getOperatorById(b[1]).selectiveness;
+            return aSelectiveness - bSelectiveness
+
+        });
         this._settings = getSetsSettings();
         const attributes = clauses.map(([key]) => key);
         this._hasExtrinsic = attributes.some(key => !isIntrinsicAttribute(key));
         this._attributes = attributes.map(key => this._db.getAttributeDefinition(key));
-        this._canCreate = this._clauses.every(clause => {
-            const op = getOperatorById(clause[1]);
+        this._canCreate = operators.every(op => {
             return op.enforce !== undefined;
         })
     }

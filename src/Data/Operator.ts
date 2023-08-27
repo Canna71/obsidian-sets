@@ -8,6 +8,7 @@ export type Operator = {
     compatibleTypes: string[] | string;
     matches: (a: unknown, b: unknown) => boolean;
     enforce?: (a: unknown, b: unknown) => unknown;
+    selectiveness: number;
 };
 
 
@@ -23,25 +24,29 @@ const operators : Record<OperatorName,Operator> = {
         op: "eq",
         compatibleTypes: "*",
         matches: (a:unknown, b:unknown) => a == b,
-        enforce: (a:unknown, b:unknown) => b
+        enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 0
     },
     "neq": {
         op: "neq",
         compatibleTypes: "*",
         matches: (a:unknown, b:unknown) => a != b,
         // enforce: (a:unknown, b:unknown) => b
+        selectiveness: Number.MAX_VALUE
     },
     "isnull": {
         op: "isnull",
         compatibleTypes: "*",
         matches: (a:unknown, b:unknown) => a === null,
-        enforce: (a:unknown, b:unknown) => null
+        enforce: (a:unknown, b:unknown) => null,
+        selectiveness: 10
     },
     "notnull": {
         op: "notnull",
         compatibleTypes: "*",
         matches: (a:unknown, b:unknown) => a !== null,
-        // enforce: (a:unknown, b:unknown) => b
+        // enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 10
     },
     
     "hasall": {
@@ -58,30 +63,35 @@ const operators : Record<OperatorName,Operator> = {
             const ret = items.slice();
             items.forEach(i => !ret.includes(i) && ret.push(i));
             return ret;
-        }
+        },
+        selectiveness: 5
     },
     "gt": {
         op: "gt",
         compatibleTypes: "*",
         matches: (a:any, b:any) => a > b,
-        // enforce: (a:unknown, b:unknown) => b
+        // enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 5
     },
     "gte": {
         op: "gte",
         compatibleTypes: "*",
         matches: (a:any, b:any) => a >= b,
-        enforce: (a:unknown, b:unknown) => b
+        enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 5
     },
     "lt": {
         op: "lt",
         compatibleTypes: "*",
         matches: (a:any, b:any) => a < b,
-        // enforce: (a:unknown, b:unknown) => b
+        // enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 5
     },
     "lte": {
         op: "lte",
         compatibleTypes: "*",
         matches: (a:any, b:any) => a <= b,
-        enforce: (a:unknown, b:unknown) => b
+        enforce: (a:unknown, b:unknown) => b,
+        selectiveness: 5
     },
 }
