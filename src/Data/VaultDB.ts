@@ -1,7 +1,7 @@
 
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { IntrinsicAttributeKey, Query } from "./Query";
+import { IntrinsicAttributeKey, Query, isIntrinsicAttribute } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
@@ -159,7 +159,7 @@ export class VaultDB {
             return this.accessors.get(key)!;
         }
         let ret:AttributeDefinition;
-        if (Object.values(IntrinsicAttributeKey).includes(key as IntrinsicAttributeKey) ) {
+        if (isIntrinsicAttribute(key) ) {
             ret = new IntrinsicAttributeDefinition(this.app, key as IntrinsicAttributeKey);
         } else {
             ret = new MetadataAttributeDefinition(this.app, key);
