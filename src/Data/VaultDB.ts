@@ -96,11 +96,34 @@ export class VaultDB {
                 }
             }
         }
+
+        // TODO: sorting
+        const sortby = query.sortby;
+        // const gt = getOperatorById("gt");
+        // const lt = getOperatorById("lt");
+        sortby.forEach(sortField => {
+            ret.sort((a,b)=>{
+                // const op = sortField[1] ? lt : gt;
+                const attr = this.getAttributeDefinition(sortField[0]);
+                return (sortField[1] ? -1 : 1) * this.compare(attr, a, b);
+            }) 
+        })
+
         return {
             data: ret,
             db: this,
             query,
         };
+    }
+
+    private compare (attr: AttributeDefinition, a: ObjectData, b: ObjectData): number {
+        
+        const aval = attr.getValue(a);
+        const bval = attr.getValue(b);
+
+        if (aval < bval) return -1;
+        if (aval > bval) return 1;
+        return 0;
     }
 
     queryType(type: string) {

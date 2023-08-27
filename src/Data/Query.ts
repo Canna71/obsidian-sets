@@ -58,7 +58,7 @@ export class Query {
             return op.enforce !== undefined;
         })
         this._context = context;
-        this._sortBy = sort;
+        this._sortBy = sort.slice().reverse();
     }
 
     static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
@@ -109,5 +109,9 @@ export class Query {
 
     get context() {
         return this._context;
+    }
+
+    get sortby() {
+        return this._sortBy;
     }
 }
