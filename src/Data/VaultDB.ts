@@ -70,8 +70,8 @@ export class VaultDB {
         this.observer.detach(event, observer);
     }
 
-    fromClauses(clauses: Clause[], context?: ObjectData, sort?: SortField[]): Query {
-        return Query.__fromClauses(this, clauses, context, sort);
+    fromClauses(clauses: Clause[], sort: SortField[], context?: ObjectData): Query {
+        return Query.__fromClauses(this, clauses, sort, context);
     }
 
     execute(query: Query): QueryResult {
@@ -106,7 +106,7 @@ export class VaultDB {
     queryType(type: string) {
         const query = this.fromClauses([
             [this.plugin.settings.typeAttributeKey,"eq",type]
-        ]);
+        ],[]);
         return this.execute(query);
     }
 

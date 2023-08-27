@@ -41,7 +41,7 @@ export class Query {
     private _context?: ObjectData;
     private _sortBy: SortField[];
 
-    private constructor(db: VaultDB, clauses: Clause[], context?: ObjectData, context?: ObjectData) {
+    private constructor(db: VaultDB, clauses: Clause[], sort: SortField[], context?: ObjectData) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -61,10 +61,10 @@ export class Query {
         this._sortBy = sort;
     }
 
-    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, context?: ObjectData, sort: SortField[]) {
+    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
         if (Array.isArray(clauses) && Array.isArray(clauses[0]))
-            return new Query(db,clauses, context, sort);
-        else return new Query(db, [clauses as Clause], context, sort);
+            return new Query(db,clauses, sort, context);
+        else return new Query(db, [clauses as Clause], sort, context);
     }
 
     matches(data: ObjectData) {
