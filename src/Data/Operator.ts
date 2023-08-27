@@ -2,14 +2,15 @@ import { AttributeDefinition } from "./AttributeDefinition";
 import { ObjectData } from "./ObjectData";
 
 
-export type OperatorName = "eq" | "neq" | "isnull" | "notnull" | "hasall" | 
+export type OperatorName = "eq" | "neq" | "isnull" | "notnull" | 
+    "hasall" | "hasthis" |
     "gt" | "gte" | "lt" | "lte";
 
 export type Operator = {
     op: OperatorName;
     compatibleTypes: string[] | string;
-    matches: (a: AttributeDefinition, data:ObjectData, val:unknown) => boolean;
-    enforce?: (current: unknown, val: unknown) => unknown;
+    matches: (a: AttributeDefinition, data:ObjectData, val:unknown, context?: ObjectData) => boolean;
+    enforce?: (current: unknown, val: unknown, context?: ObjectData) => unknown;
     selectiveness: number;
 };
 
@@ -64,6 +65,28 @@ const operators : Record<OperatorName,Operator> = {
             return (val as any[]).every(el => (list as any[]).includes(el))
         },
         enforce: (current:unknown, val:unknown) => {
+            const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
+            const items = Array.isArray(val) ? val : [val];
+            
+            items.forEach(item => !ret.includes(item) && ret.push(item));
+            return ret;
+        },
+        selectiveness: 5
+    },
+    "hasthis": {
+        op: "hasthis",
+        compatibleTypes: "list",
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown, context: ObjectData) => {
+            const list = a.getValue(data);
+            if(!list) return false;
+            if(!Array.isArray(list)) return false;
+
+
+            return false;
+            
+            // return (val as any[]).every(el => (list as any[]).includes(el))
+        },
+        enforce: (current:unknown, val:unknown, context: ObjectData) => {
             const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
             const items = Array.isArray(val) ? val : [val];
             
