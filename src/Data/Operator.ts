@@ -81,16 +81,16 @@ const operators : Record<OperatorName,Operator> = {
             if(!list) return false;
             if(!Array.isArray(list)) return false;
 
-
-            return false;
             
+            const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
+            return list.includes(thisLink);
             // return (val as any[]).every(el => (list as any[]).includes(el))
         },
         enforce: (current:unknown, val:unknown, context: ObjectData) => {
             const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
-            const items = Array.isArray(val) ? val : [val];
+            const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
             
-            items.forEach(item => !ret.includes(item) && ret.push(item));
+            if(!ret.includes(thisLink)) ret.push(thisLink);
             return ret;
         },
         selectiveness: 5

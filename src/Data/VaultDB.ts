@@ -70,8 +70,8 @@ export class VaultDB {
         this.observer.detach(event, observer);
     }
 
-    fromClauses(clauses: Clause[]): Query {
-        return Query.__fromClauses(this, clauses);
+    fromClauses(clauses: Clause[], context?: ObjectData): Query {
+        return Query.__fromClauses(this, clauses, context);
     }
 
     execute(query: Query): QueryResult {
@@ -147,11 +147,14 @@ export class VaultDB {
         // .filter(c => getOperatorById(c.op).isConstraint)
         .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic)
         ;
+
+        const context = results.query.context;
+
         const defaults = constraints.reduce((def, [at,op,val])=>{
             const operator = getOperatorById(op);
             const curDefault = def[at];
 
-            const okDefault = operator.enforce?.(curDefault, val);
+            const okDefault = operator.enforce?.(curDefault, val, context);
             return {...def, [at]: okDefault}
         },{} as Record<string,any>);
         return defaults; 
@@ -269,10 +272,17 @@ export class VaultDB {
         return newFIle;
     }
 
+    public getDataContext(filePath: string): ObjectData {
+        return this.getObjectData(filePath);
+    }
+
     private getObjectData(
         filePath: string,
-        metadata: CachedMetadata
+        metadata?: CachedMetadata
     ): ObjectData {
+        if(metadata === undefined){
+            metadata = this.app.metadataCache.getCache(filePath) || undefined;
+        }
         const tfile = this.app.vault.getAbstractFileByPath(filePath);
         if (!tfile) throw Error(`File ${filePath} not found!`);
         if (!(tfile instanceof TFile)) throw Error(`${filePath} is a folder`);

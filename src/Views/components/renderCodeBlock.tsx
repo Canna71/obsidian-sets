@@ -28,8 +28,9 @@ const stateMap = new Map<string,any>();
 
 const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
-    
-    const query = db.fromClauses(clauses);
+    // TODO: get file context from ctx.sourcePath
+    const context = db.getDataContext(ctx.sourcePath);
+    const query = db.fromClauses(clauses, context);
     const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);

@@ -36,8 +36,9 @@ export class Query {
     private _attributes: AttributeDefinition[];
     private _db: VaultDB;
     private _canCreate: boolean;
+    private _context?: ObjectData;
 
-    private constructor(db: VaultDB, clauses: Clause[]) {
+    private constructor(db: VaultDB, clauses: Clause[], context?: ObjectData) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -53,13 +54,13 @@ export class Query {
         this._canCreate = operators.every(op => {
             return op.enforce !== undefined;
         })
+        this._context = context;
     }
 
-    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause) {
-        
+    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, context?: ObjectData) {
         if (Array.isArray(clauses) && Array.isArray(clauses[0]))
-            return new Query(db,clauses);
-        else return new Query(db, [clauses as Clause]);
+            return new Query(db,clauses, context);
+        else return new Query(db, [clauses as Clause], context);
     }
 
     matches(data: ObjectData) {
@@ -74,8 +75,8 @@ export class Query {
             const [at, op, val] = clause;
             const attr = this._db.getAttributeDefinition(at);
             const operator = getOperatorById(op);
-            // const val = clause.val;
-            return operator.matches(attr, data, val);
+            // const val = clause.val; 
+            return operator.matches(attr, data, val, this._context);
         });
 
         return res;
@@ -100,5 +101,9 @@ export class Query {
 
     get canCreate() {
         return this._canCreate;
+    }
+
+    get context() {
+        return this._context;
     }
 }
