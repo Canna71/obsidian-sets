@@ -195,15 +195,17 @@ export default class SetsPlugin extends Plugin {
         if (!(file instanceof TFile)) return;
         const collections = this._vaultDB.getCollections();
         const meta = this.app.metadataCache.getFileCache(file);
-
+        // get collections currently linked by object
         const currentColl =
             (meta?.frontmatter?.[
                 this.settings.collectionAttributeKey
             ] as string[]) || [];
+        // map to wiki links
         let collectionLinks = collections.map((col) => ({
             col,
             link: this._vaultDB.generateWikiLink(col.file, "/"),
         }));
+        // remove already linked collections
         collectionLinks = collectionLinks.filter(
             (cl) => !currentColl.includes(cl.link)
         );
@@ -214,7 +216,6 @@ export default class SetsPlugin extends Plugin {
                     menuItem.setSubmenu().addItem((menuItem: MenuItem) => {
                         menuItem.setTitle(cl.col.file.basename);
                         menuItem.callback = () => {
-                            console.log(`add item to ${cl.col.file.basename}`);
                             currentColl.push(cl.link);
                             this.app.fileManager.processFrontMatter(
                                 file,

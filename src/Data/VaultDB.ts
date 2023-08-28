@@ -31,7 +31,7 @@ export class VaultDB {
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
     private app: App;
-
+    private _collectionCache?: ObjectData[] = undefined;
     private observer = new Observer();
 
     private accessors = new Map<string,AttributeDefinition>();
@@ -62,8 +62,9 @@ export class VaultDB {
         // }
         this.accessors.clear();
         this.dbInitialized = true;
-        console.info("metadata-changed")
+        this._collectionCache = undefined;
         this.observer.notify("metadata-changed");
+        console.info("metadata-changed");
     }
 
     dispose() {
@@ -212,9 +213,14 @@ export class VaultDB {
     }
 
     getCollections():ObjectData[] {
+        if(this._collectionCache !== undefined) {
+            return this._collectionCache;
+        }
+
         const clause:Clause = [this.plugin.settings.typeAttributeKey, "eq", this.plugin.settings.collectionType];
         const query = this.fromClauses([clause],[]);
         const result = this.execute(query);
+        this._collectionCache = result.data;
         return result.data;
     }
 
