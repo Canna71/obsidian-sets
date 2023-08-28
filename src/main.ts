@@ -1,15 +1,19 @@
 import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
-import { addIcon, MarkdownView, TFile } from "obsidian";
+import {
+    addIcon,
+    Editor,
+    MarkdownFileInfo,
+    MarkdownView,
+    Menu,
+    MenuItem,
+    TAbstractFile,
+    TFile,
+} from "obsidian";
 
 // import { MathResult } from './Extensions/ResultMarkdownChild';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SetsView, SETS_VIEW } from "./Views/SetsView";
-import {
-    finishRenderMath,
-    loadMathJax,
-    Plugin,
-    WorkspaceLeaf,
-} from "obsidian";
+import { finishRenderMath, loadMathJax, Plugin, WorkspaceLeaf } from "obsidian";
 import { SetsSettingsTab } from "src/SettingTab";
 import { processCodeBlock } from "./Views/processCodeBlock";
 import { VaultDB } from "./Data/VaultDB";
@@ -22,8 +26,6 @@ const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.60
 // Remember to rename these classes and interfaces!
 
 let gSettings: SetsSettings;
-
-
 
 export function getSetsSettings() {
     return gSettings;
@@ -94,27 +96,29 @@ export default class SetsPlugin extends Plugin {
         this.addSettingTab(new SetsSettingsTab(this.app, this));
 
         this._vaultDB = new VaultDB(this);
-        
+
+        this.onFileMenu = this.onFileMenu.bind(this);
+
+        this.app.workspace.on("file-menu", this.onFileMenu);
+        this.app.workspace.on("editor-menu", this.onEditorMenu);
+
         // this.patchView(tmp);
     }
-
-    
 
     private patchView() {
         const tmp = MarkdownView.prototype.getDisplayText;
         const app = this.app;
-        MarkdownView.prototype.getDisplayText =
-            function () {
-                const file = this.file as TFile;
-                let prefix = "";
-                if (file) {
-                    const md = app.metadataCache.getFileCache(file);
-                    if (md?.frontmatter?.__icon) prefix = md?.frontmatter?.__icon;
-                    console.log(file);
-                }
+        MarkdownView.prototype.getDisplayText = function () {
+            const file = this.file as TFile;
+            let prefix = "";
+            if (file) {
+                const md = app.metadataCache.getFileCache(file);
+                if (md?.frontmatter?.__icon) prefix = md?.frontmatter?.__icon;
+                console.log(file);
+            }
 
-                return prefix + tmp.call(this);
-            };
+            return prefix + tmp.call(this);
+        };
     }
 
     registerNewTypes() {
@@ -126,15 +130,13 @@ export default class SetsPlugin extends Plugin {
     onunload() {
         this.app.workspace.detachLeavesOfType(SETS_VIEW);
         this.vaultDB.dispose();
+        this.app.workspace.off("file-menu", this.onFileMenu);
+        this.app.workspace.off("editor-menu", this.onEditorMenu);
     }
 
-    
-    
-    public get vaultDB() : VaultDB {
+    public get vaultDB(): VaultDB {
         return this._vaultDB;
     }
-   
-    
 
     async loadSettings() {
         this.settings = Object.assign(
@@ -174,7 +176,6 @@ export default class SetsPlugin extends Plugin {
     }
 
     async registerPostProcessor() {
-        
         // await loadMathJax();
         // await finishRenderMath();
         // this.registerMarkdownPostProcessor(getPostPrcessor(this.settings));
@@ -184,8 +185,56 @@ export default class SetsPlugin extends Plugin {
         // this.registerEditorExtension([resultField, SetsConfigField]);
     }
 
+    private onFileMenu(
+        menu: Menu,
+        file: TAbstractFile,
+        source: string,
+        leaf?: WorkspaceLeaf
+    ) {
+        // console.log("onFileMenu",arguments);
+        if (!(file instanceof TFile)) return;
+        const collections = this._vaultDB.getCollections();
+        const meta = this.app.metadataCache.getFileCache(file);
 
+        const currentColl =
+            (meta?.frontmatter?.[
+                this.settings.collectionAttributeKey
+            ] as string[]) || [];
+        let collectionLinks = collections.map((col) => ({
+            col,
+            link: this._vaultDB.generateLink(col.file, "/"),
+        }));
+        collectionLinks = collectionLinks.filter(
+            (cl) => !currentColl.includes(cl.link)
+        );
+        if (collectionLinks.length > 0) {
+            menu.addItem((menuItem: MenuItem) => {
+                menuItem.setTitle("Add To Collection...");
+                collectionLinks.forEach((cl) => {
+                    menuItem.setSubmenu().addItem((menuItem: MenuItem) => {
+                        menuItem.setTitle(cl.col.file.basename);
+                        menuItem.callback = () => {
+                            console.log(`add item to ${cl.col.file.basename}`);
+                            currentColl.push(cl.link);
+                            this.app.fileManager.processFrontMatter(
+                                file,
+                                (fm) => {
+                                    fm[this.settings.collectionAttributeKey] =
+                                        currentColl;
+                                }
+                            );
+                        };
+                    });
+                });
+            });
+        }
+    }
 
-
+    private onEditorMenu(
+        menu: Menu,
+        editor: Editor,
+        info: MarkdownView | MarkdownFileInfo
+    ) {
+        console.log("onEditorMenu", arguments);
+    }
 }
-

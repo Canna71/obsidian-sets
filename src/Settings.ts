@@ -7,6 +7,7 @@ export interface SetsSettings {
     typeAttributeKey: string;
     collectionsRoot: string;
     collectionAttributeKey: string;
+    collectionType: string;
 }   
 
 export const DEFAULT_SETTINGS: SetsSettings = {
@@ -16,6 +17,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     typesFolder: "Sets/Types",
     typeAttributeKey: "type",
     collectionsRoot: "Collections",
-    collectionAttributeKey: "collection"
+    collectionAttributeKey: "collection",
+    collectionType: "collection"
 }
 

@@ -54,7 +54,7 @@ export class VaultDB {
         // }
         this.accessors.clear();
         this.dbInitialized = true;
-
+        console.info("metadata-changed")
         this.observer.notify("metadata-changed");
     }
 
@@ -203,7 +203,12 @@ export class VaultDB {
         return defaults; 
     }
 
-    
+    getCollections():ObjectData[] {
+        const clause:Clause = [this.plugin.settings.typeAttributeKey, "eq", this.plugin.settings.collectionType];
+        const query = this.fromClauses([clause],[]);
+        const result = this.execute(query);
+        return result.data;
+    }
 
     getAttributeDefinition(key: string):AttributeDefinition {
         if(this.accessors.has(key)){
