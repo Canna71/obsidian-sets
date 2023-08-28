@@ -235,6 +235,5 @@ export default class SetsPlugin extends Plugin {
         editor: Editor,
         info: MarkdownView | MarkdownFileInfo
     ) {
-        console.log("onEditorMenu", arguments);
     }
 }
