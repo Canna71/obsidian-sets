@@ -1,7 +1,12 @@
-
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
-import { Clause, IntrinsicAttributeKey, Query, SortField, isIntrinsicAttribute } from "./Query";
+import {
+    Clause,
+    IntrinsicAttributeKey,
+    Query,
+    SortField,
+    isIntrinsicAttribute,
+} from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
@@ -20,10 +25,9 @@ export type QueryResult = {
 
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex
-    return e.replace(/[\\\x00\x08\x0B\x0C\x0E-\x1F ]/g, (function(e) {
-        return encodeURIComponent(e)
-    }
-    ))
+    return e.replace(/[\\\x00\x08\x0B\x0C\x0E-\x1F ]/g, function (e) {
+        return encodeURIComponent(e);
+    });
 }
 
 export class VaultDB {
@@ -32,9 +36,10 @@ export class VaultDB {
     private plugin: SetsPlugin;
     private app: App;
     private _collectionCache?: ObjectData[] = undefined;
+    private _typesCache?: TFile[] = undefined;
     private observer = new Observer();
 
-    private accessors = new Map<string,AttributeDefinition>();
+    private accessors = new Map<string, AttributeDefinition>();
 
     constructor(plugin: SetsPlugin) {
         this.plugin = plugin;
@@ -63,6 +68,7 @@ export class VaultDB {
         this.accessors.clear();
         this.dbInitialized = true;
         this._collectionCache = undefined;
+        this._typesCache = undefined;
         this.observer.notify("metadata-changed");
         console.info("metadata-changed");
     }
@@ -79,7 +85,11 @@ export class VaultDB {
         this.observer.detach(event, observer);
     }
 
-    fromClauses(clauses: Clause[], sort: SortField[], context?: ObjectData): Query {
+    fromClauses(
+        clauses: Clause[],
+        sort: SortField[],
+        context?: ObjectData
+    ): Query {
         return Query.__fromClauses(this, clauses, sort, context);
     }
 
@@ -92,14 +102,14 @@ export class VaultDB {
         //@ts-ignore
         // const cache = this.app.metadataCache.metadataCache;
         const ret: ObjectData[] = [];
-        
+
         //@ts-ignore
         const files: string[] = this.app.metadataCache.getCachedFiles();
         for (const filePath of files) {
             const fileCache = this.app.metadataCache.getCache(filePath);
             if (fileCache) {
                 const ob = this.getObjectData(filePath, fileCache);
-                if(types.contains(ob.file)) continue;
+                if (types.contains(ob.file)) continue;
                 if (query.matches(ob)) {
                     ret.push(ob);
                 }
@@ -110,13 +120,13 @@ export class VaultDB {
         const sortby = query.sortby;
         // const gt = getOperatorById("gt");
         // const lt = getOperatorById("lt");
-        sortby.forEach(sortField => {
-            ret.sort((a,b)=>{
+        sortby.forEach((sortField) => {
+            ret.sort((a, b) => {
                 // const op = sortField[1] ? lt : gt;
                 const attr = this.getAttributeDefinition(sortField[0]);
                 return (sortField[1] ? -1 : 1) * this.compare(attr, a, b);
-            }) 
-        })
+            });
+        });
 
         return {
             data: ret,
@@ -125,8 +135,11 @@ export class VaultDB {
         };
     }
 
-    private compare (attr: AttributeDefinition, a: ObjectData, b: ObjectData): number {
-        
+    private compare(
+        attr: AttributeDefinition,
+        a: ObjectData,
+        b: ObjectData
+    ): number {
         const aval = attr.getValue(a);
         const bval = attr.getValue(b);
 
@@ -136,9 +149,10 @@ export class VaultDB {
     }
 
     queryType(type: string) {
-        const query = this.fromClauses([
-            [this.plugin.settings.typeAttributeKey,"eq",type]
-        ],[]);
+        const query = this.fromClauses(
+            [[this.plugin.settings.typeAttributeKey, "eq", type]],
+            []
+        );
         return this.execute(query);
     }
 
@@ -146,13 +160,13 @@ export class VaultDB {
         const type = results.query.inferSetType();
         const collection = results.query.inferCollection();
 
-        if(!type && !collection) return false;
+        if (!type && !collection) return false;
         return results.query.canCreate;
     }
 
     async addToSet(results: QueryResult) {
         const tmp = await this.getTemplate(results);
-        if(!tmp) return;
+        if (!tmp) return;
         const { template, folder } = tmp;
         let content = "";
         if (template instanceof TFile) {
@@ -162,21 +176,20 @@ export class VaultDB {
         if (folder instanceof TFolder) {
             const defaults = this.inferProperties(results);
 
-            const newFIle = await this.app.fileManager.createNewFile(
+            const newFile = await this.app.fileManager.createNewFile(
                 folder as TFolder,
                 undefined,
                 undefined,
                 content
             );
-            console.log("new file created:", newFIle.path);
-            this.app.fileManager.processFrontMatter(newFIle, (frontMatter)=>{
+            this.app.fileManager.processFrontMatter(newFile, (frontMatter) => {
                 Object.assign(frontMatter, defaults);
-            })
+            });
         }
     }
     private async getTemplate(results: QueryResult) {
         const type = results.query.inferSetType();
-        if(type){
+        if (type) {
             // const typeDisplayName = this.getTypeDisplayName(type);
             const folder = await this.getSetFolder(type);
             let template = this.getArchetypeFile(type);
@@ -186,82 +199,102 @@ export class VaultDB {
             return { template, folder };
         }
         const collection = results.query.inferCollection();
-        if(collection && results.query.context) {
-
+        if (collection && results.query.context) {
             const folder = results.query.context.file.parent;
-            if(folder) 
-                return { template: undefined, folder };
+            if (folder) return { template: undefined, folder };
         }
     }
 
-    inferProperties(results: QueryResult) : Record<string,any> {
-        const constraints = results.query.clauses.filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
-        // .filter(c => getOperatorById(c.op).isConstraint)
-        .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic)
-        ;
-
+    inferProperties(results: QueryResult): Record<string, any> {
+        const constraints = results.query.clauses
+            .filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
+            // .filter(c => getOperatorById(c.op).isConstraint)
+            .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic);
         const context = results.query.context;
 
-        const defaults = constraints.reduce((def, [at,op,val])=>{
+        const defaults = constraints.reduce((def, [at, op, val]) => {
             const operator = getOperatorById(op);
             const curDefault = def[at];
 
             const okDefault = operator.enforce?.(curDefault, val, context);
-            return {...def, [at]: okDefault}
-        },{} as Record<string,any>);
-        return defaults; 
+            return { ...def, [at]: okDefault };
+        }, {} as Record<string, any>);
+        return defaults;
     }
 
-    getCollections():ObjectData[] {
-        if(this._collectionCache !== undefined) {
+    getCollections(): ObjectData[] {
+        if (this._collectionCache !== undefined) {
             return this._collectionCache;
         }
 
-        const clause:Clause = [this.plugin.settings.typeAttributeKey, "eq", this.plugin.settings.collectionType];
-        const query = this.fromClauses([clause],[]);
+        const clause: Clause = [
+            this.plugin.settings.typeAttributeKey,
+            "eq",
+            this.plugin.settings.collectionType,
+        ];
+        const query = this.fromClauses([clause], []);
         const result = this.execute(query);
         this._collectionCache = result.data;
         return result.data;
     }
 
-    getAttributeDefinition(key: string):AttributeDefinition {
-        if(this.accessors.has(key)){
+    getTypes(): TFile[] {
+        if (this._typesCache !== undefined) {
+            return this._typesCache;
+        }
+        const typesFolder = this.getArchetypeFolder();
+        if (!typesFolder) return [];
+        const typesFiles = typesFolder.children.filter(
+            (f) => f instanceof TFile
+        ) as TFile[];
+        this._typesCache = typesFiles;
+        return typesFiles;
+    }
+
+    getAttributeDefinition(key: string): AttributeDefinition {
+        if (this.accessors.has(key)) {
             return this.accessors.get(key)!;
         }
-        let ret:AttributeDefinition;
-        if (isIntrinsicAttribute(key) ) {
-            ret = new IntrinsicAttributeDefinition(this.app, key as IntrinsicAttributeKey);
+        let ret: AttributeDefinition;
+        if (isIntrinsicAttribute(key)) {
+            ret = new IntrinsicAttributeDefinition(
+                this.app,
+                key as IntrinsicAttributeKey
+            );
         } else {
             ret = new MetadataAttributeDefinition(this.app, key);
         }
-        this.accessors.set(key,ret);
+        this.accessors.set(key, ret);
         return ret;
     }
 
-
-    
-
     private getArchetypeFile(type: string) {
+        // const typesFolder = this.getArchetypeFolder();
+        // if(!typesFolder) return undefined;
+        // const availableTypes = typesFolder.children;
+        const availableTypes = this.getTypes();
+        if (availableTypes.length < 1) return undefined;
 
-        const typesFolder = this.getArchetypeFolder();
-        if(!typesFolder) return undefined;
-        const availableTypes = typesFolder.children;
-
-        const typeFile = availableTypes.find(file=>{
-            if(file instanceof TFile){
-                const cache = this.app.metadataCache.getFileCache(file);
-                if(cache) {
-                    if(cache.frontmatter?.[this.plugin.settings.typeAttributeKey] === type) return true;
-                }
+        const typeFile = availableTypes.find((file) => {
+            const cache = this.app.metadataCache.getFileCache(file);
+            if (cache) {
+                if (
+                    cache.frontmatter?.[
+                        this.plugin.settings.typeAttributeKey
+                    ] === type
+                )
+                return true;
             }
-        })
+        });
         return typeFile;
         // const typeFilePath = this.getArchetypePath(typeDisplayName);
         // return this.app.vault.getAbstractFileByPath(typeFilePath);
     }
 
     private getArchetypeFolder() {
-        return this.app.vault.getAbstractFileByPath(this.plugin.settings.typesFolder) as TFolder;
+        return this.app.vault.getAbstractFileByPath(
+            this.plugin.settings.typesFolder
+        ) as TFolder;
     }
 
     private getArchetypePath(typeDisplayName: string) {
@@ -301,7 +334,8 @@ export class VaultDB {
                 for (const key in inst.frontmatter) {
                     subsum[key] = subsum[key] || [];
                     if (!subsum[key].contains(inst.frontmatter[key])) {
-                        inst.frontmatter[key] && subsum[key].push(inst.frontmatter[key]);
+                        inst.frontmatter[key] &&
+                            subsum[key].push(inst.frontmatter[key]);
                     }
                 }
             }
@@ -336,9 +370,9 @@ export class VaultDB {
 
     public generateWikiLink(file: TFile, source = "/") {
         // return app.fileManager.generateMarkdownLink(file,source)
-        const linkText =  app.metadataCache.fileToLinktext(file, source);
+        const linkText = app.metadataCache.fileToLinktext(file, source);
 
-        return `[[${escapeURI(linkText)}]]`
+        return `[[${escapeURI(linkText)}]]`;
     }
 
     public getDataContext(filePath: string): ObjectData {
@@ -349,7 +383,7 @@ export class VaultDB {
         filePath: string,
         metadata?: CachedMetadata
     ): ObjectData {
-        if(metadata === undefined){
+        if (metadata === undefined) {
             metadata = this.app.metadataCache.getCache(filePath) || undefined;
         }
         const tfile = this.app.vault.getAbstractFileByPath(filePath);
@@ -367,8 +401,8 @@ export class VaultDB {
 
     private async ensureFolder(path: string) {
         let folder = this.app.vault.getAbstractFileByPath(path);
-        if(!folder || !(folder instanceof TFolder)){
-            folder = await this.app.vault.createFolder(path)
+        if (!folder || !(folder instanceof TFolder)) {
+            folder = await this.app.vault.createFolder(path);
         }
         return folder as TFolder;
     }
