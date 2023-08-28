@@ -321,7 +321,9 @@ export class VaultDB {
     }
 
     public generateLink(file: TFile, source = "/") {
-        return app.fileManager.generateMarkdownLink(file,source)
+        // return app.fileManager.generateMarkdownLink(file,source)
+        const linkText =  app.metadataCache.fileToLinktext(file, source);
+        return `[[${linkText}]]`
     }
 
     public getDataContext(filePath: string): ObjectData {
