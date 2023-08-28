@@ -16,13 +16,13 @@ export function isIntrinsicAttribute(key: IntrinsicAttributeKey | string): key i
     return (Object.values(IntrinsicAttributeKey).includes(key as IntrinsicAttributeKey) );
 }
 
-export type ExtrinsicAttribute = string;
+export type ExtrinsicAttributeKey = string;
 
-export type AttributeClause = IntrinsicAttributeKey | ExtrinsicAttribute;
+export type AttributeKey = IntrinsicAttributeKey | ExtrinsicAttributeKey;
 
-export type Clause = [AttributeClause, OperatorName, any];
+export type Clause = [AttributeKey, OperatorName, any];
 
-export type SortField = [AttributeClause, boolean];
+export type SortField = [AttributeKey, boolean];
 
 // export type Clause = {
 //     at: AttributeClause,
@@ -87,14 +87,23 @@ export class Query {
     }
 
     inferSetType(): string | undefined {
-        const typeClauses = this.getTypeClauses();
+        const typeClauses = this.getClausesByAttr(this._settings.typeAttributeKey);
         if (typeClauses.length > 0) return typeClauses[0][2] as string;
     }
 
-    getTypeClauses(): Clause[] {
+    inferCollection(): string | undefined {
+        const typeClauses = this.getClausesByAttr(this._settings.collectionAttributeKey, "hasthis");
+        if (typeClauses.length > 0 && this._context) {
+            const link = this._db.generateLink(this._context.file)
+            return link;
+        }
+        
+    }
+
+    getClausesByAttr(key: AttributeKey, op: OperatorName="eq"): Clause[] {
         const clauses = this._clauses.filter(
-            ([at, op, _]) =>
-                at === this._settings.typeAttributeKey && op === "eq"
+            ([at, clop, _]) =>
+                at === key && clop === op
         );
         return clauses;
     }

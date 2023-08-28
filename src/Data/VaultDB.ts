@@ -135,24 +135,24 @@ export class VaultDB {
 
     canAdd(results: QueryResult) {
         const type = results.query.inferSetType();
-        return type !== undefined && results.query.canCreate;
+        const collection = results.query.inferCollection();
+
+        if(!type && !collection) return false;
+        return results.query.canCreate;
     }
 
     async addToSet(results: QueryResult) {
-        const type = results.query.inferSetType();
-        if(!type) {
-            throw Error("Could not infer type.")
-        }
-        // const typeDisplayName = this.getTypeDisplayName(type);
-        const folder = await this.getSetFolder(type);
-        let template = this.getArchetypeFile(type);
-        if (!template) {
-            template = await this.inferType(type);
-        }
-        const defaults = this.inferProperties(results);
-
+        const tmp = await this.getTemplate(results);
+        if(!tmp) return;
+        const { template, folder } = tmp;
+        let content = "";
         if (template instanceof TFile) {
-            const content = await this.app.vault.read(template);
+            content = await this.app.vault.read(template);
+        }
+
+        if (folder instanceof TFolder) {
+            const defaults = this.inferProperties(results);
+
             const newFIle = await this.app.fileManager.createNewFile(
                 folder as TFolder,
                 undefined,
@@ -165,6 +165,26 @@ export class VaultDB {
             })
         }
     }
+    private async getTemplate(results: QueryResult) {
+        const type = results.query.inferSetType();
+        if(type){
+            // const typeDisplayName = this.getTypeDisplayName(type);
+            const folder = await this.getSetFolder(type);
+            let template = this.getArchetypeFile(type);
+            if (!template) {
+                template = await this.inferType(type);
+            }
+            return { template, folder };
+        }
+        const collection = results.query.inferCollection();
+        if(collection && results.query.context) {
+
+            const folder = results.query.context.file.parent;
+            if(folder) 
+                return { template: undefined, folder };
+        }
+    }
+
     inferProperties(results: QueryResult) : Record<string,any> {
         const constraints = results.query.clauses.filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
         // .filter(c => getOperatorById(c.op).isConstraint)
@@ -293,6 +313,10 @@ export class VaultDB {
             Object.assign(fm, archeType);
         });
         return newFIle;
+    }
+
+    public generateLink(file: TFile, source = "/") {
+        return app.fileManager.generateMarkdownLink(file,source)
     }
 
     public getDataContext(filePath: string): ObjectData {
