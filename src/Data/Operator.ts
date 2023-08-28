@@ -159,8 +159,8 @@ const operators : Record<OperatorName,Operator> = {
         },
         enforce: (current:unknown, val:unknown, context: ObjectData) => {
             const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
-            const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
-            
+            // const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
+            const thisLink = context.db.generateWikiLink(context.file);
             if(!ret.includes(thisLink)) ret.push(thisLink);
             return ret;
         },

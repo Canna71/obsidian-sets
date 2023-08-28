@@ -16,7 +16,10 @@
     user-select: none;
 
     .sets-codeblock-toolbar {
+        // margin-top: 20px;
         margin-bottom: 15px;
+        display: flex;
+        flex-direction: row;
     }
 
     .sets-gridview {
