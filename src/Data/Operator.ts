@@ -6,7 +6,9 @@ export type OperatorName =
     "eq" | "neq" | "isempty" | "notempty" | 
     "contains" | "nocontains" |
     "hasall" | "hasthis" |
-    "gt" | "gte" | "lt" | "lte";
+    "gt" | "gte" | "lt" | "lte" |
+    "checked" | "unchecked"
+    ;
 
 export type Operator = {
     op: OperatorName;
@@ -28,7 +30,7 @@ export const getOperatorById = (op: OperatorName) => {
 const operators : Record<OperatorName,Operator> = {
     "eq": {
         op: "eq",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) == val,
         enforce: (current: unknown, val: unknown) => val,
         selectiveness: 0,
@@ -36,7 +38,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "neq": {
         op: "neq",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) != val,
         // enforce: (a:unknown, b:unknown) => b
         selectiveness: Number.MAX_VALUE,
@@ -123,7 +125,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "gt": {
         op: "gt",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) > (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5,
@@ -132,7 +134,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "gte": {
         op: "gte",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) >= (val as any),
         enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5,
@@ -141,7 +143,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "lt": {
         op: "lt",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) < (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5,
@@ -150,7 +152,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "lte": {
         op: "lte",
-        compatibleTypes: "*",
+        compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) <= (val as any),
         enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5,
@@ -159,7 +161,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "contains": {
         op: "contains",
-        compatibleTypes: "text",
+        compatibleTypes: ["text","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data).toString().toLowerCase().includes((val as any).toString().toLowerCase()),
         // enforce: (current:unknown, b:unknown) => b,
         selectiveness: 2,
@@ -168,11 +170,30 @@ const operators : Record<OperatorName,Operator> = {
     },
     "nocontains": {
         op: "nocontains",
-        compatibleTypes: "text",
+        compatibleTypes: ["text","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => !a.getValue(data).toString().toLowerCase().includes((val as any).toString().toLowerCase()),
         // enforce: (current:unknown, b:unknown) => b,
         selectiveness: 12,
         displayName: () => "Does Not Contain"
 
+    },
+    "checked": {
+        op: "checked",
+        compatibleTypes: ["checkbox"],
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) == true,
+        // enforce: (current:unknown, b:unknown) => b,
+        selectiveness: 10,
+        displayName: () => "Checked"
+    },
+    "unchecked": {
+        op: "unchecked",
+        compatibleTypes: ["checkbox"],
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+            const value = a.getValue(data);
+            return value == false || value === null || value === undefined;
+        },
+        // enforce: (current:unknown, b:unknown) => b,
+        selectiveness: 10,
+        displayName: () => "Unchecked"
     },
 }

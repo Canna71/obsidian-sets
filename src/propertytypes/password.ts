@@ -1,10 +1,10 @@
-import { App, ButtonComponent, setIcon } from "obsidian";
+import { App,  setIcon } from "obsidian";
 import { PropertyContext } from "src/obsidian-ex";
 
 function  registerPasswordPropertyType(app: App)  {
 
     app.metadataTypeManager.registeredTypeWidgets.password = {
-    name: () => "password",
+    name: () => "Password",
     type: "password",
     default: () => "",
     icon: "lucide-key",
