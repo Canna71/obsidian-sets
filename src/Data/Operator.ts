@@ -5,7 +5,7 @@ import { ObjectData } from "./ObjectData";
 export type OperatorName = 
     "eq" | "neq" | "isempty" | "notempty" | 
     "contains" | "nocontains" |
-    "hasall" | "hasthis" |
+    "hasall" | "hasthis" | "hasany" | "hasnone" |
     "gt" | "gte" | "lt" | "lte" |
     "checked" | "unchecked"
     ;
@@ -25,10 +25,17 @@ export const getOperatorById = (op: OperatorName) => {
     return operators[op];
 }
 
-
+const prepareLists = (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+    const list = a.getValue(data);
+    if(!list) return false;
+    if(!Array.isArray(list)) return false;
+    if (val === undefined) val = []
+    if (!Array.isArray(val)) val=[val];
+    return {list:list as any[], value: val as any[]}           
+}
 
 const operators : Record<OperatorName,Operator> = {
-    "eq": {
+    "eq": { 
         op: "eq",
         compatibleTypes: ["text","number","date","datetime","password"],
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) == val,
@@ -80,13 +87,11 @@ const operators : Record<OperatorName,Operator> = {
         op: "hasall",
         compatibleTypes: "list",
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
-            const list = a.getValue(data);
-            if(!list) return false;
-            if(!Array.isArray(list)) return false;
-            if (val === undefined) val = []
-            if (!Array.isArray(val)) val=[val];
-            
-            return (val as any[]).every(el => (list as any[]).includes(el))
+                
+            const res = prepareLists(a,data,val);
+            if(!res) return res;
+            const {list, value} = res;
+            return value.every(el => (list as any[]).includes(el))
         },
         enforce: (current:unknown, val:unknown) => {
             const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
@@ -97,6 +102,38 @@ const operators : Record<OperatorName,Operator> = {
         },
         selectiveness: 5,
         displayName: () => "Has All"
+
+    },
+    "hasany": {
+        op: "hasany",
+        compatibleTypes: "list",
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+            const res = prepareLists(a,data,val);
+            if(!res) return res;
+            const {list, value} = res;
+            return value.some(el => (list as any[]).includes(el))
+        },
+        
+        selectiveness: 5,
+        displayName: () => "Has Any"
+
+    },
+    "hasnone": {
+        op: "hasnone",
+        compatibleTypes: "list",
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+                
+            const res = prepareLists(a,data,val);
+            if(!res) return res;
+            const {list, value} = res;
+            return value.every(el => !(list as any[]).includes(el))
+        },
+        enforce: (current:unknown, val:unknown) => {
+            
+            return [];
+        },
+        selectiveness: 5,
+        displayName: () => "Has None"
 
     },
     "hasthis": {
