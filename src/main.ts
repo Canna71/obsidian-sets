@@ -202,7 +202,7 @@ export default class SetsPlugin extends Plugin {
             ] as string[]) || [];
         let collectionLinks = collections.map((col) => ({
             col,
-            link: this._vaultDB.generateLink(col.file, "/"),
+            link: this._vaultDB.generateWikiLink(col.file, "/"),
         }));
         collectionLinks = collectionLinks.filter(
             (cl) => !currentColl.includes(cl.link)

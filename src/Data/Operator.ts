@@ -82,7 +82,7 @@ const operators : Record<OperatorName,Operator> = {
             if(!Array.isArray(list)) return false;
 
             
-            const thisLink = data.db.generateLink(context.file);
+            const thisLink = data.db.generateWikiLink(context.file);
             return list.includes(thisLink);
             // return (val as any[]).every(el => (list as any[]).includes(el))
         },

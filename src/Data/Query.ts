@@ -94,7 +94,7 @@ export class Query {
     inferCollection(): string | undefined {
         const typeClauses = this.getClausesByAttr(this._settings.collectionAttributeKey, "hasthis");
         if (typeClauses.length > 0 && this._context) {
-            const link = this._db.generateLink(this._context.file)
+            const link = this._db.generateWikiLink(this._context.file)
             return link;
         }
         

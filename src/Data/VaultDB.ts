@@ -18,6 +18,14 @@ export type QueryResult = {
     query: Query;
 };
 
+function escapeURI(e: string) {
+    // eslint-disable-next-line no-control-regex
+    return e.replace(/[\\\x00\x08\x0B\x0C\x0E-\x1F ]/g, (function(e) {
+        return encodeURIComponent(e)
+    }
+    ))
+}
+
 export class VaultDB {
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
@@ -320,10 +328,11 @@ export class VaultDB {
         return newFIle;
     }
 
-    public generateLink(file: TFile, source = "/") {
+    public generateWikiLink(file: TFile, source = "/") {
         // return app.fileManager.generateMarkdownLink(file,source)
         const linkText =  app.metadataCache.fileToLinktext(file, source);
-        return `[[${linkText}]]`
+
+        return `[[${escapeURI(linkText)}]]`
     }
 
     public getDataContext(filePath: string): ObjectData {
