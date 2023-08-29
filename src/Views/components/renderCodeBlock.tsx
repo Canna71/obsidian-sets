@@ -71,6 +71,8 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
                 fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
             } else {
                 fieldDefinitions = db.getTypeAttributes(definition.type)?.map(key => ({ key }))
+                
+                
             }
         } else if (definition.collection) {
             if (getSetsSettings().inferCollectionFieldsByDefault) {
@@ -78,10 +80,15 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
             }
         }
 
-        if (!fieldDefinitions) {
-            fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName, width: undefined }]
+        
+        fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName, width: undefined }, ...(fieldDefinitions||[])]
+        if(definition.type && !getSetsSettings().inferSetFieldsByDefault) {
+            definition = {...definition, fields: fieldDefinitions}
         }
     }
+
+    
+            
 
 
     const attributes: AttributeDefinition[] =
