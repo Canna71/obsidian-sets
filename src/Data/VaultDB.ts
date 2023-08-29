@@ -442,6 +442,6 @@ export class VaultDB {
             Object.assign(avail, result.frontmatter)
         })
 
-        return [IntrinsicAttributeKey.FileName, ...Object.keys(avail)];
+        return [...Object.keys(avail)];
     }
 }

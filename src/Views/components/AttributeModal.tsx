@@ -13,11 +13,13 @@ export interface PropertyData {
 
 export class AttributeModal extends SuggestModal<PropertyData> {
     private _types: any;
+    private _onSelect: (PropertyData: any) => void;
     // private _app: App;
-    constructor(app: App) {
+    constructor(app: App, onSelect:(PropertyData)=>void) {
         super(app);
         // this._types = indexBy<any>("type",Object.values(app.metadataTypeManager.registeredTypeWidgets));
         this._types = app.metadataTypeManager.registeredTypeWidgets;
+        this._onSelect = onSelect;
     }
     // Returns all available suggestions.
     getSuggestions(query: string): PropertyData[] {
@@ -58,6 +60,7 @@ export class AttributeModal extends SuggestModal<PropertyData> {
 
     // Perform action on the selected suggestion.
     onChooseSuggestion(prop: PropertyData, evt: MouseEvent | KeyboardEvent) {
-        console.log(`chosen `, prop);
+        // console.log(`chosen `, prop);
+        this._onSelect && this._onSelect(prop);
     }
 }

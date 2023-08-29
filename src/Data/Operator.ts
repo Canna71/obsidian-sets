@@ -26,6 +26,14 @@ export const getOperatorById = (op: OperatorName) => {
     return operators[op];
 }
 
+export const getOperatorsForType = (type: string) => {
+    return Object.values(operators).filter(operator => {
+        if(operator.compatibleTypes === "*") return true;
+        if(operator.compatibleTypes.includes(type)) return true;
+        return false;
+    })
+}
+
 const prepareLists = (a:AttributeDefinition, data:ObjectData, val:unknown) => {
     const list = a.getValue(data);
     if(!list) return false;
