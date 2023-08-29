@@ -1,5 +1,4 @@
 import { App, SuggestModal, setIcon } from "obsidian";
-import { indexBy } from "src/Utils/indexBy";
 import { sortBy } from "src/Utils/sortBy";
 import { PropertyInfo } from "src/obsidian-ex";
 

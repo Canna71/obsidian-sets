@@ -90,7 +90,7 @@ const operators : Record<OperatorName,Operator> = {
     
     "hasall": {
         op: "hasall",
-        compatibleTypes: "list",
+        compatibleTypes: "multitext",
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
                 
             const res = prepareLists(a,data,val);
@@ -112,7 +112,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "hasany": {
         op: "hasany",
-        compatibleTypes: "list",
+        compatibleTypes: "multitext",
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
             const res = prepareLists(a,data,val);
             if(!res) return res;
@@ -127,7 +127,7 @@ const operators : Record<OperatorName,Operator> = {
     },
     "hasnone": {
         op: "hasnone",
-        compatibleTypes: "list",
+        compatibleTypes: "multitext",
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
                 
             const res = prepareLists(a,data,val);
