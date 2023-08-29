@@ -3,15 +3,16 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
-import { FilterEditor } from "../FilterEditor";
-import { SetDefinition } from "./renderCodeBlock";
+import { FilterModal } from "../FilterModal";
 import { useBlock } from "./BlockProvider";
+import { useApp } from "./AppProvider";
 
 const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeDefinition[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
 
     let filterBtn : HTMLDivElement;
+    const app = useApp()!;
 
-    const {definition} = useBlock();
+    const {definition} = useBlock()!;
 
     const onAdd= async () => {
         //TODO: move elsewhere
@@ -26,7 +27,7 @@ const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeD
     }
 
     const onFilter = () => {
-        const filterModal = new FilterEditor(definition);
+        const filterModal = new FilterModal(app, definition());
         filterModal.open();
     }
 
