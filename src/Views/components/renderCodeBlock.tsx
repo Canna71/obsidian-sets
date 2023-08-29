@@ -1,6 +1,6 @@
 
 import { render } from "solid-js/web";
-import {  Clause, SortField } from "src/Data/Query";
+import { Clause, IntrinsicAttributeKey, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
@@ -10,6 +10,7 @@ import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
 import { BlockProvider } from "./BlockProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
+import { getSetsSettings } from "src/main";
 
 export interface FieldDefinition {
     key: string;
@@ -17,19 +18,19 @@ export interface FieldDefinition {
 }
 
 export interface SetDefinition {
-    filter? : Clause[];
+    filter?: Clause[];
     fields?: FieldDefinition[];
     sortby?: SortField[];
     transientState?: any;
 }
 
-const stateMap = new Map<string,any>();
+const stateMap = new Map<string, any>();
 
 
 
-const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTMLElement, ctx: MarkdownPostProcessorContext) => {
+const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
     const clauses = definition.filter || [];
-    
+
     const context = db.getDataContext(ctx.sourcePath);
     const sortby = definition.sortby || [];
     const query = db.fromClauses(clauses, sortby, context);
@@ -46,15 +47,24 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
 
     db.on("metadata-changed", onDataChanged);
 
-    onCleanup(()=>{
+    onCleanup(() => {
         db.off("metadata-changed", onDataChanged);
-    }) 
+    })
 
-    const fieldDefinitions = definition.fields || db.inferFields(initialdata).map(key => ({key}));
-    const attributes : AttributeDefinition[] =  
-        fieldDefinitions.map(fd=>fd.key)
-        .map(key=>db.getAttributeDefinition(key));
-    
+    let fieldDefinitions = definition.fields;
+    if (!fieldDefinitions) {
+        if (getSetsSettings().inferFieldsByDefault) {
+            fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
+        } else {
+            fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName, width: undefined }]
+        }
+    }
+
+
+    const attributes: AttributeDefinition[] =
+        fieldDefinitions.map(fd => fd.key)
+            .map(key => db.getAttributeDefinition(key));
+
     // if (attributes.length === 0) {
     //     attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
     // }
@@ -62,23 +72,23 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
     const updateDefinition = (def: SetDefinition) => {
         const scrollLeft = el.querySelector(".sets-gridview-scroller")?.scrollLeft;
         // def.scroll = scrollLeft;
-        stateMap.set("TODO",{scroll: scrollLeft});
+        stateMap.set("TODO", { scroll: scrollLeft });
         delete def.transientState;
-        saveDataIntoBlock<SetDefinition>(def,ctx)
-    } 
+        saveDataIntoBlock<SetDefinition>(def, ctx)
+    }
 
     console.log(`scroll from map:`, stateMap.get("TODO"))
     definition.transientState = stateMap.get("TODO");
     stateMap.delete("TODO");
-    render(()=>
-    <AppProvider app={app}>
-        <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >
-            <CodeBlock queryResult={data} attributes={attributes}  viewMode={{
-                viewMode,setViewMode
-            }} />
-        </BlockProvider>
-        
-    </AppProvider>, el);
+    render(() =>
+        <AppProvider app={app}>
+            <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >
+                <CodeBlock queryResult={data} attributes={attributes} viewMode={{
+                    viewMode, setViewMode
+                }} />
+            </BlockProvider>
+
+        </AppProvider>, el);
 }
 
 export default renderCodeBlock;
