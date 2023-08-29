@@ -18,6 +18,8 @@ export interface FieldDefinition {
 }
 
 export interface SetDefinition {
+    type?: string;
+    collection?: string;
     filter?: Clause[];
     fields?: FieldDefinition[];
     sortby?: SortField[];
@@ -33,7 +35,18 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     const context = db.getDataContext(ctx.sourcePath);
     const sortby = definition.sortby || [];
-    const query = db.fromClauses(clauses, sortby, context);
+
+    let query;
+    if (definition.type) {
+        query = db.fromClausesSet(definition.type, clauses, sortby, context);
+    } else if (definition.collection) {
+        query = db.fromClausesCollection(definition.collection, clauses, sortby, context);
+    } else {
+        query = db.fromClauses(clauses, sortby, context);
+    }
+
+
+
     const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);
@@ -53,9 +66,19 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     let fieldDefinitions = definition.fields;
     if (!fieldDefinitions) {
-        if (getSetsSettings().inferFieldsByDefault) {
-            fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
-        } else {
+        if (definition.type) {
+            if (getSetsSettings().inferSetFieldsByDefault) {
+                fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
+            } else {
+                fieldDefinitions = db.getTypeAttributes(definition.type)?.map(key => ({ key }))
+            }
+        } else if (definition.collection) {
+            if (getSetsSettings().inferCollectionFieldsByDefault) {
+                fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
+            }
+        }
+
+        if (!fieldDefinitions) {
             fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName, width: undefined }]
         }
     }

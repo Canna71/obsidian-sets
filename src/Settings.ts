@@ -8,7 +8,9 @@ export interface SetsSettings {
     collectionsRoot: string;
     collectionAttributeKey: string;
     collectionType: string;
-    inferFieldsByDefault: boolean;
+    inferCollectionFieldsByDefault: boolean;
+    inferSetFieldsByDefault: boolean;
+    inferQueryFieldsByDefault: boolean;
 }   
 
 export const DEFAULT_SETTINGS: SetsSettings = {
@@ -17,9 +19,11 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     setsRoot: "Sets",
     typesFolder: "Sets/Types",
     typeAttributeKey: "type",
-    collectionsRoot: "Collections",
+    collectionsRoot: "Sets/Collections",
     collectionAttributeKey: "collection",
     collectionType: "collection",
-    inferFieldsByDefault: false
+    inferCollectionFieldsByDefault: true,
+    inferSetFieldsByDefault: false,
+    inferQueryFieldsByDefault: false
 }
 

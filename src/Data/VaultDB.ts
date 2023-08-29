@@ -94,6 +94,24 @@ export class VaultDB {
         return Query.__fromClauses(this, clauses, sort, context);
     }
 
+    fromClausesSet(
+        type: string,
+        clauses: Clause[],
+        sort: SortField[],
+        context?: ObjectData
+    ): Query {
+        return Query.__fromClauses(this, [ [this.plugin.settings.typeAttributeKey,"eq",type], ...clauses], sort, context);
+    }
+
+    fromClausesCollection(
+        link: string,
+        clauses: Clause[],
+        sort: SortField[],
+        context?: ObjectData
+    ): Query {
+        return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
+    }
+
     execute(query: Query): QueryResult {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
@@ -290,6 +308,16 @@ export class VaultDB {
         return typeFile;
         // const typeFilePath = this.getArchetypePath(typeDisplayName);
         // return this.app.vault.getAbstractFileByPath(typeFilePath);
+    }
+
+    getTypeAttributes(type:string) {
+        const file = this.getArchetypeFile(type);
+        if(file) {
+            const cache = this.app.metadataCache.getFileCache(file);
+            if(cache?.frontmatter) {
+                return Object.keys(cache.frontmatter);
+            }
+        }
     }
 
     private getArchetypeFolder() {

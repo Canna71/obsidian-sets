@@ -41,7 +41,7 @@ export class Query {
     private _context?: ObjectData;
     private _sortBy: SortField[];
 
-    private constructor(db: VaultDB, clauses: Clause[], sort: SortField[], context?: ObjectData) {
+    protected constructor(db: VaultDB, clauses: Clause[], sort: SortField[], context?: ObjectData) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -124,3 +124,5 @@ export class Query {
         return this._sortBy;
     }
 }
+
+
