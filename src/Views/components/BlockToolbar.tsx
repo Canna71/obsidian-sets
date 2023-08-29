@@ -32,7 +32,7 @@ const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeD
     }
 
     onMount(()=>{
-        setIcon(filterBtn, "filter")
+        filterBtn && setIcon(filterBtn, "filter")
     })
 
     return <div class="sets-codeblock-toolbar">

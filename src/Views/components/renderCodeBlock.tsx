@@ -48,9 +48,9 @@ const renderCodeBlock =  (app:App, db:VaultDB, definition:SetDefinition, el:HTML
 
     onCleanup(()=>{
         db.off("metadata-changed", onDataChanged);
-    })
+    }) 
 
-    const fieldDefinitions = definition.fields || [{"key": "__bname"}];
+    const fieldDefinitions = definition.fields || db.inferFields(initialdata).map(key => ({key}));
     const attributes : AttributeDefinition[] =  
         fieldDefinitions.map(fd=>fd.key)
         .map(key=>db.getAttributeDefinition(key));

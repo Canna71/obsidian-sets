@@ -1,6 +1,7 @@
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
 import {
+    AttributeKey,
     Clause,
     IntrinsicAttributeKey,
     Query,
@@ -405,5 +406,14 @@ export class VaultDB {
             folder = await this.app.vault.createFolder(path);
         }
         return folder as TFolder;
+    }
+
+    inferFields(results: QueryResult): AttributeKey[] {
+        const avail = {};
+        results.data.forEach(result => {
+            Object.assign(avail, result.frontmatter)
+        })
+
+        return [IntrinsicAttributeKey.FileName, ...Object.keys(avail)];
     }
 }
