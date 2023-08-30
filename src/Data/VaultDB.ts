@@ -71,7 +71,6 @@ export class VaultDB {
         this._collectionCache = undefined;
         this._typesCache = undefined;
         this.observer.notify("metadata-changed");
-        console.info("metadata-changed");
     }
 
     dispose() {

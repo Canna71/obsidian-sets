@@ -36,7 +36,6 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
                 app: app,
                 key,
                 onChange: (val) => {
-                    console.log(`what to do now? `, val);
                     const owner = props.data.file;
                     // const fm = {...props.data.frontmatter, [key]: val}
                     app.fileManager.processFrontMatter(owner, (fm) => {

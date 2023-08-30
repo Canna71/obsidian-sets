@@ -3,15 +3,18 @@ import { SetDefinition } from "./components/renderCodeBlock";
 import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { FilterEditor } from "./components/FilterEditor";
+import { VaultDB } from "src/Data/VaultDB";
 
 
 
 export class FilterModal extends Modal {
     message: string;
     definition: SetDefinition;
-    constructor(app: App, definition: SetDefinition) {
+    private _db: VaultDB;
+    constructor(app: App,db:VaultDB, definition: SetDefinition) {
         super(app);
         this.definition = definition;
+        this._db = db;
     }
 
     onOpen() {
@@ -22,7 +25,7 @@ export class FilterModal extends Modal {
         // const clauseContainer = contentEl.createDiv();
 
 
-        render(() => <AppProvider app={this.app}><FilterEditor /></AppProvider>, contentEl);
+        render(() => <AppProvider app={this.app}><FilterEditor db={this._db} /></AppProvider>, contentEl);
 
         // new Setting(contentEl)
         //     .addButton((btn) =>

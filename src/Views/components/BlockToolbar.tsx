@@ -27,7 +27,7 @@ const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeD
     }
 
     const onFilter = () => {
-        const filterModal = new FilterModal(app, definition());
+        const filterModal = new FilterModal(app, props.queryResult.db, definition());
         filterModal.open();
     }
 

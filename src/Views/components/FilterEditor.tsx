@@ -1,19 +1,26 @@
-import { Component, Show, createEffect, createSignal, onMount } from "solid-js";
+import { Component, Show, createEffect, createSignal } from "solid-js";
 import { useApp } from "./AppProvider";
 import { AttributeModal, PropertyData } from "./AttributeModal";
 import { Operator, getOperatorsForType } from "src/Data/Operator";
-import { Clause } from "src/Data/Query";
 import { DropdownComponent } from "obsidian";
 import { mapBy } from "src/Utils/indexBy";
+import { VaultDB } from "src/Data/VaultDB";
 
-export const FilterEditor: Component = (props) => {
+export interface FilterEditorProps {
+    db: VaultDB
+}
+
+export const FilterEditor: Component<FilterEditorProps> = (props) => {
 
     const app = useApp();
 
     const [prop, setProp] = createSignal<PropertyData>();
     const [operators, setOperators] = createSignal([] as Operator[]);
+    const [operator, setOperator] = createSignal<Operator>();
+    const [val, setVal] = createSignal<any>();
 
     let ddOps: HTMLDivElement;
+    let divValue: HTMLDivElement;
 
     // app.metadataTypeManager.properties
     const addClause = (e: MouseEvent) => {
@@ -22,7 +29,12 @@ export const FilterEditor: Component = (props) => {
             const type = pd.typeKey;
             const _ops = getOperatorsForType(type);
             setOperators(_ops);
-            setProp(pd)
+            setProp(pd);
+            setOperator(_ops[0]);
+            const attr = props.db.getAttributeDefinition(prop()?.typeKey || "text");
+            const widget = attr.getPropertyWidget();
+
+            widget && setVal(widget?.default());
         });
         am.open();
     };
@@ -31,11 +43,52 @@ export const FilterEditor: Component = (props) => {
         return prop() !== undefined;
     }
 
+    const divValueIsVisible = () => {
+        return operator() !== undefined && !operator()?.isUnary;
+    }
+
     createEffect(()=>{
         if(ddlIsVisible()){
             const options = mapBy("op", operators(), op=>op.displayName())
             ddOps.empty()
-            new DropdownComponent(ddOps).addOptions(options)
+            new DropdownComponent(ddOps)
+            .addOptions(options)
+            .onChange((value:string)=>{
+                setOperator(operators().find(op => op.op === value)!);
+            })
+            .setValue(operator()?.op || operators()[0].op)
+        }
+    })
+
+    createEffect(()=>{
+        if(divValueIsVisible()) {
+            if(!prop()?.name) return;
+            const attr = props.db.getAttributeDefinition(prop()!.name);
+            const widget = attr.getPropertyWidget();
+            if(widget){
+                divValue.empty();
+                widget.render(divValue!,
+                  {key: prop()?.name,
+                    type: prop()?.typeKey,
+                    value: val()
+                },
+                {
+                    app,
+                    key: prop()?.name,
+                    onChange: (val) => {
+                        setVal(val);
+                    },
+                    rerender: () => {
+                        console.log(`re-render called`);
+                    },
+                    sourcePath: "/",
+                    blur: () => {
+                        console.log(`blur called`);
+                    },
+                    metadataEditor: null
+                }
+                );
+            }
         }
     })
 
@@ -52,9 +105,12 @@ export const FilterEditor: Component = (props) => {
                 <Show when={prop()}>
                     <input type="text" class="metadata-property-key" onClick={addClause} readOnly value={prop()?.name}></input>
                 </Show>
-                <Show when={prop() && operators().length}>
+                <Show when={ddlIsVisible()}>
                     {/* <div ref={ref => updateDDc(ref)}></div> */}
                     <div ref={ddOps!}></div>
+                </Show>
+                <Show when={divValueIsVisible()} >
+                    <div class="metadata-property-value" ref={divValue!}></div>
                 </Show>
             </div>
             <div><button onClick={addClause}>Add Clause</button></div>
