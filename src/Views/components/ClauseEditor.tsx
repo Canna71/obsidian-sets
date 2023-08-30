@@ -7,6 +7,7 @@ import { mapBy } from "src/Utils/indexBy";
 import { VaultDB } from "src/Data/VaultDB";
 import { Clause } from "src/Data/Query";
 import { PropertyData, getPropertyData } from "src/Data/PropertyData";
+import { getDynamicValuesForType, isDynamic } from "src/Data/DynamicValues";
 
 export interface ClauseEditorProps {
     db: VaultDB,
@@ -40,8 +41,17 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     // const [operator, setOperator] = createSignal<Operator>(getOperator());
     // const [val, setVal] = createSignal<any>(props.clause()[2]);
 
+    const dynamicValues = () => {
+        if(prop()?.typeKey){
+            const dv = getDynamicValuesForType(prop()!.typeKey)
+            return dv;
+        }
+        return [];
+    }
+
     let spanIcon: HTMLSpanElement;
     let ddOps: HTMLDivElement;
+    let ddDynamicValues: HTMLDivElement;
     let divValue: HTMLDivElement;
 
     // app.metadataTypeManager.properties
@@ -66,7 +76,11 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     }
 
     const divValueIsVisible = () => {
-        return props.clause[1] !== undefined && !getOperator()?.isUnary;
+        if(getOperator()?.isUnary) return false;
+        if(dynamicValues().length === 0) return true;
+        if(typeof props.clause[2] === "string" && isDynamic(props.clause[2])) return false;
+        return true;
+        // return props.clause[1] !== undefined 
     }
 
     createEffect(()=>{
@@ -89,6 +103,30 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 // setOperator(operators().find(op => op.op === value)!);
             })
             .setValue(props.clause[1] || operators[0].op)
+        }
+    })
+
+    createEffect(()=>{
+        if(dynamicValues().length>0){
+            const options = mapBy("id", dynamicValues(), dv=>dv.displayName())
+            options[""] = "Value:"
+            ddDynamicValues.empty();
+            let currentValue;
+            if(props.clause[2] !== undefined && isDynamic(props.clause[2])) {
+                currentValue = props.clause[2];
+            } else {
+                currentValue = ""
+            }
+            // const currentValue = isDynamic(props.clause[2]) ? props.clause[2]  !== undefined ? props.clause[2] : dynamicValues()[0].id
+        
+            new DropdownComponent(ddDynamicValues)
+            .addOptions(options)
+            .onChange((value:string)=>{
+                // TODO: check if we should reset the value
+                props.update([props.clause[0], props.clause[1], value])
+                // setOperator(operators().find(op => op.op === value)!);
+            })
+            .setValue(currentValue)
         }
     })
 
@@ -139,6 +177,10 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 <Show when={operatorsSelectIsVisible()}>
                     {/* <div ref={ref => updateDDc(ref)}></div> */}
                     <div ref={ddOps!}></div>
+                </Show>
+                <Show when={dynamicValues().length}>
+                    {/* <div ref={ref => updateDDc(ref)}></div> */}
+                    <div ref={ddDynamicValues!}></div>
                 </Show>
                 <Show when={divValueIsVisible()} >
                     <div class="metadata-property-value" ref={divValue!}></div>

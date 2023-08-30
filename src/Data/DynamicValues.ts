@@ -23,6 +23,11 @@ export function getDynamicValue(val: string, a: AttributeDefinition, data:Object
     return dv.generate(a,data,context);
 }
 
+export function getDynamicValuesForType(type: string) {
+    return Object.values(dynamicValues)
+        .filter(dv => dv.type === type);
+}
+
 export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@link-to-this": {
         id: "@link-to-this",

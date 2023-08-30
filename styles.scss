@@ -184,3 +184,15 @@
     overflow-y: visible;
     background: var(--modal-background);
 }
+
+.sets-query-editor {
+
+    .metadata-property {
+        .metadata-property-value {
+            overflow: visible;
+        }
+        input {
+            overflow-x: visible;
+        }
+    }
+}
