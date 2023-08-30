@@ -67,22 +67,6 @@ const operators : Record<OperatorName,Operator> = {
         isUnary: false
 
     },
-    "isempty": {
-        op: "isempty",
-        compatibleTypes: "*",
-        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
-            const value = a.getValue(data);
-            if(Array.isArray(value)){
-                return value.length === 0
-            }
-            return value === null || value === undefined || value === ""
-        } ,
-        enforce: (current: unknown, val: unknown) => null,
-        selectiveness: 10,
-        displayName: () => "Is Empty",
-        isUnary: true
-
-    },
     "notempty": {
         op: "notempty",
         compatibleTypes: "*",
@@ -99,6 +83,23 @@ const operators : Record<OperatorName,Operator> = {
         isUnary: true
 
     },
+    "isempty": {
+        op: "isempty",
+        compatibleTypes: "*",
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => {
+            const value = a.getValue(data);
+            if(Array.isArray(value)){
+                return value.length === 0
+            }
+            return value === null || value === undefined || value === ""
+        } ,
+        enforce: (current: unknown, val: unknown) => null,
+        selectiveness: 10,
+        displayName: () => "Is Empty",
+        isUnary: true
+
+    },
+    
     
     "hasall": {
         op: "hasall",

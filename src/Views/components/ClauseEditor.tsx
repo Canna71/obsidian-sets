@@ -58,15 +58,17 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     const onClickProp = (e: MouseEvent) => {
         const am = new AttributeModal(app!,(pd:PropertyData)=>{
             // const type = pd.typeKey;
-            // const _ops = getOperatorsForType(type);
             // setOperators(_ops);
-            setProp(pd);
+            // setProp(pd);
             // setOperator(_ops[0]);
-            const attr = props.db.getAttributeDefinition(prop()?.typeKey || "text");
+            const attr = props.db.getAttributeDefinition(pd.name || "text");
             const widget = attr.getPropertyWidget();
-            const op = operators()[0].op
+            const _ops = getOperatorsForType(pd.typeKey);
+            const op = _ops[0].op;
             // widget && setVal(widget?.default());
-            widget && props.update([pd.name,op,widget?.default()])
+            widget && props.update([pd.name,op,widget?.default()]);
+            setProp(pd);
+
         });
         am.open();
     };
@@ -82,6 +84,8 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         return true;
         // return props.clause[1] !== undefined 
     }
+
+    
 
     createEffect(()=>{
         const p = prop();
@@ -106,8 +110,12 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         }
     })
 
+    const ddlDynamicValuesIsVisible = () => {
+        return (dynamicValues().length > 0) && (!getOperator()?.isUnary);
+    }
+
     createEffect(()=>{
-        if(dynamicValues().length>0){
+        if(ddlDynamicValuesIsVisible()){
             const options = mapBy("id", dynamicValues(), dv=>dv.displayName())
             options[""] = "Value:"
             ddDynamicValues.empty();
@@ -178,7 +186,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                     {/* <div ref={ref => updateDDc(ref)}></div> */}
                     <div ref={ddOps!}></div>
                 </Show>
-                <Show when={dynamicValues().length}>
+                <Show when={ddlDynamicValuesIsVisible()}>
                     {/* <div ref={ref => updateDDc(ref)}></div> */}
                     <div ref={ddDynamicValues!}></div>
                 </Show>
