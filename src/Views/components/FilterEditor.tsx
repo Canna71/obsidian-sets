@@ -2,7 +2,7 @@ import { Component, Show, createEffect, createSignal } from "solid-js";
 import { useApp } from "./AppProvider";
 import { AttributeModal, PropertyData } from "./AttributeModal";
 import { Operator, getOperatorsForType } from "src/Data/Operator";
-import { DropdownComponent } from "obsidian";
+import { DropdownComponent, setIcon } from "obsidian";
 import { mapBy } from "src/Utils/indexBy";
 import { VaultDB } from "src/Data/VaultDB";
 
@@ -19,13 +19,14 @@ export const FilterEditor: Component<FilterEditorProps> = (props) => {
     const [operator, setOperator] = createSignal<Operator>();
     const [val, setVal] = createSignal<any>();
 
+    let spanIcon: HTMLSpanElement;
+
     let ddOps: HTMLDivElement;
     let divValue: HTMLDivElement;
 
     // app.metadataTypeManager.properties
     const addClause = (e: MouseEvent) => {
         const am = new AttributeModal(app!,(pd:PropertyData)=>{
-            const key = pd.typeIcon;
             const type = pd.typeKey;
             const _ops = getOperatorsForType(type);
             setOperators(_ops);
@@ -46,6 +47,14 @@ export const FilterEditor: Component<FilterEditorProps> = (props) => {
     const divValueIsVisible = () => {
         return operator() !== undefined && !operator()?.isUnary;
     }
+
+    createEffect(()=>{
+        const p = prop();
+        if(p){
+            const icon = p.typeIcon;
+            setIcon(spanIcon, icon || "help-circle")
+        }
+    })
 
     createEffect(()=>{
         if(ddlIsVisible()){
@@ -103,6 +112,7 @@ export const FilterEditor: Component<FilterEditorProps> = (props) => {
             <div>TODO: list existing clauses</div>
             <div class="metadata-property">
                 <Show when={prop()}>
+                    <span ref={spanIcon!} class="metadata-property-icon"></span>
                     <input type="text" class="metadata-property-key" onClick={addClause} readOnly value={prop()?.name}></input>
                 </Show>
                 <Show when={ddlIsVisible()}>
