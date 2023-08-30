@@ -13,7 +13,7 @@ export interface DynamicValue  {
     id: DynamicValueName,
     displayName: () => string,
     generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => any;
-    type: string;
+    type: string[];
 }
 
 export function isDynamic(val: string):boolean {
@@ -27,7 +27,7 @@ export function getDynamicValue(val: string, a: AttributeDefinition, data:Object
 
 export function getDynamicValuesForType(type: string) {
     return Object.values(dynamicValues)
-        .filter(dv => dv.type === type);
+        .filter(dv => dv.type.includes(type));
 }
 
 export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
@@ -42,7 +42,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
                 throw Error("Cannot generate @link-to-this since context is missing.")
             }
         },
-        type: "multitext"
+        type: ["multitext", "text"]
     },
 
     "@today": {
@@ -51,7 +51,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@yesterday": {
         id: "@yesterday",
@@ -59,7 +59,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().subtract(1, 'days').format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@tomorrow": {
         id: "@tomorrow",
@@ -67,7 +67,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().add(1, 'days').format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@this-week": {
         id: "@this-week",
@@ -75,7 +75,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().startOf('week').format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@last-week": {
         id: "@last-week",
@@ -83,7 +83,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().subtract(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@next-week": {
         id: "@next-week",
@@ -91,7 +91,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().add(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
 
     "@this-month": {
@@ -100,7 +100,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().startOf('month').format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@last-month": {
         id: "@last-month",
@@ -108,7 +108,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().subtract(1, 'month').startOf("month").format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
     "@next-month": {
         id: "@next-month",
@@ -116,6 +116,6 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
         generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
             return moment().add(1, 'month').startOf("month").format("YYYY-MM-DD")
         },
-        type: "date"
+        type: ["date","datetime"]
     },
 }

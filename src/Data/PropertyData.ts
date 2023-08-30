@@ -2,8 +2,11 @@ import { App } from "obsidian";
 import { indexBy } from "src/Utils/indexBy";
 import { sortBy } from "src/Utils/sortBy";
 import { PropertyInfo } from "src/obsidian-ex";
+import { IntrinsicAttributeKey } from "./Query";
+import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export interface PropertyData {
+    key: string;
     name: string;
     count: number;
     typeKey: string;
@@ -28,6 +31,7 @@ export function getPropertyData(app: App): PropertyData[] {
         //this._types.find(rtw => rtw.type === pi.type);
         const type = _types[pi.type];
         return {
+            key: pi.name,
             name: pi.name,
             count: pi.count,
             typeName: type?.name(),
@@ -35,5 +39,41 @@ export function getPropertyData(app: App): PropertyData[] {
             typeIcon: type?.icon,
         };
     });
-    return ret;
+
+    const intrinsics = [
+        {
+            name: new IntrinsicAttributeDefinition(app, IntrinsicAttributeKey.FileName).displayName(),
+            key: IntrinsicAttributeKey.FileName,
+            count:Number.NaN,
+            typeName: "Text",
+            typeKey: "text",
+            typeIcon: "lucide-text"
+        },
+        {
+            name: new IntrinsicAttributeDefinition(app, IntrinsicAttributeKey.FilePath).displayName(),
+            key: IntrinsicAttributeKey.FilePath,
+            count:Number.NaN,
+            typeName: "Text",
+            typeKey: "text",
+            typeIcon: "lucide-text" 
+        },
+        {
+            name: new IntrinsicAttributeDefinition(app, IntrinsicAttributeKey.FileCreationDate).displayName(),
+            key: IntrinsicAttributeKey.FileCreationDate,
+            count:Number.NaN,
+            typeName: "Date & time",
+            typeKey: "datetime",
+            typeIcon: "lucide-clock"
+        },
+        {
+            name: new IntrinsicAttributeDefinition(app, IntrinsicAttributeKey.FileModificationDate).displayName(),
+            key: IntrinsicAttributeKey.FileModificationDate,
+            count:Number.NaN,
+            typeName: "Date & time",
+            typeKey: "datetime",
+            typeIcon: "lucide-clock"
+        } 
+    ]
+
+    return [...intrinsics, ...ret];
 }

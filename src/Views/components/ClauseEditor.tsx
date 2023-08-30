@@ -21,7 +21,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
 
     const propertyData = () => {
         const pds = getPropertyData(app!);
-        const pd = pds.find(p => p.name === props.clause[0]);
+        const pd = pds.find(p => p.key === props.clause[0]);
         return pd;
     }
 
@@ -59,14 +59,14 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         const am = new AttributeModal(app!,(pd:PropertyData)=>{
             // const type = pd.typeKey;
             // setOperators(_ops);
-            // setProp(pd);
+            // setProp(pd); 
             // setOperator(_ops[0]);
-            const attr = props.db.getAttributeDefinition(pd.name || "text");
+            const attr = props.db.getAttributeDefinition(pd.key);
             const widget = attr.getPropertyWidget();
             const _ops = getOperatorsForType(pd.typeKey);
             const op = _ops[0].op;
             // widget && setVal(widget?.default());
-            widget && props.update([pd.name,op,widget?.default()]);
+            widget && props.update([pd.key,op,widget?.default()]);
             setProp(pd);
 
         });
@@ -140,19 +140,19 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
 
     createEffect(()=>{
         if(divValueIsVisible()) {
-            if(!prop()?.name) return;
-            const attr = props.db.getAttributeDefinition(prop()!.name);
+            if(!prop()?.key) return;
+            const attr = props.db.getAttributeDefinition(prop()!.key);
             const widget = attr.getPropertyWidget();
             if(widget){
                 divValue.empty();
                 widget.render(divValue!,
-                  {key: prop()?.name,
+                  {key: prop()?.key,
                     type: prop()?.typeKey,
                     value: props.clause[2] || widget.default()
                 },
                 {
                     app,
-                    key: prop()?.name,
+                    key: prop()?.key,
                     onChange: (val) => {
                         props.update([props.clause[0], props.clause[1], val])
                     },

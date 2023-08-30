@@ -18,11 +18,12 @@ import { IntrinsicAttributeKey } from "./Query";
 
 export class IntrinsicAttributeDefinition implements AttributeDefinition {
     _key: IntrinsicAttributeKey;
-    _displayName: string;
-    constructor(app: App, key: IntrinsicAttributeKey, displayName?: string) {
+    
+    private _app: App;
+    constructor(app: App, key: IntrinsicAttributeKey) {
         this._key = key;
-        this._displayName = this._displayName ||
-            key[0].toUpperCase() + key.slice(1);
+        
+        this._app = app;
     }
     get key() { return this._key; }
 
@@ -55,9 +56,16 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
     }
     // TODO: remove dependency from app
     getPropertyWidget() {
-        return undefined;
+        switch(this._key){
+            case IntrinsicAttributeKey.FileCreationDate:
+            case IntrinsicAttributeKey.FileModificationDate:
+                return this._app.metadataTypeManager.registeredTypeWidgets["date"];
+            case IntrinsicAttributeKey.FileName:
+            case IntrinsicAttributeKey.FilePath:
+            default:
+                return this._app.metadataTypeManager.registeredTypeWidgets["text"];
+        }
     }
-
     getPropertyInfo() {
         return { key: this._key, type: "text" };
     }
