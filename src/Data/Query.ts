@@ -4,6 +4,7 @@ import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { VaultDB } from "./VaultDB";
+import { getDynamicValue, isDynamic } from "./DynamicValues";
 
 export enum IntrinsicAttributeKey {
     FileName = "__bname",
@@ -79,8 +80,10 @@ export class Query {
             const [at, op, val] = clause;
             const attr = this._db.getAttributeDefinition(at);
             const operator = getOperatorById(op);
+            let value = val;
             // const val = clause.val; 
-            return operator.matches(attr, data, val, this._context);
+            if(isDynamic(val)) value = getDynamicValue(val,attr,data,this._context);
+            return operator.matches(attr, data, value, this._context);
         });
 
         return res;
@@ -92,8 +95,12 @@ export class Query {
     }
 
     inferCollection(): string | undefined {
-        const typeClauses = this.getClausesByAttr(this._settings.collectionAttributeKey, "hasthis");
-        if (typeClauses.length > 0 && this._context) {
+        const collClauses = this.getClausesByAttr(this._settings.collectionAttributeKey)
+        .filter(c => c[1]==="hasall" || c[1] === "hasany")
+        .filter(c => c[2] === "@link-to-this")
+        ;
+
+        if (collClauses.length > 0 && this._context) {
             const link = this._db.generateWikiLink(this._context.file)
             return link;
         }

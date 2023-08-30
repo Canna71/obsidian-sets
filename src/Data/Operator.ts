@@ -5,10 +5,14 @@ import { ObjectData } from "./ObjectData";
 export type OperatorName = 
     "eq" | "neq" | "isempty" | "notempty" | 
     "contains" | "nocontains" |
-    "hasall" | "hasthis" | "hasany" | "hasnone" |
+    "hasall" |  "hasany" | "hasnone" |
     "gt" | "gte" | "lt" | "lte" |
     "checked" | "unchecked"
     ;
+
+
+
+
 
 export type Operator = {
     op: OperatorName;
@@ -152,30 +156,30 @@ const operators : Record<OperatorName,Operator> = {
         isUnary: false
 
     },
-    "hasthis": {
-        op: "hasthis",
-        compatibleTypes: "multitext",
-        matches: (a:AttributeDefinition, data:ObjectData, val:unknown, context: ObjectData) => {
-            const list = a.getValue(data);
-            if(!list) return false;
-            if(!Array.isArray(list)) return false;
+    // "hasthis": {
+    //     op: "hasthis",
+    //     compatibleTypes: "multitext",
+    //     matches: (a:AttributeDefinition, data:ObjectData, val:unknown, context: ObjectData) => {
+    //         const list = a.getValue(data);
+    //         if(!list) return false;
+    //         if(!Array.isArray(list)) return false;
 
             
-            const thisLink = data.db.generateWikiLink(context.file);
-            return list.includes(thisLink);
-            // return (val as any[]).every(el => (list as any[]).includes(el))
-        },
-        enforce: (current:unknown, val:unknown, context: ObjectData) => {
-            const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
-            // const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
-            const thisLink = context.db.generateWikiLink(context.file);
-            if(!ret.includes(thisLink)) ret.push(thisLink);
-            return ret;
-        },
-        selectiveness: 5,
-        displayName: () => "Has This",
-        isUnary: true
-    },
+    //         const thisLink = data.db.generateWikiLink(context.file);
+    //         return list.includes(thisLink);
+    //         // return (val as any[]).every(el => (list as any[]).includes(el))
+    //     },
+    //     enforce: (current:unknown, val:unknown, context: ObjectData) => {
+    //         const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
+    //         // const thisLink = app.fileManager.generateMarkdownLink(context.file,"/")
+    //         const thisLink = context.db.generateWikiLink(context.file);
+    //         if(!ret.includes(thisLink)) ret.push(thisLink);
+    //         return ret;
+    //     },
+    //     selectiveness: 5,
+    //     displayName: () => "Has This",
+    //     isUnary: true
+    // },
     "gt": {
         op: "gt",
         compatibleTypes: ["text","number","date","datetime","password"],
