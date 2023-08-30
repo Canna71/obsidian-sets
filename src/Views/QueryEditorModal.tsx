@@ -31,7 +31,7 @@ export class QueryEditorModal extends Modal {
         render(() => <AppProvider app={this.app}>
             {/* <ClauseEditor db={this._db} /> */}
             <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
-                <QueryEditor db={this._db} />
+                <QueryEditor db={this._db} exit={()=>{this.close()}} />
             </BlockProvider>
             
         </AppProvider>, contentEl);

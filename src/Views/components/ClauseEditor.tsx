@@ -1,4 +1,4 @@
-import { Accessor, Component, Setter, Show, createEffect, createSignal } from "solid-js";
+import { Component, Show, createEffect, createSignal } from "solid-js";
 import { useApp } from "./AppProvider";
 import { AttributeModal } from "./AttributeModal";
 import { OperatorName, getOperatorById, getOperatorsForType } from "src/Data/Operator";
@@ -10,8 +10,8 @@ import { PropertyData, getPropertyData } from "src/Data/PropertyData";
 
 export interface ClauseEditorProps {
     db: VaultDB,
-    clause: Accessor<Clause>
-    update: Setter<Clause>
+    clause: Clause
+    update: (clause: Clause) => void
 }
 
 export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
@@ -20,7 +20,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
 
     const propertyData = () => {
         const pds = getPropertyData(app!);
-        const pd = pds.find(p => p.name === props.clause()[0]);
+        const pd = pds.find(p => p.name === props.clause[0]);
         return pd;
     }
 
@@ -32,7 +32,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     }
 
     const getOperator = () => {
-        return getOperatorById(props.clause()[1]);
+        return getOperatorById(props.clause[1]);
     }
 
     const [prop, setProp] = createSignal(propertyData());
@@ -56,7 +56,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
             const widget = attr.getPropertyWidget();
             const op = operators()[0].op
             // widget && setVal(widget?.default());
-            widget && props.update(clause => [pd.name,op,widget?.default()])
+            widget && props.update([pd.name,op,widget?.default()])
         });
         am.open();
     };
@@ -66,7 +66,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     }
 
     const divValueIsVisible = () => {
-        return props.clause()[1] !== undefined && !getOperator()?.isUnary;
+        return props.clause[1] !== undefined && !getOperator()?.isUnary;
     }
 
     createEffect(()=>{
@@ -85,10 +85,10 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
             .addOptions(options)
             .onChange((value:string)=>{
                 // TODO: check if we should reset the value
-                props.update(clause => [clause[0], value as OperatorName, clause[2]])
+                props.update([props.clause[0], value as OperatorName, props.clause[2]])
                 // setOperator(operators().find(op => op.op === value)!);
             })
-            .setValue(props.clause()[1] || operators()[0].op)
+            .setValue(props.clause[1] || operators[0].op)
         }
     })
 
@@ -102,13 +102,13 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 widget.render(divValue!,
                   {key: prop()?.name,
                     type: prop()?.typeKey,
-                    value: props.clause()[2] || widget.default()
+                    value: props.clause[2] || widget.default()
                 },
                 {
                     app,
                     key: prop()?.name,
                     onChange: (val) => {
-                        props.update(clause => [clause[0], clause[1], val])
+                        props.update([props.clause[0], props.clause[1], val])
                     },
                     rerender: () => {
                         console.log(`re-render called`);
