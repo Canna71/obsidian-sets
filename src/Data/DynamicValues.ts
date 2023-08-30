@@ -3,7 +3,9 @@ import { AttributeDefinition } from "./AttributeDefinition";
 import { ObjectData } from "./ObjectData";
 
 export type DynamicValueName = "@link-to-this"
-| "@today"
+| "@today" | "@yesterday" | "@tomorrow"
+| "@last-week" | "@this-week" | "@next-week"
+| "@last-month" | "@this-month" | "@next-month"
 
 ;
 
@@ -50,5 +52,70 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
             return moment().format("YYYY-MM-DD")
         },
         type: "date"
-    }
+    },
+    "@yesterday": {
+        id: "@yesterday",
+        displayName: () => "Yesterday",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().subtract(1, 'days').format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@tomorrow": {
+        id: "@tomorrow",
+        displayName: () => "Tomorrow",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().add(1, 'days').format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@this-week": {
+        id: "@this-week",
+        displayName: () => "This Week",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().startOf('week').format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@last-week": {
+        id: "@last-week",
+        displayName: () => "Last Week",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().subtract(1, 'week').startOf("week").format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@next-week": {
+        id: "@next-week",
+        displayName: () => "Next Week",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().add(1, 'week').startOf("week").format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+
+    "@this-month": {
+        id: "@this-month",
+        displayName: () => "This Month",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().startOf('month').format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@last-month": {
+        id: "@last-month",
+        displayName: () => "Last month",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().subtract(1, 'month').startOf("month").format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
+    "@next-month": {
+        id: "@next-month",
+        displayName: () => "Next month",
+        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+            return moment().add(1, 'month').startOf("month").format("YYYY-MM-DD")
+        },
+        type: "date"
+    },
 }
