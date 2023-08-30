@@ -17,6 +17,11 @@ export interface FieldDefinition {
     width?: string;
 }
 
+// export interface BlockContext {
+//     state: SetDefinition,
+//     update: (def:SetDefinition) => void;
+// }
+
 export interface SetDefinition {
     type?: string;
     collection?: string;
@@ -24,6 +29,7 @@ export interface SetDefinition {
     fields?: FieldDefinition[];
     sortby?: SortField[];
     transientState?: any;
+    
 }
 
 const stateMap = new Map<string, any>();

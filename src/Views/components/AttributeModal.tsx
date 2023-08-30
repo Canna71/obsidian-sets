@@ -1,47 +1,42 @@
 import { App, SuggestModal, setIcon } from "obsidian";
-import { sortBy } from "src/Utils/sortBy";
-import { PropertyInfo } from "src/obsidian-ex";
+import { getPropertyData } from "src/Data/PropertyData";
+import type { PropertyData } from "src/Data/PropertyData";
 
-
-export interface PropertyData {
-    name: string;
-    count: number;
-    typeKey: string;
-    typeName: string;
-    typeIcon: string;
-}
 
 export class AttributeModal extends SuggestModal<PropertyData> {
-    private _types: any;
+    // private _types: any;
     private _onSelect: (PropertyData: any) => void;
     // private _app: App;
     constructor(app: App, onSelect:(PropertyData)=>void) {
         super(app);
         // this._types = indexBy<any>("type",Object.values(app.metadataTypeManager.registeredTypeWidgets));
-        this._types = app.metadataTypeManager.registeredTypeWidgets;
+        // this._types = app.metadataTypeManager.registeredTypeWidgets;
         this._onSelect = onSelect;
     }
     // Returns all available suggestions.
     getSuggestions(query: string): PropertyData[] {
         query = query.toLowerCase();
         
-        let propInfo: PropertyInfo[] = Object.values(this.app.metadataTypeManager.properties)
-            .filter(property => property.name && property.name.length && property.name.toLowerCase().includes(query))
-            ;
-        propInfo = sortBy("name", propInfo);
-        const ret = propInfo.map(pi => {
-            //this._types.find(rtw => rtw.type === pi.type);
-            const type = this._types[pi.type];
-                return ({
-                    name: pi.name,
-                    count: pi.count,
-                    typeName: type?.name(),
-                    typeKey: type?.type,
-                    typeIcon: type?.icon
-                })
+        // let propInfo: PropertyInfo[] = Object.values(this.app.metadataTypeManager.properties)
+        //     .filter(property => property.name && property.name.length && property.name.toLowerCase().includes(query))
+        //     ;
+        // propInfo = sortBy("name", propInfo);
+        // const ret = propInfo.map(pi => {
+        //     //this._types.find(rtw => rtw.type === pi.type);
+        //     const type = this._types[pi.type];
+        //         return ({
+        //             name: pi.name,
+        //             count: pi.count,
+        //             typeName: type?.name(),
+        //             typeKey: type?.type,
+        //             typeIcon: type?.icon
+        //         })
             
-            });
-        return ret;
+        //     });
+        const pds = getPropertyData(this.app);
+        return pds.filter(pd => 
+            pd.name && pd.name.length && 
+            pd.name.toLowerCase().includes(query));
         
     }
 

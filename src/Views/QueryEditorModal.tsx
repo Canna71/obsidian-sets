@@ -2,19 +2,22 @@ import { App, Modal } from "obsidian";
 import { SetDefinition } from "./components/renderCodeBlock";
 import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
-import { FilterEditor } from "./components/FilterEditor";
 import { VaultDB } from "src/Data/VaultDB";
+import QueryEditor from "./QueryEditor";
+import { BlockProvider } from "./components/BlockProvider";
 
 
 
-export class FilterModal extends Modal {
+export class QueryEditorModal extends Modal {
     message: string;
     definition: SetDefinition;
     private _db: VaultDB;
-    constructor(app: App,db:VaultDB, definition: SetDefinition) {
+    private _update: (def: SetDefinition) => void;
+    constructor(app: App,db:VaultDB, definition: SetDefinition, update: (def: SetDefinition)=> void) {
         super(app);
         this.definition = definition;
         this._db = db;
+        this._update = update;
     }
 
     onOpen() {
@@ -25,7 +28,13 @@ export class FilterModal extends Modal {
         // const clauseContainer = contentEl.createDiv();
 
 
-        render(() => <AppProvider app={this.app}><FilterEditor db={this._db} /></AppProvider>, contentEl);
+        render(() => <AppProvider app={this.app}>
+            {/* <ClauseEditor db={this._db} /> */}
+            <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
+                <QueryEditor db={this._db} />
+            </BlockProvider>
+            
+        </AppProvider>, contentEl);
 
         // new Setting(contentEl)
         //     .addButton((btn) =>

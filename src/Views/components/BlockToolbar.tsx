@@ -3,16 +3,17 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
-import { FilterModal } from "../FilterModal";
+import { QueryEditorModal } from "../QueryEditorModal";
 import { useBlock } from "./BlockProvider";
 import { useApp } from "./AppProvider";
+import { SetDefinition } from "./renderCodeBlock";
 
 const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeDefinition[], viewMode: {viewMode:Accessor<ViewMode>, setViewMode: (vm:ViewMode)=>void}}> = (props) => {
 
     let filterBtn : HTMLDivElement;
     const app = useApp()!;
 
-    const {definition} = useBlock()!;
+    const {definition,save, setDefinition} = useBlock()!;
 
     const onAdd= async () => {
         //TODO: move elsewhere
@@ -26,8 +27,13 @@ const BlockToolbar: Component<{queryResult: QueryResult,  attributes: AttributeD
         return props.queryResult.db.canAdd(props.queryResult);
     }
 
+    const update = (def:SetDefinition) => {
+        setDefinition(def);
+        save();
+    }
+
     const onFilter = () => {
-        const filterModal = new FilterModal(app, props.queryResult.db, definition());
+        const filterModal = new QueryEditorModal(app, props.queryResult.db, definition(), update);
         filterModal.open();
     }
 
