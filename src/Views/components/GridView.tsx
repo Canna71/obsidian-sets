@@ -17,10 +17,10 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     const { definition } = useBlock()!;
 
     // const { state } = gridContext!;
-    const fields = () => definition().fields || props.attributes.map(at => ({key:at.key, width: undefined}));
+    const fields = () => definition().fields || props.attributes.map(at => (at.key));
     const colSizes = () => {
         return fields().map(field =>
-            definition().grid?.columnWidths?.[field.key]
+            definition().grid?.columnWidths?.[field]
              || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
         ).join(" ")
     }

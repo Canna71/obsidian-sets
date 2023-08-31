@@ -12,11 +12,12 @@ import { BlockProvider } from "./BlockProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
 import { getSetsSettings } from "src/main";
 
-export interface FieldDefinition {
-    key: string;
-    // width?: string;
-    sort?: "asc" | "desc";
-}
+// export interface FieldDefinition {
+//     key: string;
+    
+// }
+
+export type FieldDefinition = string;
 
 // export interface BlockContext {
 //     state: SetDefinition,
@@ -77,32 +78,26 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     if (!fieldDefinitions) {
         if (definition.type) {
             if (getSetsSettings().inferSetFieldsByDefault) {
-                fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
+                fieldDefinitions = db.inferFields(initialdata)
             } else {
-                fieldDefinitions = db.getTypeAttributes(definition.type)?.map(key => ({ key }))
-                
-                
+                fieldDefinitions = db.getTypeAttributes(definition.type)
             }
         } else if (definition.collection) {
             if (getSetsSettings().inferCollectionFieldsByDefault) {
-                fieldDefinitions = db.inferFields(initialdata).map(key => ({ key }))
+                fieldDefinitions = db.inferFields(initialdata)
             }
         }
 
         
-        fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName }, ...(fieldDefinitions||[])]
+        fieldDefinitions = [IntrinsicAttributeKey.FileName , ...(fieldDefinitions||[])]
         if(definition.type && !getSetsSettings().inferSetFieldsByDefault) {
             definition = {...definition, fields: fieldDefinitions}
         }
     }
 
-    
-            
-
 
     const attributes: AttributeDefinition[] =
-        fieldDefinitions.map(fd => fd.key)
-            .map(key => db.getAttributeDefinition(key));
+        fieldDefinitions.map(key => db.getAttributeDefinition(key));
 
     // if (attributes.length === 0) {
     //     attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))

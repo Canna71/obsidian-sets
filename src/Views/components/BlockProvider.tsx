@@ -25,7 +25,7 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
         reorder: (from: string, to: string) => {
             const updatedItems = definition().fields?.slice();
             if(!updatedItems) throw Error("No items to reoreder!")
-            const ids = updatedItems?.map(f=>f.key);
+            const ids = updatedItems;
             const fromIndex = ids?.indexOf(from);
             const toIndex = ids?.indexOf(to);
             if (updatedItems) {
