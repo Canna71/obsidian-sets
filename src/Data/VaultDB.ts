@@ -112,7 +112,7 @@ export class VaultDB {
         return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
     }
 
-    execute(query: Query, top=10): QueryResult {
+    execute(query: Query, top=Number.MAX_VALUE): QueryResult {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
