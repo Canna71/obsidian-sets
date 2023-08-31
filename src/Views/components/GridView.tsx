@@ -20,7 +20,8 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     const fields = () => definition().fields || props.attributes.map(at => ({key:at.key, width: undefined}));
     const colSizes = () => {
         return fields().map(field =>
-            field.width || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
+            definition().grid?.columnWidths?.[field.key]
+             || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
         ).join(" ")
     }
     let scroller: HTMLDivElement;

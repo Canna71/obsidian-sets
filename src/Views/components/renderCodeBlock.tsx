@@ -14,7 +14,8 @@ import { getSetsSettings } from "src/main";
 
 export interface FieldDefinition {
     key: string;
-    width?: string;
+    // width?: string;
+    sort?: "asc" | "desc";
 }
 
 // export interface BlockContext {
@@ -29,7 +30,9 @@ export interface SetDefinition {
     fields?: FieldDefinition[];
     sortby?: SortField[];
     transientState?: any;
-    
+    grid?: {
+        columnWidths?: Record<string,string>;
+    }
 }
 
 const stateMap = new Map<string, any>();
@@ -87,7 +90,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         }
 
         
-        fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName, width: undefined }, ...(fieldDefinitions||[])]
+        fieldDefinitions = [{ key: IntrinsicAttributeKey.FileName }, ...(fieldDefinitions||[])]
         if(definition.type && !getSetsSettings().inferSetFieldsByDefault) {
             definition = {...definition, fields: fieldDefinitions}
         }

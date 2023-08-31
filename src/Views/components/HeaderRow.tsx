@@ -9,11 +9,12 @@ import { useBlock } from "./BlockProvider";
 export interface ResizeEvent {
     action: "resize" | "done" | "reset",
     index: number,
+    // key: string,
     size: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
+function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>) {
     const state: {
         resizing?: Element,
         index: number,
@@ -41,7 +42,7 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
         console.log('mouseup ');
         if (state.resizing) {
             state.resizing = undefined;
-            onResize()?.({ action: "done", size: undefined, index: state.index });
+            onResize()?.({ action: "done", size: -1, index: state.index });
             state.index = -1;
         }
         // state.mousex = e.clientX;
@@ -59,7 +60,7 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
     el.addEventListener("mousedown", (e: MouseEvent) => {
 
         const resizing = getResizing(e);
-        if (resizing) {
+        if (resizing) { 
             state.resizing = resizing;
             // $0.parentElement.indexOf($0)
             // state.resizing = resizer!.closest(".sets-header-cell")!;
@@ -79,7 +80,8 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
         const resizing = getResizing(e);
         if(resizing){
             const index = resizing.parentElement!.indexOf(resizing);
-            onResize()?.({ action: "reset", size: undefined, index });
+            
+            onResize()?.({ action: "reset", size: -1, index });
         }
     })
 
@@ -91,7 +93,7 @@ function headerResize(el: Element, onResize: Accessor<(ResizeEvent) => void>) {
 
 const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
-    const { definition, updateFields } = useBlock()!;
+    const {  updateSize } = useBlock()!;
     const block = useBlock()!;
 
     const onDragStart = ({ draggable }) => {
@@ -102,15 +104,15 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
 
     const onDragEnd = ({ draggable, droppable }) => {
         if (draggable && droppable) {
-            const currentItems = props.attributes.map(attr => attr.key);
-            const fromIndex = currentItems.indexOf(draggable.id);
-            const toIndex = currentItems.indexOf(droppable.id);
+            // const currentItems = props.attributes.map(attr => attr.key);
+            // const fromIndex = currentItems.indexOf(draggable.id);
+            // const toIndex = currentItems.indexOf(droppable.id);
             // console.log(`reorder`,draggable, droppable);
-            if (fromIndex !== toIndex) {
+            if (draggable.id !== droppable.id) {
                 // const updatedItems = currentItems.slice();
                 // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
                 // setItems(updatedItems);
-                block.reorder(fromIndex, toIndex);
+                block.reorder(draggable.id, droppable.id);
             }
         }
         setActiveItem(null);
@@ -124,25 +126,25 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
 
     const onResize = (ev: ResizeEvent) => {
 
-        if (Number.isNumber(ev.size)) {
-            const fields = definition().fields!;
-            const newFields = fields.map((f, i) => {
-                return i !== ev.index ? f :
-                    ({ ...f, width: `${ev.size}px` })
-            })
-            updateFields(newFields);
-        } else if (ev.action === "done") {
-            block.save()
-        } else if (ev.action === "reset") {
-            const fields = definition().fields!;
-            const newFields = fields.map((f, i) => {
-                return i !== ev.index ? f :
-                    ({ ...f, width: undefined })
-            })
-            updateFields(newFields);
-            block.save()
+        switch(ev.action){
+            case "resize":
+                if (Number.isNumber(ev.size)) {
+                    const key = ids()[ev.index];
+                    updateSize(key,`${ev.size}px`);
+                }
+            break;
+            case "done":
+                block.save();
+            break;
+            case "reset":
+                {
+                const key = ids()[ev.index];
+                updateSize(key,undefined);
+                block.save();
+                }
+            break;
         }
-        // console.log(`todo`, size);
+        
 
     }
 

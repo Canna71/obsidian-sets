@@ -1,14 +1,16 @@
 
 import { createSignal, createContext, useContext, JSX, Accessor } from "solid-js";
-import { FieldDefinition, SetDefinition } from "./renderCodeBlock";
+import {  SetDefinition } from "./renderCodeBlock";
 
 
 
 export interface BlockStateContext {
     definition: Accessor<SetDefinition>;
-    reorder: (from: number, to: number) => void;
-    updateFields: (fields: FieldDefinition[]) => void;
+    reorder: (from: string, to: string) => void;
+    // updateFields: (fields: FieldDefinition[]) => void;
+    updateSize: (field: string, size?: string) => void;
     setDefinition: (def:SetDefinition) => void;
+
     save: () => void;
 }
 const BlockContext = createContext<BlockStateContext>();
@@ -20,18 +22,34 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
     const [definition, setState] = createSignal(props.setDefinition);
     const blockState = {
         definition,
-        reorder: (from: number, to: number) => {
+        reorder: (from: string, to: string) => {
             const updatedItems = definition().fields?.slice();
+            if(!updatedItems) throw Error("No items to reoreder!")
+            const ids = updatedItems?.map(f=>f.key);
+            const fromIndex = ids?.indexOf(from);
+            const toIndex = ids?.indexOf(to);
             if (updatedItems) {
-                updatedItems.splice(to, 0, ...updatedItems.splice(from, 1));
+                updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
             }
             const newDef = {...definition(), fields: updatedItems}
             props.updateDefinition(newDef)
             // setItems(updatedItems);
         }, 
-        updateFields: (fields: FieldDefinition[]) => {
-            console.log(`updateFields`, fields)
-            setState(state => ({...state, fields}))
+        // updateFields: (fields: FieldDefinition[]) => {
+        //     console.log(`updateFields`, fields)
+        //     setState(state => ({...state, fields}))
+        // },
+        updateSize: (field: string, size: string) => {
+            setState(state => ({
+                ...state,
+                grid: {
+                    ...state.grid,
+                    columnWidths: {
+                        ...state.grid?.columnWidths,
+                        [field]: size
+                    }
+                }
+            }))
         },
         setDefinition: (def:SetDefinition) => {setState(def);},
         save: () => props.updateDefinition(definition())
