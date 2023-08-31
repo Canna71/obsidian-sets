@@ -22,6 +22,7 @@ export type QueryResult = {
     data: ObjectData[];
     db: VaultDB;
     query: Query;
+    total: number;
 };
 
 function escapeURI(e: string) {
@@ -111,10 +112,11 @@ export class VaultDB {
         return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
     }
 
-    execute(query: Query): QueryResult {
+    execute(query: Query, top=10): QueryResult {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
+        const startTime = Date.now();
         const archetypeFolder = this.getArchetypeFolder();
         const types = archetypeFolder?.children || [];
         //@ts-ignore
@@ -132,6 +134,7 @@ export class VaultDB {
                     ret.push(ob);
                 }
             }
+            
         }
 
         // TODO: sorting
@@ -145,11 +148,16 @@ export class VaultDB {
                 return (sortField[1] ? -1 : 1) * this.compare(attr, a, b);
             });
         });
+        const timeTaken = Date.now() - startTime;
+        console.info(`${ret.length} items fetched in ${timeTaken}ms`);
+        
+
 
         return {
-            data: ret,
+            data: ret.slice(0,top),
             db: this,
             query,
+            total: ret.length
         };
     }
 
