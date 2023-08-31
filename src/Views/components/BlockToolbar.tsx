@@ -7,10 +7,12 @@ import { QueryEditorModal } from "../QueryEditorModal";
 import { useBlock } from "./BlockProvider";
 import { useApp } from "./AppProvider";
 import { SetDefinition } from "./renderCodeBlock";
+import { FieldSelectModal } from "../FieldSelectModal";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
 
     let filterBtn: HTMLDivElement;
+    let fieldsBtn: HTMLDivElement;
     const {app, db} = useApp()!;
 
     const { definition, save, setDefinition } = useBlock()!;
@@ -37,8 +39,14 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         filterModal.open();
     }
 
+    const onFieldsSelect = () => {
+        const fieldsModal = new FieldSelectModal(app, props.queryResult.db, definition(), update);
+        fieldsModal.open();
+    }
+
     onMount(() => {
         filterBtn && setIcon(filterBtn, "filter")
+        fieldsBtn && setIcon(fieldsBtn, "list")
     })
 
     return <div class="sets-codeblock-toolbar">
@@ -46,6 +54,9 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
             <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
 
         </Show>
+        <div ref={fieldsBtn!} class="clickable-icon"
+            onClick={onFieldsSelect}
+        ></div>
         <div ref={filterBtn!} class="clickable-icon"
             onClick={onFilter}
         ></div>

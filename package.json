@@ -22,9 +22,9 @@
 		"esbuild-plugin-solid": "^0.5.0",
 		"esbuild-plugin-svgr": "^1.0.1",
 		"esbuild-sass-plugin": "^2.3.2",
-		"obsidian": "latest",
 		"tslib": "latest",
-		"typescript": "latest"
+		"typescript": "latest",
+        "obsidian": "^1.4.4"
 	},
 	"dependencies": {
 		"@jalik/observer": "github:jalik/js-observer",
