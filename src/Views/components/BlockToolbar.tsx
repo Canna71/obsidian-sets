@@ -11,7 +11,7 @@ import { SetDefinition } from "./renderCodeBlock";
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
 
     let filterBtn: HTMLDivElement;
-    const app = useApp()!;
+    const {app, db} = useApp()!;
 
     const { definition, save, setDefinition } = useBlock()!;
 
@@ -19,7 +19,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         //TODO: move elsewhere
 
         // TODO: find the right path
-        const db = props.queryResult.db;
+        // const db = props.queryResult.db;
         db.addToSet(props.queryResult);
     }
 

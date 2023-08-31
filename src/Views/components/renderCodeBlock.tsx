@@ -117,7 +117,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     definition.transientState = stateMap.get("TODO");
     stateMap.delete("TODO");
     render(() =>
-        <AppProvider app={app}>
+        <AppProvider app={{app, db}}>
             <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >
                 <CodeBlock queryResult={data} attributes={attributes} viewMode={{
                     viewMode, setViewMode

@@ -1,17 +1,15 @@
 import { Component, For } from "solid-js";
-import { VaultDB } from "src/Data/VaultDB";
 import { useBlock } from "./components/BlockProvider";
 import ClauseEditor from "./components/ClauseEditor";
 import { createStore } from "solid-js/store";
 import { Clause } from "src/Data/Query";
 
 export interface QueryEditorProps {
-    db: VaultDB,
+   
     exit: () => void
 }
 
 const QueryEditor:Component<QueryEditorProps> = (props) => {
-
     const {definition,setDefinition,save} = useBlock()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     const [state, setState] = createStore(definition()|| [])
@@ -35,7 +33,7 @@ const QueryEditor:Component<QueryEditorProps> = (props) => {
         <For each={state.filter || []}>
             {
             (clause, index) => {
-                return <ClauseEditor db={props.db} clause={clause} update={(clause)=>update(index(),clause)} />
+                return <ClauseEditor  clause={clause} update={(clause)=>update(index(),clause)} />
             }
             }
         </For>

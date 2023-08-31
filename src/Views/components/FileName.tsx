@@ -36,7 +36,7 @@ function isValidFileName(app:App,file:TFile, filename: string) {
 }
 
 const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
-    const app = useApp()!;
+    const {app} = useApp()!;
     const text = () => props.attribute.format(props.data);
     const [isEdit, setEdit] = createSignal(false);
     const [msg, setMsg] = createSignal<string|undefined>(undefined);

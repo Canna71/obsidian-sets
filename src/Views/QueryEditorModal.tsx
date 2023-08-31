@@ -28,10 +28,10 @@ export class QueryEditorModal extends Modal {
         // const clauseContainer = contentEl.createDiv();
 
 
-        render(() => <AppProvider app={this.app}>
+        render(() => <AppProvider app={{app: this.app, db:this._db}}>
             {/* <ClauseEditor db={this._db} /> */}
             <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
-                <QueryEditor db={this._db} exit={()=>{this.close()}} />
+                <QueryEditor exit={()=>{this.close()}} />
             </BlockProvider>
             
         </AppProvider>, contentEl);

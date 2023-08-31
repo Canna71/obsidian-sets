@@ -4,20 +4,19 @@ import { AttributeModal } from "./AttributeModal";
 import { OperatorName, getOperatorById, getOperatorsForType } from "src/Data/Operator";
 import { DropdownComponent, setIcon } from "obsidian";
 import { mapBy } from "src/Utils/indexBy";
-import { VaultDB } from "src/Data/VaultDB";
 import { Clause } from "src/Data/Query";
 import { PropertyData, getPropertyData } from "src/Data/PropertyData";
 import { getDynamicValuesForType, isDynamic } from "src/Data/DynamicValues";
 
 export interface ClauseEditorProps {
-    db: VaultDB,
+    // db: VaultDB,
     clause: Clause
     update: (clause: Clause) => void
 }
 
 export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
 
-    const app = useApp();
+    const {app, db} = useApp()!;
 
     const propertyData = () => {
         const pds = getPropertyData(app!);
@@ -61,7 +60,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
             // setOperators(_ops);
             // setProp(pd); 
             // setOperator(_ops[0]);
-            const attr = props.db.getAttributeDefinition(pd.key);
+            const attr = db.getAttributeDefinition(pd.key);
             const widget = attr.getPropertyWidget();
             const _ops = getOperatorsForType(pd.typeKey);
             const op = _ops[0].op;
@@ -141,7 +140,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     createEffect(()=>{
         if(divValueIsVisible()) {
             if(!prop()?.key) return;
-            const attr = props.db.getAttributeDefinition(prop()!.key);
+            const attr = db.getAttributeDefinition(prop()!.key);
             const widget = attr.getPropertyWidget();
             if(widget){
                 divValue.empty();
