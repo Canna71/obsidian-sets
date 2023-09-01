@@ -8,11 +8,14 @@ import { useBlock } from "./BlockProvider";
 import { useApp } from "./AppProvider";
 import { SetDefinition } from "./renderCodeBlock";
 import { FieldSelectModal } from "../FieldSelectModal";
+import SortingEditorModal from "../SortingEditorModal";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
 
     let filterBtn: HTMLDivElement;
     let fieldsBtn: HTMLDivElement;
+    let sortBtn: HTMLDivElement;
+
     const {app, db} = useApp()!;
 
     const { definition, save, setDefinition } = useBlock()!;
@@ -44,9 +47,16 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsModal.open();
     }
 
+    const onSorting = () => {
+        const fieldsModal = new SortingEditorModal(app, props.queryResult.db, definition(), update);
+        fieldsModal.open();
+    }
+
     onMount(() => {
         filterBtn && setIcon(filterBtn, "filter")
         fieldsBtn && setIcon(fieldsBtn, "list")
+        fieldsBtn && setIcon(sortBtn, "arrow-up-down")
+
     })
 
     return <div class="sets-codeblock-toolbar">
@@ -54,6 +64,9 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
             <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
 
         </Show>
+        <div ref={sortBtn!} class="clickable-icon"
+            onClick={onSorting}
+        ></div>
         <div ref={fieldsBtn!} class="clickable-icon"
             onClick={onFieldsSelect}
         ></div>
