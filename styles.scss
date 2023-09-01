@@ -196,6 +196,16 @@
 }
 
 .sets-fields-select {
+
+
+    .sets-field-search {
+        height: var(--input-height);
+        border: var(--input-border-width) solid var(--background-modifier-border);
+        color: var(--text-normal);
+        padding: var(--size-4-1) var(--size-4-2);
+        width: 100%;
+    }
+
     .sets-fields-label {
         padding: var(--size-4-1);
         margin: var(--size-4-2) 0;
@@ -211,12 +221,12 @@
 
     &.available-props {
         max-height: 120px;
-        min-height: 16px;
+        min-height: 32px;
     }
 
     &.selected-props {
         max-height: 120px;
-        min-height: 16px;
+        min-height: 32px;
     }
 
     .sets-field-item {

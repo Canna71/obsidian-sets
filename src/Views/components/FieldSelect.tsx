@@ -1,8 +1,6 @@
-import { FieldDefinition } from "./renderCodeBlock";
 import { useApp } from "./AppProvider";
 import { useBlock } from "./BlockProvider";
-import { Component, For } from "solid-js";
-import { createStore } from "solid-js/store";
+import { Component, For, createSignal } from "solid-js";
 import { PropertyData, getPropertyData } from "src/Data/PropertyData";
 import { Property } from "./Property";
 
@@ -17,7 +15,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;
-
+    const [keyword, setKeyword] = createSignal("");
     const onSave = () => {
         // const newDef = {...definition(), }
         // console.log(state);
@@ -33,12 +31,14 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
     const available = () => {
         const pd = getPropertyData(app);
-        return pd.filter(pd => !(definition().fields || []).includes(pd.key));
+        return pd.filter(pd => !(definition().fields || []).includes(pd.key))
+                .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
     };
 
     const selected = () => {
         const pd = getPropertyData(app);
-        return pd.filter(pd => (definition().fields || []).includes(pd.key));
+        return pd.filter(pd => (definition().fields || []).includes(pd.key))
+            .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
     };
 
     const onSelect = (e:PropertyData) => {
@@ -50,7 +50,14 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     }
 
     return (<div class="sets-fields-select">
-        <h3>Select Fields</h3>
+        <h4>Select Fields</h4>
+        <input class="sets-field-search" 
+        value={keyword()} 
+        type="search"
+        placeholder="Search for a property"
+        onInput={(e) => {
+          setKeyword(e.target.value)
+        }}></input>
         <div class="sets-fields-label">Visible:</div>
         <div class="sets-fields-list selected-props">
             <For each={selected()}>{(pd) => <Property {...pd} icon="toggle-right" onClick={onUnselect} />}</For>
