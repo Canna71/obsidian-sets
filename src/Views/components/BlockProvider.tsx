@@ -10,6 +10,8 @@ export interface BlockStateContext {
     // updateFields: (fields: FieldDefinition[]) => void;
     updateSize: (field: string, size?: string) => void;
     setDefinition: (def:SetDefinition) => void;
+    addField: (field:string) => void;
+    removeField: (field:string) => void;
 
     save: () => void;
 }
@@ -39,6 +41,18 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
         //     console.log(`updateFields`, fields)
         //     setState(state => ({...state, fields}))
         // },
+        addField: (field: string) => {
+            setState(state => ({
+                ...state,
+                fields: state.fields?.includes(field) ? state.fields : [...state.fields || [], field]
+            }))
+        },
+        removeField: (field: string) => {
+            setState(state => ({
+                ...state,
+                fields: state.fields?.filter(f=>f!==field)
+            }))
+        },
         updateSize: (field: string, size: string) => {
             setState(state => ({
                 ...state,
