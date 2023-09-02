@@ -286,6 +286,27 @@
 .sets-sorting-editor {
     .sets-sorting-fields {
         display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 100px;
+        overflow-y: auto;
+
+        .sets-sorting-property {
+            display: flex;
+            padding: 2px;
+            
+            border: var(--input-border-width) solid var(--background-modifier-border);
+            
+            .sets-field-item {
+                flex-grow: 1;
+                cursor: grab;
+            }
+            
+            .sets-sort-direction {
+                padding: 0 0.2em 0 0.5em;
+            }
+
+        }
     }
 
     .sets-field-search {

@@ -1,8 +1,9 @@
 import { useApp } from "./AppProvider";
 import { useBlock } from "./BlockProvider";
-import { Component, For, createSignal } from "solid-js";
+import { Component, For, createSignal, onMount } from "solid-js";
 import { PropertyData, getPropertyData, getPropertyDataById } from "src/Data/PropertyData";
 import { Property } from "./Property";
+import { setIcon } from "obsidian";
 
 
 export interface SortingEditorProps {
@@ -16,27 +17,55 @@ interface SortingPropertyProps {
 }
 
 export const SortingProperty: Component<SortingPropertyProps> = (props) => {
-    const { removeSort  } = useBlock()!;
+    const { removeSort, setSortDirection  } = useBlock()!;
     const {app} = useApp()!;
+    let icon:HTMLDivElement;
 
     const propertyDate = () => {
         const pd = getPropertyDataById(app, props.key);
         return pd;
     }
 
-    const onRemove = (e:PropertyData) => {
-        removeSort(e.key);
+    // const onRemove = (e:PropertyData) => {
+    //     removeSort(e.key);
+    // }
+
+    const onIconClick = (e:MouseEvent) => {
+        removeSort(props.key);
+    }
+
+    onMount(()=>{
+        setIcon(icon, "x");
+
+    })
+
+    const onDirectionChange = (event:InputEvent) => {
+        const inputElement = event.target as HTMLInputElement;
+        const val = inputElement.value === "desc";
+        setSortDirection(props.key, val);
+        console.log(inputElement.value)
     }
 
     return (
         <div class="sets-sorting-property">
-            <Property {...propertyDate()!} onIconClick={onRemove} icon="x" />
+            <Property {...propertyDate()!}  />
+            <select class="sets-sort-direction"
+            oninput={onDirectionChange}
+            value={props.descending ? "desc" : "asc"}
+            >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+                
+            </select>
+            <div ref={icon!} 
+                    onClick={onIconClick}
+                    class="sets-field-property-toggle clickable-icon" ></div>
         </div>
     )
 }
 
 const SortingEditor: Component<SortingEditorProps> = (props) => {
-    const { definition, save, setSort  } = useBlock()!;
+    const { definition, save, addSort     } = useBlock()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;
@@ -66,7 +95,7 @@ const SortingEditor: Component<SortingEditorProps> = (props) => {
     };
 
     const addToSort = (e:PropertyData) => {
-        setSort(e.key,false);
+        addSort(e.key,false);
     }
 
     return (<div class="sets-sorting-editor">

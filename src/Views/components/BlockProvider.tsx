@@ -1,6 +1,7 @@
 
 import { createSignal, createContext, useContext, JSX, Accessor } from "solid-js";
 import {  SetDefinition } from "./renderCodeBlock";
+import { AttributeKey, SortField } from "src/Data/Query";
 
 
 
@@ -12,7 +13,9 @@ export interface BlockStateContext {
     setDefinition: (def:SetDefinition) => void;
     addField: (field:string) => void;
     removeField: (field:string) => void;
-    setSort: (field: string, deseending:boolean) => void;
+    setSortDirection: (field: string, deseending:boolean) => void;
+    addSort: (field: string, deseending:boolean) => void;
+
     removeSort: (field: string) => void;
     save: () => void;
 }
@@ -54,10 +57,16 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
                 fields: state.fields?.filter(f=>f!==field)
             }))
         },
-        setSort: (field: string, deseending:boolean) => {
+        setSortDirection: (field: AttributeKey, descending:boolean) => {
             setState(state => ({
                 ...state,
-                sortby: [...(state.sortby||[]).filter(([f])=>f!==field),[field,deseending] ]
+                sortby: [...(state.sortby||[]).map(s => s[0] === field ? [field, descending] as SortField : s) ]
+            }))
+        },
+        addSort: (field: AttributeKey, descending:boolean) => {
+            setState(state => ({
+                ...state,
+                sortby: [...(state.sortby||[]).filter(([f])=>f!==field), [field, descending] ]
             }))
         },
         removeSort: (field: string) => {
