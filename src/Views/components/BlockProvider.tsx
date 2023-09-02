@@ -12,7 +12,8 @@ export interface BlockStateContext {
     setDefinition: (def:SetDefinition) => void;
     addField: (field:string) => void;
     removeField: (field:string) => void;
-
+    setSort: (field: string, deseending:boolean) => void;
+    removeSort: (field: string) => void;
     save: () => void;
 }
 const BlockContext = createContext<BlockStateContext>();
@@ -51,6 +52,18 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
             setState(state => ({
                 ...state,
                 fields: state.fields?.filter(f=>f!==field)
+            }))
+        },
+        setSort: (field: string, deseending:boolean) => {
+            setState(state => ({
+                ...state,
+                sortby: [...(state.sortby||[]).filter(([f])=>f!==field),[field,deseending] ]
+            }))
+        },
+        removeSort: (field: string) => {
+            setState(state => ({
+                ...state,
+                sortby: [...(state.sortby||[]).filter(([f])=>f!==field) ]
             }))
         },
         updateSize: (field: string, size: string) => {

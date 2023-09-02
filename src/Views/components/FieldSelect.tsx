@@ -60,12 +60,12 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
         }}></input>
         <div class="sets-fields-label">Visible:</div>
         <div class="sets-fields-list selected-props">
-            <For each={selected()}>{(pd) => <Property {...pd} icon="toggle-right" onClick={onUnselect} />}</For>
+            <For each={selected()}>{(pd) => <Property {...pd} icon="toggle-right" onItemClick={onUnselect} />}</For>
         </div>
         <div class="sets-fields-label">Available:</div>
 
         <div class="sets-fields-list available-props">
-            <For each={available()}>{(pd) => <Property {...pd} icon="toggle-left" onClick={onSelect} />}</For>
+            <For each={available()}>{(pd) => <Property {...pd} icon="toggle-left" onItemClick={onSelect} />}</For>
         </div>
         <div class="sets-button-bar">
             <button class="mod-cta" onClick={onSave}>Save</button>

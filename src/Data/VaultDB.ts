@@ -408,7 +408,8 @@ export class VaultDB {
         // return app.fileManager.generateMarkdownLink(file,source)
         const linkText = app.metadataCache.fileToLinktext(file, source);
 
-        return `[[${escapeURI(linkText)}]]`;
+        return `[[${(linkText)}]]`;
+        // return `[[${escapeURI(linkText)}]]`;
     }
 
     public getDataContext(filePath: string): ObjectData {

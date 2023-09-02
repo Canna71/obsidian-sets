@@ -1,10 +1,11 @@
 import { setIcon } from "obsidian";
-import { Component, onMount } from "solid-js";
+import { Component, Show, onMount } from "solid-js";
 import { PropertyData } from "src/Data/PropertyData";
 
 export type PropertyProps = PropertyData & {
-    icon:string
-    onClick: (e:PropertyData) => void
+    icon?:string
+    onItemClick?: (e:PropertyData) => void
+    onIconClick?: (e:PropertyData) => void
 }
 
 export const Property: Component<PropertyProps> = (props) => {
@@ -14,22 +15,33 @@ export const Property: Component<PropertyProps> = (props) => {
 
     onMount(()=>{
         setIcon(typeicon, props.typeIcon || "help-circle");
-        setIcon(toggleicon, props.icon);
+        props.icon && setIcon(toggleicon, props.icon);
     })
 
     const onClick = (e:MouseEvent) => {
-        props.onClick && props.onClick(
+        props.onItemClick && props.onItemClick(
             props
         )
     }
 
-    return <div class="sets-field-item">
+    const onIconClick = (e:MouseEvent) => {
+        if(props.onIconClick) props.onIconClick(props) 
+        else {
+            props.onItemClick && props.onItemClick(props)
+        }
+    }
+
+    return <div class="sets-field-item" onClick={onClick}>
         
         
             <div ref={typeicon!} class="sets-field-property-icon"></div>
             <div class="sets-field-property-name">{props.name}</div>
             {/* <div class="sets-field-type-name">{props.typeName || "unknown"}</div> */}
-            <div ref={toggleicon!} class="sets-field-property-toggle clickable-icon" onClick={onClick}></div>
+            <Show when={props.icon}>
+                <div ref={toggleicon!} 
+                    onClick={onIconClick}
+                    class="sets-field-property-toggle clickable-icon" ></div>
+            </Show>
         
     </div>;
 };

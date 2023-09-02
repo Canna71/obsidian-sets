@@ -16,6 +16,10 @@ export interface PropertyData {
 
 let _types;
 
+export function getPropertyDataById(app:App, key: string):  PropertyData | undefined {
+    return getPropertyData(app).find(pd => pd.key === key);
+}
+
 export function getPropertyData(app: App): PropertyData[] {
     if (!_types) {
         _types = indexBy<any>(

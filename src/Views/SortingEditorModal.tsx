@@ -31,7 +31,7 @@ export default class SortingEditorModal extends Modal {
             {/* <ClauseEditor db={this._db} /> */}
             <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
                 <SortingEditor 
-                    exit={() => { this.close() }} 
+                    exit={() => { this.close() }}
                 />
             </BlockProvider>
 

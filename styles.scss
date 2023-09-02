@@ -11,6 +11,12 @@
     font-size: var(--font-text-size);
 }
 
+.sets-codeblock:hover {
+    .sets-codeblock-toolbar {
+        visibility: visible;
+    }
+}
+
 .sets-codeblock {
     padding: 12px;
     user-select: none;
@@ -20,6 +26,11 @@
         margin-bottom: 15px;
         display: flex;
         flex-direction: row;
+        gap: 8px;
+        justify-content: end;
+        padding: 16px;
+        visibility: hidden;
+        
     }
 
     .sets-gridview {
@@ -150,6 +161,10 @@
                                             );
                                         }
 
+                                        a.internal-link {
+                                            flex: 1;
+                                        }
+
                                         .sets-cell-filename-link {
                                             cursor: pointer;
                                             flex: 1;
@@ -229,32 +244,35 @@
         min-height: 32px;
     }
 
-    .sets-field-item {
+    
+}
+
+.sets-field-item {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--metadata-property-padding);
+    overflow: hidden;
+    align-self: stretch;
+    min-height: var(--input-height);
+    cursor: pointer;
+
+    .sets-field-property-icon {
+        // align-items: center;
+        color: var(--icon-color);
         display: flex;
-        align-items: flex-start;
-        padding: var(--metadata-property-padding);
-        overflow: hidden;
-        align-self: stretch;
-        min-height: var(--input-height);
+        align-items: center;
+        padding: var(--size-4-1) 0;
+        height: var(--input-height);
+    }
 
-        .sets-field-property-icon {
-            // align-items: center;
-            color: var(--icon-color);
-            display: flex;
-            align-items: center;
-            padding: var(--size-4-1) 0;
-            height: var(--input-height);
-        }
+    .sets-field-property-name {
+        color: var(--metadata-label-text-color);
+        text-overflow: ellipsis;
+        flex-grow: 1;
+        padding: var(--size-4-1) var(--size-4-2);
+        height: var(--input-height);
 
-        .sets-field-property-name {
-            color: var(--metadata-label-text-color);
-            text-overflow: ellipsis;
-            flex-grow: 1;
-            padding: var(--size-4-1) var(--size-4-2);
-            height: var(--input-height);
-
-            // align-items: center;
-        }
+        // align-items: center;
     }
 }
 
@@ -263,4 +281,14 @@
     justify-content: end;
     padding: 16px;
     gap: 8px;
+}
+
+.sets-sorting-editor {
+    .sets-sorting-fields {
+        display: flex;
+    }
+
+    .sets-field-search {
+        width: 100%;
+    }
 }

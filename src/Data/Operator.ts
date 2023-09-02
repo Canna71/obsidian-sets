@@ -132,7 +132,13 @@ const operators : Record<OperatorName,Operator> = {
             const {list, value} = res;
             return value.some(el => (list as any[]).includes(el))
         },
-        
+        enforce: (current:unknown, val:unknown) => {
+            const ret = (!current || !Array.isArray(current)) ? [] : current.slice();
+            const items = Array.isArray(val) ? val : [val];
+            
+            items.forEach(item => !ret.includes(item) && ret.push(item));
+            return ret;
+        },
         selectiveness: 5,
         displayName: () => "Has Any",
         isUnary: false

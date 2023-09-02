@@ -1,4 +1,4 @@
-import { App, Keymap, Platform, TFile, setIcon } from "obsidian";
+import { App, Platform, TFile, setIcon } from "obsidian";
 import { Component, Show, createSignal, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
@@ -87,14 +87,14 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
         finishEdit();
     };
 
-    const onClick = async (e:MouseEvent) => {
+    // const onClick = async (e:MouseEvent) => {
         
-        const paneType = Keymap.isModEvent(e);
-        const file = props.data.file;
+    //     const paneType = Keymap.isModEvent(e);
+    //     const file = props.data.file;
 
-        const leaf = app?.workspace.getLeaf(paneType);
-        await leaf?.openFile(file);
-    }
+    //     const leaf = app?.workspace.getLeaf(paneType);
+    //     await leaf?.openFile(file);
+    // }
 
     const onInput = (e:InputEvent) => {
         // console.log(e, isValidFileName(app, editor.innerText.trim()));
@@ -102,6 +102,10 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
         
         setMsg(msg);
     } 
+
+    const linkText = () => {
+        return app.metadataCache.fileToLinktext(props.data.file, "/")
+    }
 
     const onkeydown = (e:KeyboardEvent) => {
         if(e.key === "Enter"){
@@ -117,7 +121,14 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
     return <>
         <Show when={!isEdit()}>
             <div class="sets-cell-filename">
-                <div class="sets-cell-filename-link" onClick={onClick} onauxclick={onClick}>{text()}</div>
+                {/* <div class="sets-cell-filename-link internal-link" 
+                data-path={props.data.file.path}
+                onClick={onClick} onauxclick={onClick}>{text()}</div> */}
+                <a data-href={linkText()}
+                    href={linkText()} 
+                    class="internal-link sets-cell-filename-link" 
+                    target="_blank" 
+                    rel="noopener">{text()}</a>
                 <div ref={pencil!} class="sets-cell-filename-edit clickable-icon" onClick={onEdit} ></div>
                 
             </div>

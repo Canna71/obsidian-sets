@@ -23,7 +23,7 @@ export type AttributeKey = IntrinsicAttributeKey | ExtrinsicAttributeKey;
 
 export type Clause = [AttributeKey, OperatorName, any];
 
-export type SortField = [AttributeKey, boolean];
+export type SortField = [AttributeKey, boolean]; // false = ascending, true = descendig
 
 // export type Clause = {
 //     at: AttributeClause,

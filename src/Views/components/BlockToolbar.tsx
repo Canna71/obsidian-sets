@@ -60,10 +60,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     })
 
     return <div class="sets-codeblock-toolbar">
-        <Show when={canAdd()}>
-            <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
-
-        </Show>
+        
         <div ref={sortBtn!} class="clickable-icon"
             onClick={onSorting}
         ></div>
@@ -73,6 +70,10 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         <div ref={filterBtn!} class="clickable-icon"
             onClick={onFilter}
         ></div>
+        <Show when={canAdd()}>
+            <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
+
+        </Show>
     </div>
 }
 
