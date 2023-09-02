@@ -25,6 +25,7 @@ export type QueryResult = {
     total: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex
     return e.replace(/[\\\x00\x08\x0B\x0C\x0E-\x1F ]/g, function (e) {
@@ -168,6 +169,9 @@ export class VaultDB {
     ): number {
         const aval = attr.getValue(a);
         const bval = attr.getValue(b);
+
+        if(aval === null || aval === undefined) return -1;
+        if(bval === null || bval === undefined) return 1;
 
         if (aval < bval) return -1;
         if (aval > bval) return 1;

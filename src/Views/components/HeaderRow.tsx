@@ -93,7 +93,7 @@ function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>)
 
 const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
-    const {  updateSize } = useBlock()!;
+    const { updateSize } = useBlock()!;
     const block = useBlock()!;
 
     const onDragStart = ({ draggable }) => {
@@ -156,7 +156,8 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
             onDragEnd={onDragEnd}
             collisionDetector={closestCenter}
         >
-            <DragDropSensors /><div class="sets-gridview-head">
+            <DragDropSensors />
+            <div class="sets-gridview-head">
                 <div class="sets-headers-row"
 
 

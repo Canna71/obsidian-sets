@@ -6,6 +6,7 @@ export type PropertyProps = PropertyData & {
     icon?:string
     onItemClick?: (e:PropertyData) => void
     onIconClick?: (e:PropertyData) => void
+    sortable?:  boolean;
 }
 
 export const Property: Component<PropertyProps> = (props) => {

@@ -15,5 +15,7 @@ declare module "solid-js" {
             sortable: boolean;
             headerResize: (ev:ResizeEvent)=>void;
         }
+
+        
     }
 }
