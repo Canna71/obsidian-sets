@@ -2,7 +2,7 @@
 import { render } from "solid-js/web";
 import { Clause, IntrinsicAttributeKey, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { VaultDB } from "src/Data/VaultDB";
+import { Scope, VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
@@ -25,8 +25,9 @@ export type FieldDefinition = string;
 // }
 
 export interface SetDefinition {
-    type?: string;
-    collection?: string;
+    scope?: Scope;
+    // type?: string;
+    // collection?: string;
     filter?: Clause[];
     fields?: FieldDefinition[];
     sortby?: SortField[];
@@ -45,15 +46,24 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     const context = db.getDataContext(ctx.sourcePath);
     const sortby = definition.sortby || [];
+    const [scope,what] : Scope = definition.scope || ["vault"];
 
     let query;
-    if (definition.type) {
-        query = db.fromClausesSet(definition.type, clauses, sortby, context);
-    } else if (definition.collection) {
-        query = db.fromClausesCollection(definition.collection, clauses, sortby, context);
-    } else {
-        query = db.fromClauses(clauses, sortby, context);
+    switch(scope) {
+        case "vault":  
+            query = db.fromClauses(clauses, sortby, context); 
+        break;
+        case "type":
+            query = db.fromClausesSet(what!, clauses, sortby, context);
+            break;
+        case "collection":
+            query = db.fromClausesCollection(what!, clauses, sortby, context);
+            break;
+        case "folder":
+            // query = db.fromClausesFolder(what!, clauses, sortby, context);
+            break;
     }
+    
 
 
 
@@ -77,21 +87,21 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     let fieldDefinitions = definition.fields;
     if (!fieldDefinitions) {
-        if (definition.type) {
+        if (scope == "type") {
             if (getSetsSettings().inferSetFieldsByDefault) {
                 fieldDefinitions = db.inferFields(initialdata)
             } else {
-                fieldDefinitions = db.getTypeAttributes(definition.type)
+                fieldDefinitions = db.getTypeAttributes(what!)
             }
-        } else if (definition.collection) {
+        } else if (scope == "collection") {
             if (getSetsSettings().inferCollectionFieldsByDefault) {
                 fieldDefinitions = db.inferFields(initialdata)
-            }
+            } 
         }
 
         
         fieldDefinitions = [IntrinsicAttributeKey.FileName , ...(fieldDefinitions||[])]
-        if(definition.type && !getSetsSettings().inferSetFieldsByDefault) {
+        if(scope==="type" && !getSetsSettings().inferSetFieldsByDefault) {
             definition = {...definition, fields: fieldDefinitions}
         }
     }

@@ -27,6 +27,14 @@ export type QueryResult = {
     total: number;
 };
 
+// define a scope type that could be "type", "collection", "folder" or "all"
+// each scope type can have a further specifier, for example type has the type key
+// collection has the collection file link, folder has the folder path
+// all has no specifier
+
+export type ScopeType = "type" | "collection" | "folder" | "vault";
+export type Scope = [ScopeType, string?];
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex
