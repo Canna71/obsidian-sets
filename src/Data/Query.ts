@@ -64,7 +64,21 @@ export class Query {
     }
 
     static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
-        if (Array.isArray(clauses) && Array.isArray(clauses[0]))
+        if(Array.isArray(clauses)){
+            if(clauses.length > 0){
+                if(Array.isArray(clauses[0])){
+                    return new Query(db, clauses as Clause[], sort, context);
+                } else {
+                    return new Query(db, [clauses as Clause], sort, context);
+                }
+            } else {
+                return new Query(db, [], sort, context);
+            }
+        } else {
+            throw new Error("Query.__fromClauses: clauses must be an array of clauses")
+        }
+        
+        if (Array.isArray(clauses) && clauses.length && Array.isArray(clauses[0]))
             return new Query(db,clauses, sort, context);
         else return new Query(db, [clauses as Clause], sort, context);
     }

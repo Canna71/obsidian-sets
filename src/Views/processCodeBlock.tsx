@@ -9,7 +9,7 @@ export function processCodeBlock(source: string, el: HTMLElement, plugin: SetsPl
     // and create Query with filters
     // TODO: write iterface
     // const code = JSON.parse(source);
-    const definition = parseYaml(source) as SetDefinition;
+    const definition = parseYaml(source) || {} as SetDefinition;
     
 
     try {

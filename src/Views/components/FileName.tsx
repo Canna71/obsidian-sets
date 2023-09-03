@@ -39,7 +39,7 @@ function isValidFileName(app:App,file:TFile, filename: string) {
 const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
     const {app} = useApp()!;
     const text = () => props.attribute.format(props.data);
-    const {getNewFile, setNewFile} =  useBlock()!;
+    const {getNewFile} =  useBlock()!;
     // const isEdit = () => {
     //     getNewFile() === props.data.file.path;
     // }
