@@ -45,7 +45,7 @@ export class AttributeModal extends SuggestModal<PropertyData> {
         el.createEl("div", { text: prop.name });
         const details = el.createEl("div" , {cls: "metadata-property-key"});
         const icon = details.createEl("div", {cls: "metadata-property-icon"})
-        setIcon(icon, prop.typeIcon || "help-circle");
+        setIcon(icon, prop.typeIcon || "file-question");
         //metadata-property-key-input
         // details.createEl("small", { text: `${prop.typeName}` });
         details.createEl("div", { text: `${prop.typeName || "unknown"}`, 

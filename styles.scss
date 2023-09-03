@@ -28,9 +28,9 @@
         flex-direction: row;
         gap: 8px;
         justify-content: end;
-        padding: 16px;
+        padding-right: 16px;
         visibility: hidden;
-        
+        max-width: 600px;
     }
 
     .sets-gridview {

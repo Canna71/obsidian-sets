@@ -142,8 +142,20 @@ export class VaultDB {
         // const cache = this.app.metadataCache.metadataCache;
         const ret: ObjectData[] = [];
 
-        //@ts-ignore
-        const files: string[] = this.app.metadataCache.getCachedFiles();
+        
+        let files;
+        if(query.scopeFolder){
+            files = query.scopeFolder.children.filter(f => f instanceof TFile)
+                .filter(f => f.path !== query.context?.file.path)
+                .map(f => f.path);
+            // TODO: recurse into subfolders
+        } else {
+            //@ts-ignore
+            files = this.app.metadataCache.getCachedFiles();
+        }
+        // const files: string[] = this.app.metadataCache.getCachedFiles();
+
+
         for (const filePath of files) {
             const fileCache = this.app.metadataCache.getCache(filePath);
             if (fileCache) {
@@ -208,6 +220,7 @@ export class VaultDB {
         // const type = results.query.inferSetType();
         // const collection = results.query.inferCollection();
         // if (!type && !collection) return false;
+        // if(results.query.)
         return results.query.canCreate;
     }
 
@@ -368,6 +381,10 @@ export class VaultDB {
                 return Object.keys(cache.frontmatter);
             }
         }
+    }
+
+    getFolder(path: string) {
+        return this.app.vault.getAbstractFileByPath(path) as TFolder;
     }
 
     private getArchetypeFolder() {

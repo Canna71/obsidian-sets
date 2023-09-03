@@ -49,8 +49,8 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const scope = definition.scope || VaultScope;
     const [scopeType,what] : Scope = scope;
 
-    let query;
-    db.fromClauses(scope, clauses, sortby, context);
+    // let query;
+    const query = db.fromClauses(scope, clauses, sortby, context);
     // switch(scope) {
     //     case "vault":  
     //         query = db.fromClauses(definition.scope, clauses, sortby, context); 

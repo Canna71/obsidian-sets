@@ -15,7 +15,7 @@ export const Property: Component<PropertyProps> = (props) => {
     let toggleicon:HTMLDivElement;
 
     onMount(()=>{
-        setIcon(typeicon, props.typeIcon || "help-circle");
+        setIcon(typeicon, props.typeIcon || "file-question");
         props.icon && setIcon(toggleicon, props.icon);
     })
 

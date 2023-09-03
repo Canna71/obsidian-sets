@@ -90,7 +90,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         const p = prop();
         if(p){
             const icon = p.typeIcon;
-            setIcon(spanIcon, icon || "help-circle")
+            setIcon(spanIcon, icon || "file-question")
         }
     })
 

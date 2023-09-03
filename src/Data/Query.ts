@@ -3,8 +3,9 @@ import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
 import { AttributeDefinition } from "./AttributeDefinition";
-import { Scope, VaultDB } from "./VaultDB";
+import { Scope, ScopeType, VaultDB } from "./VaultDB";
 import { getDynamicValue, isDynamic } from "./DynamicValues";
+import { TFolder } from "obsidian";
 
 export enum IntrinsicAttributeKey {
     FileName = "__bname",
@@ -41,30 +42,49 @@ export class Query {
     private _canCreate: boolean;
     private _context?: ObjectData;
     private _sortBy: SortField[];
-    private _scope: string;
+    private _scope: ScopeType;
     private _scopeSpecifier: string | undefined;
+    private _scopeFolder: TFolder | undefined;
     // private _newFile: string | undefined;
-
+    
     protected constructor(db: VaultDB,scope: Scope,  clauses: Clause[], sort: SortField[], context?: ObjectData) {
         this._db = db;
+        this._scope = scope[0];
+        this._scopeSpecifier = scope[1];
+        this._clauses = clauses;
+        this._settings = getSetsSettings();
+        switch(this._scope){
+            case "type":
+                this._clauses.push([this._settings.typeAttributeKey,"eq",this._scopeSpecifier]);
+            break;
+            case "collection":
+                this._clauses.push([this._settings.collectionAttributeKey,"hasall",[this._scopeSpecifier]]);
+            break
+            case "folder":
+                if(this._scopeSpecifier){
+                    this._scopeFolder = this._db.getFolder(this._scopeSpecifier)
+                } else {
+                    this._scopeFolder = context?.file.parent || undefined;
+                }
+            break;
+        }
+        
         const operators = clauses.map(clause => getOperatorById(clause[1]))
-        this._clauses = clauses.sort((a,b)=>{
+        this._clauses = this._clauses.sort((a,b)=>{
             const aSelectiveness = getOperatorById(a[1]).selectiveness;
             const bSelectiveness = getOperatorById(b[1]).selectiveness;
             return aSelectiveness - bSelectiveness
 
         });
-        this._settings = getSetsSettings();
         const attributes = clauses.map(([key]) => key);
         this._hasExtrinsic = attributes.some(key => !isIntrinsicAttribute(key));
         this._attributes = attributes.map(key => this._db.getAttributeDefinition(key));
         this._canCreate = operators.every(op => {
             return op.enforce !== undefined;
         })
+        this._canCreate = this._canCreate && this._scope !== "collection";
         this._context = context;
         this._sortBy = sort.slice().reverse();
-        this._scope = scope[0];
-        this._scopeSpecifier = scope[1];
     }
 
     static __fromClauses(db: VaultDB,scope:Scope, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
@@ -149,6 +169,11 @@ export class Query {
     get sortby() {
         return this._sortBy;
     }
+
+    get scopeFolder() {
+        return this._scopeFolder;
+    }
+    
 
     // get newFile():string | undefined {
     //     return this._newFile;
