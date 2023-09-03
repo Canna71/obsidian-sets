@@ -243,7 +243,13 @@ export class VaultDB {
                 content
             );
             this.app.fileManager.processFrontMatter(newFile, (frontMatter) => {
-                Object.assign(frontMatter, defaults);
+                // Object.assign(frontMatter, defaults);
+                // merge defaults with frontmatter trying to give priority to fields with valies
+                for (const key in defaults) {
+                    if (frontMatter[key] === null || frontMatter[key] === undefined) {
+                        frontMatter[key] = defaults[key];
+                    }
+                }
             });
             return newFile;
         }
