@@ -4,7 +4,7 @@ import { Component, For, createSignal, onMount } from "solid-js";
 import { PropertyData, getPropertyData, getPropertyDataById } from "src/Data/PropertyData";
 import { Property } from "./Property";
 import { setIcon } from "obsidian";
-import { DragDropProvider, DragDropSensors, SortableProvider, closestCenter, createSortable, useDragDropContext } from "@thisbeyond/solid-dnd";
+import { DragDropProvider, DragDropSensors, SortableProvider, closestCenter, createSortable } from "@thisbeyond/solid-dnd";
 
 
 export interface SortingEditorProps {

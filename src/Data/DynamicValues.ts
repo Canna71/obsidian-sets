@@ -1,6 +1,7 @@
 import { moment } from "obsidian";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { ObjectData } from "./ObjectData";
+import { VaultDB } from "./VaultDB";
 
 export type DynamicValueName = "@link-to-this"
 | "@today" | "@yesterday" | "@tomorrow"
@@ -12,7 +13,9 @@ export type DynamicValueName = "@link-to-this"
 export interface DynamicValue  {
     id: DynamicValueName,
     displayName: () => string,
-    generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => any;
+    //  refactor second argument to be a VaultDB object
+
+    generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => any;
     type: string[];
 }
 
@@ -20,9 +23,9 @@ export function isDynamic(val: string):boolean {
     return val in dynamicValues;
 }
 
-export function getDynamicValue(val: string, a: AttributeDefinition, data:ObjectData,   context?: ObjectData) {
+export function getDynamicValue(val: string, a: AttributeDefinition, db: VaultDB,   context?: ObjectData) {
     const dv = dynamicValues[val];
-    return dv.generate(a,data,context);
+    return dv.generate(a,db,context);
 }
 
 export function getDynamicValuesForType(type: string) {
@@ -34,9 +37,9 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@link-to-this": {
         id: "@link-to-this",
         displayName: () => "Link to this",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             if(context){
-                const thisLink = data.db.generateWikiLink(context.file);
+                const thisLink = db.generateWikiLink(context.file);
                 return thisLink;
             } else {
                 throw Error("Cannot generate @link-to-this since context is missing.")
@@ -48,7 +51,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@today": {
         id: "@today",
         displayName: () => "Today",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -56,7 +59,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@yesterday": {
         id: "@yesterday",
         displayName: () => "Yesterday",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().subtract(1, 'days').format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -64,7 +67,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@tomorrow": {
         id: "@tomorrow",
         displayName: () => "Tomorrow",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().add(1, 'days').format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -72,7 +75,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@this-week": {
         id: "@this-week",
         displayName: () => "This Week",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().startOf('week').format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -80,7 +83,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@last-week": {
         id: "@last-week",
         displayName: () => "Last Week",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().subtract(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -88,7 +91,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@next-week": {
         id: "@next-week",
         displayName: () => "Next Week",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().add(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -97,7 +100,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@this-month": {
         id: "@this-month",
         displayName: () => "This Month",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().startOf('month').format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -105,7 +108,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@last-month": {
         id: "@last-month",
         displayName: () => "Last month",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().subtract(1, 'month').startOf("month").format("YYYY-MM-DD")
         },
         type: ["date","datetime"]
@@ -113,7 +116,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     "@next-month": {
         id: "@next-month",
         displayName: () => "Next month",
-        generate: (a: AttributeDefinition, data:ObjectData, context?: ObjectData) => {
+        generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().add(1, 'month').startOf("month").format("YYYY-MM-DD")
         },
         type: ["date","datetime"]

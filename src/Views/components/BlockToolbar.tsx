@@ -25,7 +25,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
         // TODO: find the right path
         // const db = props.queryResult.db;
-        db.addToSet(props.queryResult);
+        db.addToSet(props.queryResult, definition().fields || []);
     }
 
     const canAdd = () => {

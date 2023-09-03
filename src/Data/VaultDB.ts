@@ -14,6 +14,8 @@ import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
 import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { getOperatorById } from "./Operator";
+import { getDynamicValue, isDynamic } from "./DynamicValues";
+import { FieldDefinition } from "src/Views/components/renderCodeBlock";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export type DBEvent = "metadata-changed";
@@ -187,16 +189,15 @@ export class VaultDB {
     }
 
     canAdd(results: QueryResult) {
-        const type = results.query.inferSetType();
-        const collection = results.query.inferCollection();
-
-        if (!type && !collection) return false;
+        // const type = results.query.inferSetType();
+        // const collection = results.query.inferCollection();
+        // if (!type && !collection) return false;
         return results.query.canCreate;
     }
 
-    async addToSet(results: QueryResult) {
+    async addToSet(results: QueryResult, properties: FieldDefinition[]) {
         const tmp = await this.getTemplate(results);
-        if (!tmp) return;
+        
         const { template, folder } = tmp;
         let content = "";
         if (template instanceof TFile) {
@@ -204,7 +205,7 @@ export class VaultDB {
         }
 
         if (folder instanceof TFolder) {
-            const defaults = this.inferProperties(results);
+            const defaults = this.inferProperties(properties, results);
 
             const newFile = await this.app.fileManager.createNewFile(
                 folder as TFolder,
@@ -233,23 +234,44 @@ export class VaultDB {
             const folder = results.query.context.file.parent;
             if (folder) return { template: undefined, folder };
         }
+        const folder = results.query.context?.file.parent;
+        return { template: undefined, folder };
+        
     }
 
-    inferProperties(results: QueryResult): Record<string, any> {
+    inferProperties(properties: FieldDefinition[], results: QueryResult): Record<string, any> {
+
+        // build defaults from properties filtering the ones that begins with double underscore
+        let defaults = properties.filter(prop => !prop.startsWith("__")).reduce((def, key) => {
+            return { ...def, [key]: null };
+        }, {} as Record<string, any>);  
+
         const constraints = results.query.clauses
             .filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
             // .filter(c => getOperatorById(c.op).isConstraint)
             .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic);
         const context = results.query.context;
 
-        const defaults = constraints.reduce((def, [at, op, val]) => {
+        defaults = constraints.reduce((def, [at, op, val]) => {
             const operator = getOperatorById(op);
             const curDefault = def[at];
 
-            const okDefault = operator.enforce?.(curDefault, val, context);
+            let value = val;
+
+            // if (curDefault === undefined) {
+            //     return { ...def, [at]: value };
+            // }
+
+            // check if val is a dynamicvalue and process it
+            
+            if (isDynamic(val)) {
+                value = getDynamicValue(val, this.getAttributeDefinition(at), this, context);
+            }
+
+            const okDefault = operator.enforce?.(curDefault, value, context);
             return { ...def, [at]: okDefault };
-        }, {} as Record<string, any>);
-        return defaults;
+        }, defaults);
+        return defaults; 
     }
 
     getCollections(): ObjectData[] {

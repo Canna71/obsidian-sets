@@ -42,8 +42,8 @@ export default class SetsPlugin extends Plugin {
 
         addIcon("sigma", sigma);
 
-        if (this.settings.addRibbonIcon) {
-            // This creates an icon in the left ribbon.
+        // if (this.settings.addRibbonIcon) {
+        //     // This creates an icon in the left ribbon.
             const ribbonIconEl = this.addRibbonIcon(
                 "sigma",
                 "Open Sets",
@@ -53,7 +53,7 @@ export default class SetsPlugin extends Plugin {
             );
             // Perform additional things with the ribbon
             ribbonIconEl.addClass("Sets-ribbon-class");
-        }
+        // }
 
         this.addCommand({
             id: "show-Sets-view",

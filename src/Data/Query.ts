@@ -82,7 +82,7 @@ export class Query {
             const operator = getOperatorById(op);
             let value = val;
             // const val = clause.val; 
-            if(isDynamic(val)) value = getDynamicValue(val,attr,data,this._context);
+            if(isDynamic(val)) value = getDynamicValue(val,attr,data.db,this._context);
             return operator.matches(attr, data, value, this._context);
         });
 

@@ -11,11 +11,11 @@ export interface SetsSettings {
     inferCollectionFieldsByDefault: boolean;
     inferSetFieldsByDefault: boolean;
     inferQueryFieldsByDefault: boolean;
-}   
+} 
 
 export const DEFAULT_SETTINGS: SetsSettings = {
     addRibbonIcon: true,
-    showAtStartup: true,
+    showAtStartup: false,
     setsRoot: "Sets",
     typesFolder: "Sets/Types",
     typeAttributeKey: "type",

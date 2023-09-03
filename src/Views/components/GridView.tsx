@@ -26,11 +26,6 @@ const GridView: Component<{ data: ObjectData[], attributes: AttributeDefinition[
     }
     let scroller: HTMLDivElement;
 
-    // const orderedAttributes = () => {
-    //     return fields().map(field => props.attributes.find(att => att.key === field.key)!);
-    // }
-    // const autoSize = attributes.map(attr => "200px").join(" ")
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     onMount(() => {
         // div.scrollLeft = definition().scroll || 0;
