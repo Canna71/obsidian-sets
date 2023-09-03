@@ -56,6 +56,9 @@ export class VaultDB {
         );
         //TODO: deregister on unload
         this.app.metadataCache.on("resolved", this.onMetadataChanged);
+        this.app.vault.on("delete", this.onMetadataChanged);
+        this.app.vault.on("rename", this.onMetadataChanged);
+        this.app.vault.on("create", this.onMetadataChanged);
     }
 
     private onMetadataChanged() {
@@ -79,6 +82,9 @@ export class VaultDB {
 
     dispose() {
         this.app.metadataCache.off("resolved", this.onMetadataChanged);
+        this.app.vault.off("delete", this.onMetadataChanged);
+        this.app.vault.off("rename", this.onMetadataChanged);
+        this.app.vault.off("create", this.onMetadataChanged);
     }
 
     on(event: DBEvent, observer: (...args: any[]) => void) {
@@ -216,6 +222,7 @@ export class VaultDB {
             this.app.fileManager.processFrontMatter(newFile, (frontMatter) => {
                 Object.assign(frontMatter, defaults);
             });
+            return newFile;
         }
     }
     private async getTemplate(results: QueryResult) {

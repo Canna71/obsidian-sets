@@ -65,6 +65,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     const onDataChanged = () => {
         const newData = db.execute(query);
+        
         setData(newData);
     }
 
@@ -99,21 +100,21 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const attributes: AttributeDefinition[] =
         fieldDefinitions.map(key => db.getAttributeDefinition(key));
 
-    // if (attributes.length === 0) {
-    //     attributes.push(db.getAttributeDefinition(IntrinsicAttributeKey.FileName))
-    // }
 
+    const stateKey = ctx.sourcePath;
+    // Saves current scroll position into the state map and deletes it from the definition
     const updateDefinition = (def: SetDefinition) => {
         const scrollLeft = el.querySelector(".sets-gridview-scroller")?.scrollLeft;
         // def.scroll = scrollLeft;
-        stateMap.set("TODO", { scroll: scrollLeft });
+        stateMap.set(stateKey, { scroll: scrollLeft });
         delete def.transientState;
         saveDataIntoBlock<SetDefinition>(def, ctx)
     }
 
-    console.log(`scroll from map:`, stateMap.get("TODO"))
-    definition.transientState = stateMap.get("TODO");
-    stateMap.delete("TODO");
+    definition.transientState = stateMap.get(stateKey);
+    stateMap.delete(stateKey);
+
+
     render(() =>
         <AppProvider app={{app, db}}>
             <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >

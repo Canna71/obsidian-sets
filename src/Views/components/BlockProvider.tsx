@@ -19,6 +19,8 @@ export interface BlockStateContext {
 
     removeSort: (field: string) => void;
     save: () => void;
+    setNewFile: (path: string) => void;
+    getNewFile: () => string;
 }
 const BlockContext = createContext<BlockStateContext>();
 
@@ -27,6 +29,11 @@ const BlockContext = createContext<BlockStateContext>();
 export function BlockProvider(props: { setDefinition: SetDefinition, updateDefinition: (definition: SetDefinition)=>void, children?: JSX.Element }) {
 
     const [definition, setState] = createSignal(props.setDefinition);
+
+    const hiddenState = {
+        newFile: ""
+    }
+
     const blockState = {
         definition,
         reorder: (from: string, to: string) => {
@@ -106,7 +113,11 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
             }))
         },
         setDefinition: (def:SetDefinition) => {setState(def);},
-        save: () => props.updateDefinition(definition())
+        save: () => props.updateDefinition(definition()),
+        setNewFile: (path: string) => {
+            hiddenState.newFile = path;
+        },
+        getNewFile: () => hiddenState.newFile
     };
 
 

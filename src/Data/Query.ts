@@ -41,6 +41,7 @@ export class Query {
     private _canCreate: boolean;
     private _context?: ObjectData;
     private _sortBy: SortField[];
+    // private _newFile: string | undefined;
 
     protected constructor(db: VaultDB, clauses: Clause[], sort: SortField[], context?: ObjectData) {
         this._db = db;
@@ -130,6 +131,15 @@ export class Query {
     get sortby() {
         return this._sortBy;
     }
+
+    // get newFile():string | undefined {
+    //     return this._newFile;
+    // }
+
+    // set newFile(newFile: string | undefined) {
+    //     this._newFile = newFile;
+    // }
+
 }
 
 

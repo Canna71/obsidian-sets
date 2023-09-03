@@ -1,9 +1,10 @@
 import { App, Platform, TFile, setIcon } from "obsidian";
-import { Component, Show, createSignal, onMount } from "solid-js";
+import { Component, Show, createEffect, createSignal } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 import { useApp } from "./AppProvider";
 import { Dialog } from "../Dialog";
+import { useBlock } from "./BlockProvider";
 
 const regexChars = /[.?*+^$[\]\\(){}|-]/g
 function escape(exp) {
@@ -38,14 +39,24 @@ function isValidFileName(app:App,file:TFile, filename: string) {
 const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
     const {app} = useApp()!;
     const text = () => props.attribute.format(props.data);
-    const [isEdit, setEdit] = createSignal(false);
+    const {getNewFile, setNewFile} =  useBlock()!;
+    // const isEdit = () => {
+    //     getNewFile() === props.data.file.path;
+    // }
+
+    const isEditFile = () => {  
+        const tmp =  getNewFile() === props.data.file.path;
+        // if (tmp) setNewFile(""); 
+        return tmp;
+    }
+
+    const [isEdit, setEdit] = createSignal(isEditFile());
     const [msg, setMsg] = createSignal<string|undefined>(undefined);
     let editor : HTMLDivElement;
     let pencil : HTMLDivElement;
 
-
-    const onEdit = (e: MouseEvent) => {
-        if (!isEdit()) setEdit(true);
+    // focus editor when it becomes visible
+    createEffect(() => {
         if(isEdit()) {
             const range = document.createRange();
             editor.focus();
@@ -54,6 +65,18 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
             selection!.removeAllRanges();
             selection!.addRange(range);
         }
+    })
+
+    const onEdit = (e: MouseEvent) => {
+        if (!isEdit()) setEdit(true);
+        // if(isEdit()) {
+        //     const range = document.createRange();
+        //     editor.focus();
+        //     range.selectNodeContents(editor);
+        //     const selection = window.getSelection();
+        //     selection!.removeAllRanges();
+        //     selection!.addRange(range);
+        // }
     };
 
     
@@ -114,7 +137,8 @@ const FileName: Component<{ data: ObjectData; attribute: AttributeDefinition; }>
         }
     } 
 
-    onMount(() => {
+    createEffect(() => {
+        if(isEdit()) return;
         setIcon(pencil, "pencil");
     })
 
