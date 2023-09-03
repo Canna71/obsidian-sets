@@ -34,7 +34,7 @@ export type QueryResult = {
 
 export type ScopeType = "type" | "collection" | "folder" | "vault";
 export type Scope = [ScopeType, string?];
-
+export const VaultScope = ["vault"] as Scope;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex
@@ -104,30 +104,32 @@ export class VaultDB {
     }
 
     fromClauses(
+        scope: Scope,
         clauses: Clause[],
         sort: SortField[],
         context?: ObjectData
     ): Query {
-        return Query.__fromClauses(this, clauses, sort, context);
+        
+        return Query.__fromClauses(this,scope, clauses, sort, context);
     }
 
-    fromClausesSet(
-        type: string,
-        clauses: Clause[],
-        sort: SortField[],
-        context?: ObjectData
-    ): Query {
-        return Query.__fromClauses(this, [ [this.plugin.settings.typeAttributeKey,"eq",type], ...clauses], sort, context);
-    }
+    // fromClausesSet(
+    //     type: string,
+    //     clauses: Clause[],
+    //     sort: SortField[],
+    //     context?: ObjectData
+    // ): Query {
+    //     return Query.__fromClauses(this, [ [this.plugin.settings.typeAttributeKey,"eq",type], ...clauses], sort, context);
+    // }
 
-    fromClausesCollection(
-        link: string,
-        clauses: Clause[],
-        sort: SortField[],
-        context?: ObjectData
-    ): Query {
-        return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
-    }
+    // fromClausesCollection(
+    //     link: string,
+    //     clauses: Clause[],
+    //     sort: SortField[],
+    //     context?: ObjectData
+    // ): Query {
+    //     return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
+    // }
 
     execute(query: Query, top=Number.MAX_VALUE): QueryResult {
         if (!this.dbInitialized) {
@@ -195,7 +197,7 @@ export class VaultDB {
     }
 
     queryType(type: string) {
-        const query = this.fromClauses(
+        const query = this.fromClauses(["vault"],
             [[this.plugin.settings.typeAttributeKey, "eq", type]],
             []
         );
@@ -299,7 +301,7 @@ export class VaultDB {
             "eq",
             this.plugin.settings.collectionType,
         ];
-        const query = this.fromClauses([clause], []);
+        const query = this.fromClauses(["vault"], [clause], []);
         const result = this.execute(query);
         this._collectionCache = result.data;
         return result.data;

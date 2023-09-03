@@ -2,7 +2,7 @@
 import { render } from "solid-js/web";
 import { Clause, IntrinsicAttributeKey, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { Scope, VaultDB } from "src/Data/VaultDB";
+import { Scope, VaultDB, VaultScope } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
@@ -46,23 +46,25 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     const context = db.getDataContext(ctx.sourcePath);
     const sortby = definition.sortby || [];
-    const [scope,what] : Scope = definition.scope || ["vault"];
+    const scope = definition.scope || VaultScope;
+    const [scopeType,what] : Scope = scope;
 
     let query;
-    switch(scope) {
-        case "vault":  
-            query = db.fromClauses(clauses, sortby, context); 
-        break;
-        case "type":
-            query = db.fromClausesSet(what!, clauses, sortby, context);
-            break;
-        case "collection":
-            query = db.fromClausesCollection(what!, clauses, sortby, context);
-            break;
-        case "folder":
-            // query = db.fromClausesFolder(what!, clauses, sortby, context);
-            break;
-    }
+    db.fromClauses(scope, clauses, sortby, context);
+    // switch(scope) {
+    //     case "vault":  
+    //         query = db.fromClauses(definition.scope, clauses, sortby, context); 
+    //     break;
+    //     case "type":
+    //         query = db.fromClausesSet(what!, clauses, sortby, context);
+    //         break;
+    //     case "collection":
+    //         query = db.fromClausesCollection(what!, clauses, sortby, context);
+    //         break;
+    //     case "folder":
+    //         // query = db.fromClausesFolder(what!, clauses, sortby, context);
+    //         break;
+    // }
     
 
 
@@ -87,13 +89,13 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     let fieldDefinitions = definition.fields;
     if (!fieldDefinitions) {
-        if (scope == "type") {
+        if (scopeType == "type") {
             if (getSetsSettings().inferSetFieldsByDefault) {
                 fieldDefinitions = db.inferFields(initialdata)
             } else {
                 fieldDefinitions = db.getTypeAttributes(what!)
             }
-        } else if (scope == "collection") {
+        } else if (scopeType == "collection") {
             if (getSetsSettings().inferCollectionFieldsByDefault) {
                 fieldDefinitions = db.inferFields(initialdata)
             } 
@@ -101,7 +103,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
         
         fieldDefinitions = [IntrinsicAttributeKey.FileName , ...(fieldDefinitions||[])]
-        if(scope==="type" && !getSetsSettings().inferSetFieldsByDefault) {
+        if(scopeType==="type" && !getSetsSettings().inferSetFieldsByDefault) {
             definition = {...definition, fields: fieldDefinitions}
         }
     }

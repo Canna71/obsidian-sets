@@ -3,7 +3,7 @@ import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
 import { AttributeDefinition } from "./AttributeDefinition";
-import { VaultDB } from "./VaultDB";
+import { Scope, VaultDB } from "./VaultDB";
 import { getDynamicValue, isDynamic } from "./DynamicValues";
 
 export enum IntrinsicAttributeKey {
@@ -41,9 +41,11 @@ export class Query {
     private _canCreate: boolean;
     private _context?: ObjectData;
     private _sortBy: SortField[];
+    private _scope: string;
+    private _scopeSpecifier: string | undefined;
     // private _newFile: string | undefined;
 
-    protected constructor(db: VaultDB, clauses: Clause[], sort: SortField[], context?: ObjectData) {
+    protected constructor(db: VaultDB,scope: Scope,  clauses: Clause[], sort: SortField[], context?: ObjectData) {
         this._db = db;
         const operators = clauses.map(clause => getOperatorById(clause[1]))
         this._clauses = clauses.sort((a,b)=>{
@@ -61,26 +63,28 @@ export class Query {
         })
         this._context = context;
         this._sortBy = sort.slice().reverse();
+        this._scope = scope[0];
+        this._scopeSpecifier = scope[1];
     }
 
-    static __fromClauses(db: VaultDB, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
+    static __fromClauses(db: VaultDB,scope:Scope, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
         if(Array.isArray(clauses)){
             if(clauses.length > 0){
                 if(Array.isArray(clauses[0])){
-                    return new Query(db, clauses as Clause[], sort, context);
+                    return new Query(db,scope, clauses as Clause[], sort, context);
                 } else {
-                    return new Query(db, [clauses as Clause], sort, context);
+                    return new Query(db,scope, [clauses as Clause], sort, context);
                 }
             } else {
-                return new Query(db, [], sort, context);
+                return new Query(db,scope, [], sort, context);
             }
         } else {
             throw new Error("Query.__fromClauses: clauses must be an array of clauses")
         }
         
-        if (Array.isArray(clauses) && clauses.length && Array.isArray(clauses[0]))
-            return new Query(db,clauses, sort, context);
-        else return new Query(db, [clauses as Clause], sort, context);
+        // if (Array.isArray(clauses) && clauses.length && Array.isArray(clauses[0]))
+        //     return new Query(db,clauses, sort, context);
+        // else return new Query(db, [clauses as Clause], sort, context);
     }
 
     matches(data: ObjectData) {
