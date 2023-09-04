@@ -64,13 +64,13 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     
         <div class="sets-codeblock-toolbar">
 
-            <div ref={sortBtn!} class="clickable-icon"
+            <div ref={sortBtn!} class="clickable-icon editmode-only"
                 onClick={onSorting}
             ></div>
-            <div ref={fieldsBtn!} class="clickable-icon"
+            <div ref={fieldsBtn!} class="clickable-icon editmode-only"
                 onClick={onFieldsSelect}
             ></div>
-            <div ref={filterBtn!} class="clickable-icon"
+            <div ref={filterBtn!} class="clickable-icon editmode-only"
                 onClick={onFilter}
             ></div>
             <Show when={canAdd()}>

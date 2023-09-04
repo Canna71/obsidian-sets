@@ -18,8 +18,15 @@
         }
     }
 }
-
-
+// sets-toolbar-addbutton
+// temporarily
+.sets-codeblock:hover {
+    .sets-codeblock-toolbar {
+        .sets-toolbar-addbutton {
+            visibility: visible;
+        }
+    }
+}
 
 .sets-codeblock {
     padding: 12px;

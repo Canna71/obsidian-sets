@@ -81,6 +81,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const onDataChanged =() => {
         // cech id this codeblock is still mounted
         if (!el.isConnected) {
+            console.log(`codeblock ${ctx.docId} ${ctx.sourcePath} is not connected anymore`);
             db.off("metadata-changed", onDataChanged);
             return;
         }
