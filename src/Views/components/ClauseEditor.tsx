@@ -1,4 +1,4 @@
-import { Component, Show, createEffect, createSignal } from "solid-js";
+import { Component, Show, createEffect, createSignal, onMount } from "solid-js";
 import { useApp } from "./AppProvider";
 import { AttributeModal } from "./AttributeModal";
 import { OperatorName, getOperatorById, getOperatorsForType } from "src/Data/Operator";
@@ -12,6 +12,7 @@ export interface ClauseEditorProps {
     // db: VaultDB,
     clause: Clause
     update: (clause: Clause) => void
+    remove: () => void
 }
 
 export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
@@ -52,6 +53,11 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     let ddOps: HTMLDivElement;
     let ddDynamicValues: HTMLDivElement;
     let divValue: HTMLDivElement;
+    let btnDelete: HTMLDivElement;
+
+    onMount(()=>{
+        setIcon(btnDelete, "x");
+    })
 
     // app.metadataTypeManager.properties
     const onClickProp = (e: MouseEvent) => {
@@ -169,10 +175,9 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         }
     })
 
-    // const updateDDc= ((ref)=>{
-    //     const options = mapBy("op", operators(), op=>op.displayName())
-    //     new DropdownComponent(ref).addOptions(options)
-    // })
+    const onDelete = () => {
+        props.remove();
+    }
 
     return (
 
@@ -192,6 +197,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 <Show when={divValueIsVisible()} >
                     <div class="metadata-property-value" ref={divValue!}></div>
                 </Show>
+                <div ref={btnDelete!} onClick={onDelete} class="clickable-icon"></div>
             </div>
 
 

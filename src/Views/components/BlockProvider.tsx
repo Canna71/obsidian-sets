@@ -23,6 +23,7 @@ export interface BlockStateContext {
     getNewFile: () => string;
     addFilter: (clause: Clause) => void;
     updateFilter: (index: number, clause: Clause) => void;
+    removeFilter: (index: number) => void;
 }
 const BlockContext = createContext<BlockStateContext>();
 
@@ -130,6 +131,12 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
             setState(state => ({
                 ...state,
                 filter: [...(state.filter || []).map((c, i) => i === index ? clause : c)]
+            }))
+        },
+        removeFilter: (index: number) => {
+            setState(state => ({
+                ...state,
+                filter: [...(state.filter || []).filter((c, i) => i !== index)]
             }))
         }
     };

@@ -120,7 +120,7 @@
                                 // position: relative;
                                 border-bottom: 1px solid var(--divider-color);
                                 display: flex;
-                                // width: fit-content;  
+                                // width: fit-content;
                                 flex-direction: column;
                                 justify-content: center;
 
@@ -201,9 +201,6 @@
 }
 
 .sets-filter-editor {
-
-    
-
     .sets-filter-header {
         display: flex;
         align-items: center;
@@ -211,23 +208,34 @@
         padding-right: var(--size-4-4);
         margin-bottom: var(--size-4-4);
     }
-
-    .metadata-property {
-        .metadata-property-value {
-            overflow: visible;
-        }
-        input {
-            overflow-x: visible;
+    .sets-filters-scroller {
+        max-height: 240px;
+        overflow-y: auto;
+        .sets-filters-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--size-4-1);
+            height: 100%;
+            padding: var(--size-4-1) var(--size-4-2) 0 var(--size-4-1);
+            .metadata-property {
+                height: var(--input-height);
+                align-items: center;
+                .metadata-property-value {
+                    overflow: visible;
+                }
+                input {
+                    overflow-x: visible;
+                }
+            }
         }
     }
 }
 
 .sets-fields-select {
-
-
     .sets-field-search {
         height: var(--input-height);
-        border: var(--input-border-width) solid var(--background-modifier-border);
+        border: var(--input-border-width) solid
+            var(--background-modifier-border);
         color: var(--text-normal);
         padding: var(--size-4-1) var(--size-4-2);
         width: 100%;
@@ -255,8 +263,6 @@
         max-height: 120px;
         min-height: 32px;
     }
-
-    
 }
 
 .sets-field-item {
@@ -306,18 +312,18 @@
         .sets-sorting-property {
             display: flex;
             padding: 2px;
-            
-            border: var(--input-border-width) solid var(--background-modifier-border);
-            
+
+            border: var(--input-border-width) solid
+                var(--background-modifier-border);
+
             .sets-field-item {
                 flex-grow: 1;
                 cursor: grab;
             }
-            
+
             .sets-sort-direction {
                 padding: 0 0.2em 0 0.5em;
             }
-
         }
     }
 

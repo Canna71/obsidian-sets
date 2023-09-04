@@ -4,7 +4,7 @@ import { Clause, IntrinsicAttributeKey, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { Scope, VaultDB, VaultScope } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal, onCleanup, onMount } from "solid-js";
 import CodeBlock, { ViewMode } from "./CodeBlock";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
@@ -89,9 +89,13 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         setData(newData);
     };
 
-    
+    onMount(() => {
+        setTimeout(() => {
+            db.on("metadata-changed", onDataChanged);
+        },110);
+    })
 
-    db.on("metadata-changed", onDataChanged);
+    
 
     onCleanup(() => {
         db.off("metadata-changed", onDataChanged);

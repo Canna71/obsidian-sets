@@ -10,7 +10,7 @@ export interface FilterEditorProps {
 }
 
 const FilterEditor: Component<FilterEditorProps> = (props) => {
-    const { definition, save, addFilter, updateFilter } = useBlock()!;
+    const { definition, save, addFilter, updateFilter, removeFilter } = useBlock()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state, setState] = createStore(definition() || [])
     let addBtn: HTMLDivElement;
@@ -33,7 +33,11 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
         updateFilter(index, clause);
     }
 
-    const onAdd = (e:MouseEvent) => {
+    const remove = (index: number) => {
+        removeFilter(index);
+    }
+
+    const onAdd = (e: MouseEvent) => {
         const defaultClause: Clause = [IntrinsicAttributeKey.FileName, "eq", ""];
         addFilter(defaultClause);
     }
@@ -41,19 +45,26 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
     return (<div class="sets-filter-editor">
         <div class="sets-filter-header">
             <div class="sets-modal-title">Filters</div>
-            <div ref={addBtn!} 
-                onClick={onAdd}
-            class="sets-filter-add-btn clickable-icon"></div>
+
         </div>
         {/* <div>Filters:</div> */}
-        <div class="sets-filters-wrapper">
-            <For each={definition().filter || []}>
-                {
-                    (clause, index) => {
-                        return <ClauseEditor clause={clause} update={(clause) => update(index(), clause)} />
+        <div class="sets-filters-scroller">
+            <div class="sets-filters-wrapper">
+                <For each={definition().filter || []}>
+                    {
+                        (clause, index) => {
+                            return <ClauseEditor clause={clause} 
+                            remove={() => remove(index())}
+                            update={(clause) => update(index(), clause)} />
+                        }
                     }
-                }
-            </For>
+                </For>
+            </div>
+        </div>
+        <div>
+            <div ref={addBtn!}
+                onClick={onAdd}
+                class="sets-filter-add-btn clickable-icon"></div>
         </div>
         <div class="sets-button-bar">
             <button class="mod-cta" onClick={onSave}>Save</button>
