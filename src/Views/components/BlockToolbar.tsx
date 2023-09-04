@@ -16,7 +16,10 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     let fieldsBtn: HTMLDivElement;
     let sortBtn: HTMLDivElement;
 
-    const {app, db} = useApp()!;
+    const { app, db } = useApp()!;
+    // const view = app.workspace.getActiveViewOfType(MarkdownView);
+
+    // const isEditMode = view?.getMode() === "source";
 
     const { definition, save, setDefinition, setNewFile } = useBlock()!;
 
@@ -57,22 +60,26 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
     })
 
-    return <div class="sets-codeblock-toolbar">
-        
-        <div ref={sortBtn!} class="clickable-icon"
-            onClick={onSorting}
-        ></div>
-        <div ref={fieldsBtn!} class="clickable-icon"
-            onClick={onFieldsSelect}
-        ></div>
-        <div ref={filterBtn!} class="clickable-icon"
-            onClick={onFilter}
-        ></div>
-        <Show when={canAdd()}>
-            <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
+    return (
+    
+        <div class="sets-codeblock-toolbar">
 
-        </Show>
-    </div>
+            <div ref={sortBtn!} class="clickable-icon"
+                onClick={onSorting}
+            ></div>
+            <div ref={fieldsBtn!} class="clickable-icon"
+                onClick={onFieldsSelect}
+            ></div>
+            <div ref={filterBtn!} class="clickable-icon"
+                onClick={onFilter}
+            ></div>
+            <Show when={canAdd()}>
+                <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
+
+            </Show>
+        </div>
+    
+    )
 }
 
 export default BlockToolbar;

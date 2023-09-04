@@ -35,7 +35,7 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
 
     const remove = (index: number) => {
         removeFilter(index);
-    }
+    } 
 
     const onAdd = (e: MouseEvent) => {
         const defaultClause: Clause = [IntrinsicAttributeKey.FileName, "eq", ""];

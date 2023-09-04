@@ -9,11 +9,14 @@ import { useBlock } from "./BlockProvider";
 
 export type ViewMode = "grid";
 
-const CodeBlock: Component<{
-    queryResult: QueryResult, attributes: AttributeDefinition[],
-
+export interface CodeBlockProps {
+    queryResult: QueryResult,
+    attributes: AttributeDefinition[],
     viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void }
-}> = (props) => {
+}
+
+
+const CodeBlock: Component<CodeBlockProps> = (props) => {
     const { getNewFile } = useBlock()!;
 
     // if newFile is set, put the new file in the first row
@@ -26,8 +29,8 @@ const CodeBlock: Component<{
             // reorder props.queryResult.data so that the new file is at the top
             if (newFileRowIndex > 0) {
                 const row = props.queryResult.data[newFileRowIndex];
-                const newData = [row, ...props.queryResult.data.filter((c,i)=>i!==newFileRowIndex)];
-                
+                const newData = [row, ...props.queryResult.data.filter((c, i) => i !== newFileRowIndex)];
+
                 return newData;
             }
 

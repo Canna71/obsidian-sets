@@ -79,7 +79,11 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const lastRendered = Date.now();
 
     const onDataChanged =() => {
-        // add current context docid to the log:
+        // cech id this codeblock is still mounted
+        if (!el.isConnected) {
+            db.off("metadata-changed", onDataChanged);
+            return;
+        }
 
         // we refresh the data only if component was last rendered more than 100ms ago
         if (Date.now() - lastRendered < 100) return;

@@ -11,11 +11,15 @@
     font-size: var(--font-text-size);
 }
 
-.sets-codeblock:hover {
-    .sets-codeblock-toolbar {
-        visibility: visible;
+.cm-preview-code-block {
+    .sets-codeblock:hover {
+        .sets-codeblock-toolbar {
+            visibility: visible;
+        }
     }
 }
+
+
 
 .sets-codeblock {
     padding: 12px;
