@@ -81,6 +81,7 @@ export class VaultDB {
 
         //     this.hashes.set(hash, list);
         // }
+        console.log("metadata changed, clearing cache" )
         this.accessors.clear();
         this.dbInitialized = true;
         this._collectionCache = undefined;
@@ -181,7 +182,8 @@ export class VaultDB {
         });
         const timeTaken = Date.now() - startTime;
         console.info(`${ret.length} items fetched in ${timeTaken}ms`);
-        
+        // log the current stack trace
+        console.trace();
 
 
         return {

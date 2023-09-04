@@ -3,7 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
-import { QueryEditorModal } from "../QueryEditorModal";
+import { FilterEditorModal } from "../FilterEditorModal";
 import { useBlock } from "./BlockProvider";
 import { useApp } from "./AppProvider";
 import { SetDefinition } from "./renderCodeBlock";
@@ -36,7 +36,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const onFilter = () => {
-        const filterModal = new QueryEditorModal(app, props.queryResult.db, definition(), update);
+        const filterModal = new FilterEditorModal(app, props.queryResult.db, definition(), update);
         filterModal.open();
     }
 

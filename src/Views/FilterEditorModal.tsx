@@ -3,12 +3,12 @@ import { SetDefinition } from "./components/renderCodeBlock";
 import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
-import QueryEditor from "./QueryEditor";
+import FilterEditor from "./FilterEditor";
 import { BlockProvider } from "./components/BlockProvider";
 
 
 
-export class QueryEditorModal extends Modal {
+export class FilterEditorModal extends Modal {
     message: string;
     definition: SetDefinition;
     private _db: VaultDB;
@@ -31,7 +31,7 @@ export class QueryEditorModal extends Modal {
         render(() => <AppProvider app={{app: this.app, db:this._db}}>
             {/* <ClauseEditor db={this._db} /> */}
             <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
-                <QueryEditor exit={()=>{this.close()}} />
+                <FilterEditor exit={()=>{this.close()}} />
             </BlockProvider>
             
         </AppProvider>, contentEl);

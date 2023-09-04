@@ -74,17 +74,28 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const [data, setData] = createStore(initialdata);
 
     const [viewMode, setViewMode] = createSignal<ViewMode>("grid" as ViewMode);
+    console.log("rendering code block", ctx.docId, ctx.sourcePath);
+    // we measur when the component was last rendered
+    const lastRendered = Date.now();
 
-    const onDataChanged = () => {
+    const onDataChanged =() => {
+        // add current context docid to the log:
+
+        // we refresh the data only if component was last rendered more than 100ms ago
+        if (Date.now() - lastRendered < 100) return;
+        console.log(`data changed ${ctx.docId} ${ctx.sourcePath}`, JSON.stringify(query.clauses));
         const newData = db.execute(query);
         
         setData(newData);
-    }
+    };
+
+    
 
     db.on("metadata-changed", onDataChanged);
 
     onCleanup(() => {
         db.off("metadata-changed", onDataChanged);
+        console.log(`cleaning up ${ctx.docId} ${ctx.sourcePath}`);
     })
 
     let fieldDefinitions = definition.fields;
@@ -120,7 +131,8 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         // def.scroll = scrollLeft;
         stateMap.set(stateKey, { scroll: scrollLeft });
         delete def.transientState;
-        saveDataIntoBlock<SetDefinition>(def, ctx)
+        db.off("metadata-changed", onDataChanged);
+        saveDataIntoBlock<SetDefinition>(def, ctx);
     }
 
     definition.transientState = stateMap.get(stateKey);

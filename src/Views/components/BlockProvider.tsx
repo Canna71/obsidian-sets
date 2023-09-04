@@ -1,7 +1,7 @@
 
 import { createSignal, createContext, useContext, JSX, Accessor } from "solid-js";
-import {  SetDefinition } from "./renderCodeBlock";
-import { AttributeKey, SortField } from "src/Data/Query";
+import { SetDefinition } from "./renderCodeBlock";
+import { AttributeKey, Clause, SortField } from "src/Data/Query";
 
 
 
@@ -11,22 +11,24 @@ export interface BlockStateContext {
     reorderSort: (from: string, to: string) => void;
     // updateFields: (fields: FieldDefinition[]) => void;
     updateSize: (field: string, size?: string) => void;
-    setDefinition: (def:SetDefinition) => void;
-    addField: (field:string) => void;
-    removeField: (field:string) => void;
-    setSortDirection: (field: string, deseending:boolean) => void;
-    addSort: (field: string, deseending:boolean) => void;
+    setDefinition: (def: SetDefinition) => void;
+    addField: (field: string) => void;
+    removeField: (field: string) => void;
+    setSortDirection: (field: string, deseending: boolean) => void;
+    addSort: (field: string, deseending: boolean) => void;
 
     removeSort: (field: string) => void;
     save: () => void;
     setNewFile: (path: string) => void;
     getNewFile: () => string;
+    addFilter: (clause: Clause) => void;
+    updateFilter: (index: number, clause: Clause) => void;
 }
 const BlockContext = createContext<BlockStateContext>();
 
 
 
-export function BlockProvider(props: { setDefinition: SetDefinition, updateDefinition: (definition: SetDefinition)=>void, children?: JSX.Element }) {
+export function BlockProvider(props: { setDefinition: SetDefinition, updateDefinition: (definition: SetDefinition) => void, children?: JSX.Element }) {
 
     const [definition, setState] = createSignal(props.setDefinition);
 
@@ -38,34 +40,34 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
         definition,
         reorder: (from: string, to: string) => {
             const updatedItems = definition().fields?.slice();
-            if(!updatedItems) throw Error("No items to reoreder!")
+            if (!updatedItems) throw Error("No items to reoreder!")
             const ids = updatedItems;
             const fromIndex = ids?.indexOf(from);
             const toIndex = ids?.indexOf(to);
             if (updatedItems) {
                 updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
             }
-            const newDef = {...definition(), fields: updatedItems}
+            const newDef = { ...definition(), fields: updatedItems }
             props.updateDefinition(newDef)
             // setItems(updatedItems);
-        }, 
+        },
         reorderSort: (from: string, to: string) => {
             const updatedItems = definition().sortby?.slice();
-            if(!updatedItems) throw Error("No items to reoreder!")
-            const ids = updatedItems.map(s =>s[0]);
+            if (!updatedItems) throw Error("No items to reoreder!")
+            const ids = updatedItems.map(s => s[0]);
             const fromIndex = ids?.indexOf(from);
             const toIndex = ids?.indexOf(to);
             if (updatedItems) {
                 updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
             }
-            setState(state=>({
+            setState(state => ({
                 ...state,
                 sortby: updatedItems
             }))
-            
-            
+
+
             // setItems(updatedItems);
-        }, 
+        },
         // updateFields: (fields: FieldDefinition[]) => {
         //     console.log(`updateFields`, fields)
         //     setState(state => ({...state, fields}))
@@ -79,25 +81,25 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
         removeField: (field: string) => {
             setState(state => ({
                 ...state,
-                fields: state.fields?.filter(f=>f!==field)
+                fields: state.fields?.filter(f => f !== field)
             }))
         },
-        setSortDirection: (field: AttributeKey, descending:boolean) => {
+        setSortDirection: (field: AttributeKey, descending: boolean) => {
             setState(state => ({
                 ...state,
-                sortby: [...(state.sortby||[]).map(s => s[0] === field ? [field, descending] as SortField : s) ]
+                sortby: [...(state.sortby || []).map(s => s[0] === field ? [field, descending] as SortField : s)]
             }))
         },
-        addSort: (field: AttributeKey, descending:boolean) => {
+        addSort: (field: AttributeKey, descending: boolean) => {
             setState(state => ({
                 ...state,
-                sortby: [...(state.sortby||[]).filter(([f])=>f!==field), [field, descending] ]
+                sortby: [...(state.sortby || []).filter(([f]) => f !== field), [field, descending]]
             }))
         },
         removeSort: (field: string) => {
             setState(state => ({
                 ...state,
-                sortby: [...(state.sortby||[]).filter(([f])=>f!==field) ]
+                sortby: [...(state.sortby || []).filter(([f]) => f !== field)]
             }))
         },
         updateSize: (field: string, size: string) => {
@@ -112,12 +114,24 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
                 }
             }))
         },
-        setDefinition: (def:SetDefinition) => {setState(def);},
+        setDefinition: (def: SetDefinition) => { setState(def); },
         save: () => props.updateDefinition(definition()),
         setNewFile: (path: string) => {
             hiddenState.newFile = path;
         },
-        getNewFile: () => hiddenState.newFile
+        getNewFile: () => hiddenState.newFile,
+        addFilter: (clause: Clause) => {
+            setState(state => ({
+                ...state,
+                filter: [...(state.filter || []), clause]
+            }))
+        },
+        updateFilter: (index: number, clause: Clause) => {
+            setState(state => ({
+                ...state,
+                filter: [...(state.filter || []).map((c, i) => i === index ? clause : c)]
+            }))
+        }
     };
 
 
