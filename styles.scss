@@ -228,16 +228,40 @@
             gap: var(--size-4-1);
             height: 100%;
             padding: var(--size-4-1) var(--size-4-2) 0 var(--size-4-1);
-            .metadata-property {
+            .sets-clause {
                 height: var(--input-height);
                 align-items: center;
+                display: flex;
+                justify-content: space-between;
+                // padding: var(--metadata-property-padding);
+                border-radius: var(--metadata-property-radius);
+                overflow: hidden;
+                // margin: var(--size-4-1);
+                box-sizing: content-box;
+                padding: 4px;
+
+                &:hover {
+                    box-shadow: 0 0 0 1px  var(--background-modifier-border);
+                }
+
                 .metadata-property-value {
                     overflow: visible;
                 }
                 input {
                     overflow-x: visible;
                 }
+                .clickable-icon {
+                    margin-left: auto;
+                }
             }
+        }
+    }
+
+    .sets-filter-buttons {
+        display: flex;
+        align-items: center;
+        .sets-filter-add-btn {
+            float: right;
         }
     }
 }

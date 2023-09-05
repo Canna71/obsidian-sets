@@ -181,7 +181,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
 
     return (
 
-            <div class="metadata-property">
+            <div class="sets-clause">
                 <Show when={prop()}>
                     <span ref={spanIcon!} class="metadata-property-icon"></span>
                     <input type="text" class="metadata-property-key" onClick={onClickProp} readOnly value={prop()?.name}></input>

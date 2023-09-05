@@ -263,7 +263,7 @@ const operators : Record<OperatorName,Operator> = {
             const value = a.getValue(data);
             return value == false || value === null || value === undefined;
         },
-        // enforce: (current:unknown, b:unknown) => b,
+        enforce: (current:unknown, b:unknown) => null,
         selectiveness: 10,
         displayName: () => "Unchecked",
         isUnary: true

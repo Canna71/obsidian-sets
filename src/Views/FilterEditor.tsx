@@ -61,10 +61,11 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
                 </For>
             </div>
         </div>
-        <div>
+        <div class="sets-filter-buttons clickable-icon" onClick={onAdd} >
             <div ref={addBtn!}
-                onClick={onAdd}
+                
                 class="sets-filter-add-btn clickable-icon"></div>
+                Add filter
         </div>
         <div class="sets-button-bar">
             <button class="mod-cta" onClick={onSave}>Save</button>
