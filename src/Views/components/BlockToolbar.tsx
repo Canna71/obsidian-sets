@@ -9,6 +9,7 @@ import { useApp } from "./AppProvider";
 import { SetDefinition } from "./renderCodeBlock";
 import { FieldSelectModal } from "../FieldSelectModal";
 import SortingEditorModal from "../SortingEditorModal";
+import { ScopeEditorModal } from "../ScopeEditorModal";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
 
@@ -39,17 +40,22 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const onFilter = () => {
-        const filterModal = new FilterEditorModal(app, props.queryResult.db, definition(), update);
+        const filterModal = new FilterEditorModal(app, db, definition(), update);
         filterModal.open();
     }
 
     const onFieldsSelect = () => {
-        const fieldsModal = new FieldSelectModal(app, props.queryResult.db, definition(), update);
+        const fieldsModal = new FieldSelectModal(app, db, definition(), update);
         fieldsModal.open();
     }
 
     const onSorting = () => {
-        const fieldsModal = new SortingEditorModal(app, props.queryResult.db, definition(), update);
+        const fieldsModal = new SortingEditorModal(app, db, definition(), update);
+        fieldsModal.open();
+    }
+
+    const onScope = () => {
+        const fieldsModal = new ScopeEditorModal(app, db, definition(), update);
         fieldsModal.open();
     }
 
@@ -63,6 +69,9 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     return (
     
         <div class="sets-codeblock-toolbar">
+            <div  class="clickable-icon editmode-only"
+                onClick={onScope}
+            >Scope</div>
 
             <div ref={sortBtn!} class="clickable-icon editmode-only"
                 onClick={onSorting}

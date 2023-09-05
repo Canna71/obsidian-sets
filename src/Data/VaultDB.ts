@@ -33,6 +33,9 @@ export type QueryResult = {
 // collection has the collection file link, folder has the folder path
 // all has no specifier
 
+// TODO: support also "folder-recursive"
+
+
 export type ScopeType = "type" | "collection" | "folder" | "vault";
 export type Scope = [ScopeType, string?];
 export const VaultScope = ["vault"] as Scope;
