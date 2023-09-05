@@ -16,6 +16,7 @@ import { AttributeDefinition } from "./AttributeDefinition";
 import { getOperatorById } from "./Operator";
 import { getDynamicValue, isDynamic } from "./DynamicValues";
 import { FieldDefinition } from "src/Views/components/renderCodeBlock";
+import { stableSort } from "src/Utils/stableSort";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export type DBEvent = "metadata-changed";
@@ -81,7 +82,7 @@ export class VaultDB {
 
         //     this.hashes.set(hash, list);
         // }
-        console.log("metadata changed, clearing cache" )
+        console.log("metadata changed, clearing cache");
         this.accessors.clear();
         this.dbInitialized = true;
         this._collectionCache = undefined;
@@ -110,8 +111,7 @@ export class VaultDB {
         sort: SortField[],
         context?: ObjectData
     ): Query {
-        
-        return Query.__fromClauses(this,scope, clauses, sort, context);
+        return Query.__fromClauses(this, scope, clauses, sort, context);
     }
 
     // fromClausesSet(
@@ -132,7 +132,7 @@ export class VaultDB {
     //     return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
     // }
 
-    execute(query: Query, top=Number.MAX_VALUE): QueryResult {
+    execute(query: Query, top = Number.MAX_VALUE): QueryResult {
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
@@ -143,19 +143,18 @@ export class VaultDB {
         // const cache = this.app.metadataCache.metadataCache;
         const ret: ObjectData[] = [];
 
-        
         let files;
-        if(query.scopeFolder){
-            files = query.scopeFolder.children.filter(f => f instanceof TFile)
-                .filter(f => f.path !== query.context?.file.path)
-                .map(f => f.path);
+        if (query.scopeFolder) {
+            files = query.scopeFolder.children
+                .filter((f) => f instanceof TFile)
+                .filter((f) => f.path !== query.context?.file.path)
+                .map((f) => f.path);
             // TODO: recurse into subfolders
         } else {
             //@ts-ignore
             files = this.app.metadataCache.getCachedFiles();
         }
         // const files: string[] = this.app.metadataCache.getCachedFiles();
-
 
         for (const filePath of files) {
             const fileCache = this.app.metadataCache.getCache(filePath);
@@ -166,7 +165,6 @@ export class VaultDB {
                     ret.push(ob);
                 }
             }
-            
         }
 
         // TODO: sorting
@@ -174,7 +172,8 @@ export class VaultDB {
         // const gt = getOperatorById("gt");
         // const lt = getOperatorById("lt");
         sortby.forEach((sortField) => {
-            ret.sort((a, b) => {
+            // ret.sort((a, b) => {
+            stableSort(ret, (a, b) => {
                 // const op = sortField[1] ? lt : gt;
                 const attr = this.getAttributeDefinition(sortField[0]);
                 return (sortField[1] ? -1 : 1) * this.compare(attr, a, b);
@@ -185,12 +184,11 @@ export class VaultDB {
         // log the current stack trace
         // console.trace();
 
-
         return {
-            data: ret.slice(0,top),
+            data: ret.slice(0, top),
             db: this,
             query,
-            total: ret.length
+            total: ret.length,
         };
     }
 
@@ -202,8 +200,22 @@ export class VaultDB {
         const aval = attr.getValue(a);
         const bval = attr.getValue(b);
 
-        if(aval === null || aval === undefined) return -1;
-        if(bval === null || bval === undefined) return 1;
+        if (aval === bval) return 0;
+        if (!aval && !bval) return 0;  // we treat falsy values as equal
+
+        // we consider null and undefined values as less than any other value
+        if (
+            (aval === null || aval === undefined) &&
+            bval !== undefined &&
+            bval !== null
+        )
+            return -1;
+        if (
+            (bval === null || bval === undefined) &&
+            aval !== undefined &&
+            aval !== null
+        )
+            return 1;
 
         if (aval < bval) return -1;
         if (aval > bval) return 1;
@@ -211,7 +223,8 @@ export class VaultDB {
     }
 
     queryType(type: string) {
-        const query = this.fromClauses(["vault"],
+        const query = this.fromClauses(
+            ["vault"],
             [[this.plugin.settings.typeAttributeKey, "eq", type]],
             []
         );
@@ -228,7 +241,7 @@ export class VaultDB {
 
     async addToSet(results: QueryResult, properties: FieldDefinition[]) {
         const tmp = await this.getTemplate(results);
-        
+
         const { template, folder } = tmp;
         let content = "";
         if (template instanceof TFile) {
@@ -248,7 +261,10 @@ export class VaultDB {
                 // Object.assign(frontMatter, defaults);
                 // merge defaults with frontmatter trying to give priority to fields with valies
                 for (const key in defaults) {
-                    if (frontMatter[key] === null || frontMatter[key] === undefined) {
+                    if (
+                        frontMatter[key] === null ||
+                        frontMatter[key] === undefined
+                    ) {
                         frontMatter[key] = defaults[key];
                     }
                 }
@@ -274,15 +290,18 @@ export class VaultDB {
         }
         const folder = results.query.context?.file.parent;
         return { template: undefined, folder };
-        
     }
 
-    inferProperties(properties: FieldDefinition[], results: QueryResult): Record<string, any> {
-
+    inferProperties(
+        properties: FieldDefinition[],
+        results: QueryResult
+    ): Record<string, any> {
         // build defaults from properties filtering the ones that begins with double underscore
-        let defaults = properties.filter(prop => !prop.startsWith("__")).reduce((def, key) => {
-            return { ...def, [key]: null };
-        }, {} as Record<string, any>);  
+        let defaults = properties
+            .filter((prop) => !prop.startsWith("__"))
+            .reduce((def, key) => {
+                return { ...def, [key]: null };
+            }, {} as Record<string, any>);
 
         const constraints = results.query.clauses
             .filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
@@ -301,15 +320,20 @@ export class VaultDB {
             // }
 
             // check if val is a dynamicvalue and process it
-            
+
             if (isDynamic(val)) {
-                value = getDynamicValue(val, this.getAttributeDefinition(at), this, context);
+                value = getDynamicValue(
+                    val,
+                    this.getAttributeDefinition(at),
+                    this,
+                    context
+                );
             }
 
             const okDefault = operator.enforce?.(curDefault, value, context);
             return { ...def, [at]: okDefault };
         }, defaults);
-        return defaults; 
+        return defaults;
     }
 
     getCollections(): ObjectData[] {
@@ -373,7 +397,7 @@ export class VaultDB {
                         this.plugin.settings.typeAttributeKey
                     ] === type
                 )
-                return true;
+                    return true;
             }
         });
         return typeFile;
@@ -381,11 +405,11 @@ export class VaultDB {
         // return this.app.vault.getAbstractFileByPath(typeFilePath);
     }
 
-    getTypeAttributes(type:string) {
+    getTypeAttributes(type: string) {
         const file = this.getArchetypeFile(type);
-        if(file) {
+        if (file) {
             const cache = this.app.metadataCache.getFileCache(file);
-            if(cache?.frontmatter) {
+            if (cache?.frontmatter) {
                 return Object.keys(cache.frontmatter);
             }
         }
@@ -476,7 +500,7 @@ export class VaultDB {
         // return app.fileManager.generateMarkdownLink(file,source)
         const linkText = app.metadataCache.fileToLinktext(file, source);
 
-        return `[[${(linkText)}]]`;
+        return `[[${linkText}]]`;
         // return `[[${escapeURI(linkText)}]]`;
     }
 
@@ -514,9 +538,9 @@ export class VaultDB {
 
     inferFields(results: QueryResult): AttributeKey[] {
         const avail = {};
-        results.data.forEach(result => {
-            Object.assign(avail, result.frontmatter)
-        })
+        results.data.forEach((result) => {
+            Object.assign(avail, result.frontmatter);
+        });
 
         return [...Object.keys(avail)];
     }

@@ -1,8 +1,6 @@
 import { Component, For, onMount } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
-import ClauseEditor from "./components/ClauseEditor";
-import { Clause, IntrinsicAttributeKey } from "src/Data/Query";
-import { setIcon } from "obsidian";
+import { Clause } from "src/Data/Query";
 
 export interface ScopeEditorProps {
 
