@@ -51,20 +51,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     // let query;
     const query = db.fromClauses(scope, clauses, sortby, context);
-    // switch(scope) {
-    //     case "vault":  
-    //         query = db.fromClauses(definition.scope, clauses, sortby, context); 
-    //     break;
-    //     case "type":
-    //         query = db.fromClausesSet(what!, clauses, sortby, context);
-    //         break;
-    //     case "collection":
-    //         query = db.fromClausesCollection(what!, clauses, sortby, context);
-    //         break;
-    //     case "folder":
-    //         // query = db.fromClausesFolder(what!, clauses, sortby, context);
-    //         break;
-    // }
+    
     
 
 
@@ -107,6 +94,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         console.log(`cleaning up ${ctx.docId} ${ctx.sourcePath}`);
     })
 
+   // Infer fields
     let fieldDefinitions = definition.fields;
     if (!fieldDefinitions) {
         if (scopeType == "type") {
@@ -121,7 +109,6 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
             } 
         }
 
-        
         fieldDefinitions = [IntrinsicAttributeKey.FileName , ...(fieldDefinitions||[])]
         if(scopeType==="type" && !getSetsSettings().inferSetFieldsByDefault) {
             definition = {...definition, fields: fieldDefinitions}
