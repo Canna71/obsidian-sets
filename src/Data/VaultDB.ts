@@ -383,6 +383,14 @@ export class VaultDB {
         }).filter(t => t !== undefined) as string[];
     }
 
+    // returns all the available collections
+    getCollectionNames(): string[] {
+        return this.getCollections().map((f) => {   
+            return f.file.basename
+        }).filter(t => t !== undefined) as string[];
+    }
+
+
 
     getAttributeDefinition(key: string): AttributeDefinition {
         if (this.accessors.has(key)) {

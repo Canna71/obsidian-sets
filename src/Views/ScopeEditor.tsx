@@ -104,6 +104,24 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
                     </For>
                 </select>
             </Show>
+
+            <Show when={scopeType() === "collection"}>
+
+                <select value={scopeSpecifier()}    
+                    onChange={(e) => setScopeSpecifier(e.target.value)}
+                >   
+                    <option value={""}>Select...</option>
+                    <For each={db.getCollections()}>
+                        {   
+                            (collection) => {
+                                return <option value={collection.name}>{collection.name}</option>
+                            }
+                        }
+                    </For>
+                </select>
+            </Show>
+                        
+
         </div>
         <div class="sets-button-bar">
             {/* The Save button should only be visible if the scope data is valid */}
