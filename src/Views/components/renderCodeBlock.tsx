@@ -47,7 +47,11 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const context = db.getDataContext(ctx.sourcePath);
     const sortby = definition.sortby || [];
     const scope = definition.scope || VaultScope;
-    const [scopeType,what] : Scope = scope;
+    // desctructure the scope using Object.entries
+    const [[scopeType, what]] = Object.entries(scope);
+    
+
+    // const {scopeType,what} : Scope = scope;
 
     // let query;
     const query = db.fromClauses(scope, clauses, sortby, context);

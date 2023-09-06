@@ -37,8 +37,12 @@ export type QueryResult = {
 
 
 export type ScopeType = "type" | "collection" | "folder" | "vault";
+
+// export type Scope = {"type": string} | {"collection": string} | {"folder": string | undefined} | {"vault": undefined};
+
 export type Scope = [ScopeType, string?];
-export const VaultScope = ["vault"] as Scope;
+// export const VaultScope = {"vault": undefined} as Scope;
+export const VaultScope: Scope = ["vault"];
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex
@@ -227,7 +231,7 @@ export class VaultDB {
 
     queryType(type: string) {
         const query = this.fromClauses(
-            ["vault"],
+            VaultScope,
             [[this.plugin.settings.typeAttributeKey, "eq", type]],
             []
         );
@@ -349,7 +353,7 @@ export class VaultDB {
             "eq",
             this.plugin.settings.collectionType,
         ];
-        const query = this.fromClauses(["vault"], [clause], []);
+        const query = this.fromClauses(VaultScope, [clause], []);
         const result = this.execute(query);
         this._collectionCache = result.data;
         return result.data;

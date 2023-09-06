@@ -2,6 +2,7 @@ import { Component, For, Show, createSignal, onMount } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { Clause } from "src/Data/Query";
 import { useApp } from "./components/AppProvider";
+import { ScopeType } from "src/Data/VaultDB";
 
 export interface ScopeEditorProps {
 
@@ -21,14 +22,17 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     
 
     const onSave = () => {
-        setDefinition({...definition(),"scope": [scopeType(), scopeSpecifier()]});
+        if(!isValid()) return;
+        if(!scopeType()) return;
+        setDefinition({...definition(), scope: [scopeType() as ScopeType, scopeSpecifier()]
+            });
         save();
         props.exit();
     }
 
     const onScopeTypeChange = (e: Event) => {
         const select = e.target as HTMLSelectElement;
-        setScopeType(select.value);
+        setScopeType(select.value as ScopeType);
     }
 
     const types = () => {
