@@ -9,7 +9,7 @@ export interface ScopeEditorProps {
 }
 
 const ScopeEditor: Component<ScopeEditorProps> = (props) => {
-    const { definition, save } = useBlock()!;
+    const { definition, save, setDefinition } = useBlock()!;
 
     // get an instance of db frm the app provider
     const {db} = useApp()!;
@@ -21,6 +21,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     
 
     const onSave = () => {
+        setDefinition({...definition(),"scope": [scopeType(), scopeSpecifier()]});
         save();
         props.exit();
     }
@@ -48,11 +49,12 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         }
         // if the scopeType is "folder" then the scopeSpecifier should be a valid folder
         if(scopeType() === "folder") {
-            return db.getFolderNames().includes(scopeSpecifier());
+            if (!scopeSpecifier()) return true;
+            return db.isValidFolder(scopeSpecifier());
         }
         // if the scopeType is "vault" then the scopeSpecifier should be ""
         if(scopeType() === "vault") {
-            return scopeSpecifier() === "";
+            return !scopeSpecifier();
         }
         
         return false;
@@ -82,7 +84,9 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             {/* if the scopeType is "type" we should allow the user to select a type
             from the ones available */}
             <Show when={scopeType() === "type"}>
-                <select value={scopeSpecifier()}>
+                <select value={scopeSpecifier()}
+                    onChange={(e) => setScopeSpecifier(e.target.value)}
+                >
                     {/* create an option for each type in types() 
                         it should also hace a first option iwth value="" and text="Select..."
                     */}
@@ -98,10 +102,12 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             </Show>
         </div>
         <div class="sets-button-bar">
-            {/* The Save button is only enabled if the scope data is valid */}
-            <button class="mod-cta" 
-                disabled={!isValid()}
-            onClick={onSave}>Save</button>
+            {/* The Save button should only be visible if the scope data is valid */}
+            <Show when={isValid()}>
+                <button class="mod-cta" 
+                onClick={onSave}>Save</button>
+            </Show>
+            
             <button class="" onClick={props.exit}>Cancel</button>
         </div>
     </div>)
