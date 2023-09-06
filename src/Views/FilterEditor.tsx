@@ -33,6 +33,7 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
         updateFilter(index, clause);
     }
 
+
     const remove = (index: number) => {
         removeFilter(index);
     } 
@@ -45,9 +46,8 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
     return (<div class="sets-filter-editor">
         <div class="sets-filter-header">
             <div class="sets-modal-title">Filters</div>
-
+            
         </div>
-        {/* <div>Filters:</div> */}
         <div class="sets-filters-scroller">
             <div class="sets-filters-wrapper">
                 <For each={definition().filter || []}>

@@ -368,6 +368,18 @@ export class VaultDB {
         return typesFiles;
     }
 
+    // return the available type names by accessing the
+    // frontmater of the TFiles returned by getTypes
+    getTypeNames(): string[] {
+        return this.getTypes().map((f) => {
+            const cache = this.app.metadataCache.getFileCache(f);
+            if (cache) {
+                return cache.frontmatter?.[ this.plugin.settings.typeAttributeKey ] as string;
+            }
+        }).filter(t => t !== undefined) as string[];
+    }
+
+
     getAttributeDefinition(key: string): AttributeDefinition {
         if (this.accessors.has(key)) {
             return this.accessors.get(key)!;
