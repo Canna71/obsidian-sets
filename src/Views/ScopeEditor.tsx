@@ -1,9 +1,10 @@
 import { Component, For, Show, createSignal } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
-import { Clause } from "src/Data/Query";
 import { useApp } from "./components/AppProvider";
 import { ScopeType } from "src/Data/VaultDB";
 import { LinkToThis } from "src/Data/DynamicValues";
+import { TFolder } from "obsidian";
+import Choice from "./components/Choice";
 
 export interface ScopeEditorProps {
 
@@ -33,8 +34,8 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
 
     const onScopeTypeChange = (e: Event) => {
         const select = e.target as HTMLSelectElement;
-        setScopeType(select.value as ScopeType);
         setScopeSpecifier("");
+        setScopeType(select.value as ScopeType);
     }
 
     const types = () => {
@@ -57,7 +58,9 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // if the scopeType is "folder" then the scopeSpecifier should be a valid folder
         if(scopeType() === "folder") {
             if (!scopeSpecifier()) return true;
-            return db.isValidFolder(scopeSpecifier());
+            // checks that the scopeSpecifier is a valid folder
+            const folder = app.vault.getAbstractFileByPath(scopeSpecifier());
+            return folder && folder instanceof TFolder;
         }
         // if the scopeType is "vault" then the scopeSpecifier should be ""
         if(scopeType() === "vault") {
@@ -65,13 +68,6 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         }
         
         return false;
-    }
-
-    // how to reduce sidebar icons in vscode
-
-    const update = (index: number, clause: Clause) => {
-        // setState("filter", index, clause);
-        // updateFilter(index, clause);
     }
 
     const collections = () => {
@@ -89,13 +85,13 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const onCollectionChange = (e: Event) => {
         const select = e.target as HTMLSelectElement;
         const val = select.value;
-        // if(!isDynamic(val)) {
-        //     console.log(val);
-        //     const file = app.vault.getAbstractFileByPath(val);
-        //     if(file instanceof TFile) {
-        //         val = db.generateWikiLink(file, "/");
-        //     }
-        // }
+        setScopeSpecifier(val);
+    }
+
+    // implement onFolderChange
+    const onFolderChange = (e: Event) => {
+        const input = e.target as HTMLInputElement;
+        const val = input.value;
         setScopeSpecifier(val);
     }
 
@@ -150,6 +146,11 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
                 
             </Show>
                         
+            <Show when={scopeType() === "folder"}>
+                <input type="text" value={scopeSpecifier()} onInput={onFolderChange} />
+                {/* <Choice value={scopeSpecifier()} onChange={onFolderChange} /> */}
+            </Show>
+
 
         </div>
         <div class="sets-button-bar">
