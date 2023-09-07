@@ -10,6 +10,8 @@ export type DynamicValueName = "@link-to-this"
 
 ;
 
+export const LinkToThis:DynamicValueName = "@link-to-this";
+
 export interface DynamicValue  {
     id: DynamicValueName,
     displayName: () => string,

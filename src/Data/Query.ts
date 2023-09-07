@@ -4,7 +4,7 @@ import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { Scope, ScopeType, VaultDB } from "./VaultDB";
-import { getDynamicValue, isDynamic } from "./DynamicValues";
+import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
 import { TFolder } from "obsidian";
 
 export enum IntrinsicAttributeKey {
@@ -136,7 +136,7 @@ export class Query {
     inferCollection(): string | undefined {
         const collClauses = this.getClausesByAttr(this._settings.collectionAttributeKey)
         .filter(c => c[1]==="hasall" || c[1] === "hasany")
-        .filter(c => c[2] === "@link-to-this")
+        .filter(c => c[2] === LinkToThis)
         ;
 
         if (collClauses.length > 0 && this._context) {

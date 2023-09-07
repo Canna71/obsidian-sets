@@ -1,8 +1,9 @@
-import { Component, For, Show, createSignal, onMount } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { Clause } from "src/Data/Query";
 import { useApp } from "./components/AppProvider";
 import { ScopeType } from "src/Data/VaultDB";
+import { LinkToThis } from "src/Data/DynamicValues";
 
 export interface ScopeEditorProps {
 
@@ -13,7 +14,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const { definition, save, setDefinition } = useBlock()!;
 
     // get an instance of db frm the app provider
-    const {db} = useApp()!;
+    const {db, app} = useApp()!;
 
 
     const [scopeType, setScopeType] = createSignal(definition().scope?.[0] || "");
@@ -33,6 +34,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const onScopeTypeChange = (e: Event) => {
         const select = e.target as HTMLSelectElement;
         setScopeType(select.value as ScopeType);
+        setScopeSpecifier("");
     }
 
     const types = () => {
@@ -49,7 +51,8 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         }
         // if the scopeType is "collection" then the scopeSpecifier should be a valid collection    
         if(scopeType() === "collection") {
-            return db.getCollectionNames().includes(scopeSpecifier());
+            return scopeSpecifier() === LinkToThis ||
+                 db.getCollections().find(c => db.generateWikiLink(c.file, "/") === scopeSpecifier());
         }
         // if the scopeType is "folder" then the scopeSpecifier should be a valid folder
         if(scopeType() === "folder") {
@@ -71,6 +74,30 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // updateFilter(index, clause);
     }
 
+    const collections = () => {
+        // return collection names from querying VaultDB
+        // together with their corresponding wiki link
+        return db.getCollections().map((collection) => {
+            return {
+                name: collection.file.basename,
+                link: db.generateWikiLink(collection.file, "/")
+            }
+        })
+    }
+
+    // implement onCollectionChange
+    const onCollectionChange = (e: Event) => {
+        const select = e.target as HTMLSelectElement;
+        const val = select.value;
+        // if(!isDynamic(val)) {
+        //     console.log(val);
+        //     const file = app.vault.getAbstractFileByPath(val);
+        //     if(file instanceof TFile) {
+        //         val = db.generateWikiLink(file, "/");
+        //     }
+        // }
+        setScopeSpecifier(val);
+    }
 
     return (<div class="sets-scope-editor">
         
@@ -79,7 +106,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             <select value={scopeType()}
                 onInput={onScopeTypeChange}
             >
-                <option value={""}>Select...</option>
+                <option disabled hidden value={""}>Select Scope...</option>
                 <option value="type">Type</option>
                 <option value="collection">Collection</option>
                 <option value="folder">Folder</option>
@@ -94,7 +121,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
                     {/* create an option for each type in types() 
                         it should also hace a first option iwth value="" and text="Select..."
                     */}
-                    <option value={""}>Select...</option>
+                    <option disabled hidden value={""}>Select type...</option>
                     <For each={types()}>
                         {
                             (type) => {
@@ -108,17 +135,19 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             <Show when={scopeType() === "collection"}>
 
                 <select value={scopeSpecifier()}    
-                    onChange={(e) => setScopeSpecifier(e.target.value)}
+                    onChange={onCollectionChange}
                 >   
-                    <option value={""}>Select...</option>
-                    <For each={db.getCollections()}>
+                    <option disabled hidden value={""}>Select collection...</option>
+                    <option value={LinkToThis}>This</option>
+                    <For each={collections()}>
                         {   
                             (collection) => {
-                                return <option value={collection.name}>{collection.name}</option>
+                                return <option value={collection.link}>{collection.name}</option>
                             }
                         }
                     </For>
                 </select>
+                
             </Show>
                         
 
