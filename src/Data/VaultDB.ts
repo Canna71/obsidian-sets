@@ -283,7 +283,7 @@ export class VaultDB {
         const type = results.query.inferSetType();
         if (type) {
             // const typeDisplayName = this.getTypeDisplayName(type);
-            const folder = await this.getSetFolder(type);
+            const folder = this.plugin.settings.createObjectsInSetsFolder ? await this.getSetFolder(type) : undefined;
             let template = this.getArchetypeFile(type);
             if (!template) {
                 template = await this.inferType(type);

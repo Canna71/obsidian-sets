@@ -11,6 +11,7 @@ export interface SetsSettings {
     inferCollectionFieldsByDefault: boolean;
     inferSetFieldsByDefault: boolean;
     inferQueryFieldsByDefault: boolean;
+    createObjectsInSetsFolder: boolean;
 } 
 
 export const DEFAULT_SETTINGS: SetsSettings = {
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     collectionType: "collection",
     inferCollectionFieldsByDefault: true,
     inferSetFieldsByDefault: false,
-    inferQueryFieldsByDefault: false
+    inferQueryFieldsByDefault: false,
+    createObjectsInSetsFolder: false
 }
 
