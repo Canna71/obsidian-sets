@@ -100,6 +100,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const folders = () => {
         // return folder names from querying VaultDB
         return getFolders(app)
+        .filter((folder) => folder !== "/" && folder !== "")
         .filter((folder) => folder.toLowerCase().contains(scopeSpecifier().toLowerCase()))
         .map((folder) => {
             return {

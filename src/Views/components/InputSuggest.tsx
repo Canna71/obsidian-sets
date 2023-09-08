@@ -1,4 +1,4 @@
-import { Accessor, Component, For, Setter, Show, createSignal, onCleanup, onMount } from "solid-js";
+import { Accessor, Component, For, Setter, Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
 
 export interface InputSuggestProps {
@@ -25,6 +25,34 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
             updatePosition
         );
     }
+
+    const onInputBlur = () => {
+        setTimeout(() => {
+            setFocused(false);
+        }, 100);
+    }
+
+    const onInput = (e: InputEvent) => {
+        // props.onChange(e);
+        setSelected(0);
+        props.setValue(e.target.value);
+    }
+
+    const isTooltipVisible = () => {
+        const ret = focused() && props.options().length > 0;
+        if (ret) {
+            updatePosition();
+        }
+        return ret;
+    }
+
+    createEffect(() => {
+        const index = selected();
+        const element = tooltip.firstChild!.childNodes[index] as HTMLDivElement;
+        if (element) {
+            element.scrollIntoView({ block: "nearest" });
+        }
+    });
 
     function updatePosition() {
         computePosition(input, tooltip, {
@@ -53,10 +81,20 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
         });
     }
 
-
+    const onInputKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "ArrowDown") {
+            setSelected(selected() + 1);
+        }
+        if (e.key === "ArrowUp") {
+            setSelected(selected() - 1);
+        }
+        if (e.key === "Enter") {
+            props.setValue(props.options()[selected()].value);
+        }
+    }
 
     onMount(() => {
-        
+
     });
 
     onCleanup(() => {
@@ -66,21 +104,29 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
     return (<>
         <input ref={input!}
             onFocus={onInputFocus}
-            onBlur={() => { setFocused(false) }}
+            onBlur={onInputBlur}
             type="text"
             value={props.value()}
-            onInput={(e) => { props.setValue(e.target.value) }} />
+            onInput={onInput}
+            onkeydown={onInputKeyDown}
+        />
         {/* <Choice value={scopeSpecifier()} onChange={onFolderChange} /> */}
-        <Show when={focused()}>
+        <Show when={isTooltipVisible()}>
             <div ref={tooltip!} role="tooltip" class="sets-tooltip suggestion-container">
                 <div class="suggestion">
-                <For each={props.options()}>
-                    {
-                        (option, index) => {
-                            return <div classList={{"suggestion-item":true, "is-selected":selected()===index()}} onClick={() => { props.setValue(option.value) }}>{option.label}</div>
+                    <For each={props.options()}>
+                        {
+                            (option, index) => {
+                                return <div classList={{ "suggestion-item": true, "is-selected": selected() === index() }}
+                                    onClick={() => { props.setValue(option.value), console.log(option.value) }}
+                                    onMouseOver={() => { setSelected(index()) }}
+                                >
+                                    {option.label}
+
+                                </div>
+                            }
                         }
-                    }
-                </For>
+                    </For>
                 </div>
             </div>
         </Show>
