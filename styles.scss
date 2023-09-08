@@ -367,6 +367,19 @@
     }
 }
 
+.sets-scope-editor {
+    .sets-scope-header {
+        .sets-modal-title {
+            padding: var(--size-4-2);
+            
+        }
+    }
+    .sets-scope-body {
+        display: flex;
+        gap: var(--size-4-2)
+    };
+}
+
 .sets-tooltip {
     width: max-content;
     position: fixed;

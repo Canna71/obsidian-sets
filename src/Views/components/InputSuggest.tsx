@@ -4,6 +4,7 @@ import { autoUpdate, computePosition, size } from "@floating-ui/dom";
 export interface InputSuggestProps {
     value: Accessor<string>,
     setValue: Setter<string>,
+    placeholder?: Accessor<string>,
     // onChange: (e: Event) => void,
     // getOptions: (inputVal: string) => {value: string, label: string}[]
     options: Accessor<{ value: string, label: string }[]>
@@ -33,9 +34,8 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
     }
 
     const onInput = (e: InputEvent) => {
-        // props.onChange(e);
         setSelected(0);
-        props.setValue(e.target.value);
+        props.setValue((e.currentTarget as HTMLInputElement).value);
     }
 
     const isTooltipVisible = () => {
@@ -109,6 +109,7 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
             value={props.value()}
             onInput={onInput}
             onkeydown={onInputKeyDown}
+            placeholder={props.placeholder?.()}
         />
         {/* <Choice value={scopeSpecifier()} onChange={onFolderChange} /> */}
         <Show when={isTooltipVisible()}>

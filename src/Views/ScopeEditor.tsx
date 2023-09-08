@@ -1,4 +1,4 @@
-import { Component, For, Show, createSignal, onCleanup, onMount } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { useApp } from "./components/AppProvider";
 import { ScopeType } from "src/Data/VaultDB";
@@ -90,12 +90,6 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         setScopeSpecifier(val);
     }
 
-    // implement onFolderChange
-    const onFolderChange = (e: Event) => {
-        const input = e.target as HTMLInputElement;
-        const val = input.value;
-        setScopeSpecifier(val);
-    }
 
     const folders = () => {
         // return folder names from querying VaultDB
@@ -115,6 +109,8 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
 
         <div class="sets-scope-header">
             <div class="sets-modal-title">Scope</div>
+        </div>
+        <div class="sets-scope-body">
             <select value={scopeType()}
                 onInput={onScopeTypeChange}
             >
@@ -163,7 +159,11 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             </Show>
 
             <Show when={scopeType() === "folder"}>
-               <InputSuggest value={scopeSpecifier} setValue={setScopeSpecifier} options={folders} />
+               <InputSuggest 
+                value={scopeSpecifier} 
+                setValue={setScopeSpecifier} 
+                placeholder={() => "Select folder..."}
+                options={folders} />
             </Show>
 
 
