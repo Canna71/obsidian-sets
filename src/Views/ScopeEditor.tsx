@@ -1,10 +1,11 @@
-import { Component, For, Show, createSignal } from "solid-js";
+import { Component, For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { useApp } from "./components/AppProvider";
 import { ScopeType } from "src/Data/VaultDB";
 import { LinkToThis } from "src/Data/DynamicValues";
 import { TFolder } from "obsidian";
-import Choice from "./components/Choice";
+import InputSuggest from "./components/InputSuggest";
+import { getFolders } from "src/Utils/getFolders";
 
 export interface ScopeEditorProps {
 
@@ -15,19 +16,20 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const { definition, save, setDefinition } = useBlock()!;
 
     // get an instance of db frm the app provider
-    const {db, app} = useApp()!;
+    const { db, app } = useApp()!;
 
 
     const [scopeType, setScopeType] = createSignal(definition().scope?.[0] || "");
     const [scopeSpecifier, setScopeSpecifier] = createSignal(definition().scope?.[1] || "");
 
-    
+
 
     const onSave = () => {
-        if(!isValid()) return;
-        if(!scopeType()) return;
-        setDefinition({...definition(), scope: [scopeType() as ScopeType, scopeSpecifier()]
-            });
+        if (!isValid()) return;
+        if (!scopeType()) return;
+        setDefinition({
+            ...definition(), scope: [scopeType() as ScopeType, scopeSpecifier()]
+        });
         save();
         props.exit();
     }
@@ -47,26 +49,26 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     // and false if it is not
     const isValid = () => {
         // if the scopeType is "type" then the scopeSpecifier should be a valid type
-        if(scopeType() === "type") {
+        if (scopeType() === "type") {
             return types().includes(scopeSpecifier());
         }
         // if the scopeType is "collection" then the scopeSpecifier should be a valid collection    
-        if(scopeType() === "collection") {
+        if (scopeType() === "collection") {
             return scopeSpecifier() === LinkToThis ||
-                 db.getCollections().find(c => db.generateWikiLink(c.file, "/") === scopeSpecifier());
+                db.getCollections().find(c => db.generateWikiLink(c.file, "/") === scopeSpecifier());
         }
         // if the scopeType is "folder" then the scopeSpecifier should be a valid folder
-        if(scopeType() === "folder") {
+        if (scopeType() === "folder") {
             if (!scopeSpecifier()) return true;
             // checks that the scopeSpecifier is a valid folder
             const folder = app.vault.getAbstractFileByPath(scopeSpecifier());
             return folder && folder instanceof TFolder;
         }
         // if the scopeType is "vault" then the scopeSpecifier should be ""
-        if(scopeType() === "vault") {
+        if (scopeType() === "vault") {
             return !scopeSpecifier();
         }
-        
+
         return false;
     }
 
@@ -95,8 +97,21 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         setScopeSpecifier(val);
     }
 
+    const folders = () => {
+        // return folder names from querying VaultDB
+        return getFolders(app)
+        .filter((folder) => folder.toLowerCase().contains(scopeSpecifier().toLowerCase()))
+        .map((folder) => {
+            return {
+                value: folder,
+                label: folder
+            }
+        })
+    }
+
+
     return (<div class="sets-scope-editor">
-        
+
         <div class="sets-scope-header">
             <div class="sets-modal-title">Scope</div>
             <select value={scopeType()}
@@ -130,25 +145,24 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
 
             <Show when={scopeType() === "collection"}>
 
-                <select value={scopeSpecifier()}    
+                <select value={scopeSpecifier()}
                     onChange={onCollectionChange}
-                >   
+                >
                     <option disabled hidden value={""}>Select collection...</option>
                     <option value={LinkToThis}>This</option>
                     <For each={collections()}>
-                        {   
+                        {
                             (collection) => {
                                 return <option value={collection.link}>{collection.name}</option>
                             }
                         }
                     </For>
                 </select>
-                
+
             </Show>
-                        
+
             <Show when={scopeType() === "folder"}>
-                <input type="text" value={scopeSpecifier()} onInput={onFolderChange} />
-                {/* <Choice value={scopeSpecifier()} onChange={onFolderChange} /> */}
+               <InputSuggest value={scopeSpecifier} setValue={setScopeSpecifier} options={folders} />
             </Show>
 
 
@@ -156,10 +170,10 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         <div class="sets-button-bar">
             {/* The Save button should only be visible if the scope data is valid */}
             <Show when={isValid()}>
-                <button class="mod-cta" 
-                onClick={onSave}>Save</button>
+                <button class="mod-cta"
+                    onClick={onSave}>Save</button>
             </Show>
-            
+
             <button class="" onClick={props.exit}>Cancel</button>
         </div>
     </div>)
