@@ -48,7 +48,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const sortby = definition.sortby || [];
     const scope = definition.scope || VaultScope;
     // desctructure the scope using Object.entries
-    const [[scopeType, what]] = Object.entries(scope);
+    const [scopeType, what] = scope;
     
 
     // const {scopeType,what} : Scope = scope;
