@@ -45,6 +45,21 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         return db.getTypeNames();
     }
 
+    const typeOptions = () => {
+        // return type names from querying VaultDB
+        
+        return types()
+        .filter((type) => type.toLowerCase().contains(scopeSpecifier().toLowerCase()))
+        .map((type) => {
+            return {
+                value: type,
+                label: type
+            }
+        });    
+    }
+
+
+
     // the isValid function should return true if the scope is valid
     // and false if it is not
     const isValid = () => {
@@ -77,10 +92,12 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // together with their corresponding wiki link
         return db.getCollections().map((collection) => {
             return {
-                name: collection.file.basename,
-                link: db.generateWikiLink(collection.file, "/")
+                label: collection.file.basename,
+                value: db.generateWikiLink(collection.file, "/")
             }
-        })
+        }).concat([{ label: "This", value: LinkToThis }])
+        .filter((collection) => collection.label.toLowerCase().contains(scopeSpecifier().toLowerCase()));
+        
     }
 
     // implement onCollectionChange
@@ -123,26 +140,29 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             {/* if the scopeType is "type" we should allow the user to select a type
             from the ones available */}
             <Show when={scopeType() === "type"}>
+                {/*
                 <select value={scopeSpecifier()}
                     onChange={(e) => setScopeSpecifier(e.target.value)}
                 >
-                    {/* create an option for each type in types() 
-                        it should also hace a first option iwth value="" and text="Select..."
-                    */}
-                    <option disabled hidden value={""}>Select type...</option>
+                    
+                     <option disabled hidden value={""}>Select type...</option>
                     <For each={types()}>
                         {
                             (type) => {
                                 return <option value={type}>{type}</option>
                             }
                         }
-                    </For>
+                    </For> 
+                   
                 </select>
+                */}
+                <InputSuggest value={scopeSpecifier} setValue={setScopeSpecifier} options={typeOptions}
+                    placeholder={() => "Select type..."} />
             </Show>
 
             <Show when={scopeType() === "collection"}>
 
-                <select value={scopeSpecifier()}
+                {/* <select value={scopeSpecifier()}
                     onChange={onCollectionChange}
                 >
                     <option disabled hidden value={""}>Select collection...</option>
@@ -154,8 +174,8 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
                             }
                         }
                     </For>
-                </select>
-
+                </select> */}
+                <InputSuggest value={scopeSpecifier} setValue={setScopeSpecifier} options={collections}    />
             </Show>
 
             <Show when={scopeType() === "folder"}>

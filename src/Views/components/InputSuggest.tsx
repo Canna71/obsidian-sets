@@ -41,14 +41,16 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
     const isTooltipVisible = () => {
         const ret = focused() && props.options().length > 0;
         if (ret) {
-            updatePosition();
+            requestAnimationFrame(() => {
+                updatePosition();
+            });
         }
-        return ret;
+        return ret; 
     }
 
     createEffect(() => {
         const index = selected();
-        const element = tooltip.firstChild!.childNodes[index] as HTMLDivElement;
+        const element = tooltip?.firstChild!.childNodes[index] as HTMLDivElement;
         if (element) {
             element.scrollIntoView({ block: "nearest" });
         }
