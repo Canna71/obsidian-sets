@@ -41,11 +41,16 @@
         justify-content: start;
         padding-right: var(--size-4-4);
         visibility: hidden;
-        max-width: 600px;
+        // max-width: 600px;
 
         .sets-scope {
             border: 1px solid var(--divider-color);
         }
+
+        .sets-toolbar-addbutton {
+            /* makes it float to the right in the flex container */
+            margin-left: auto;
+        };
     }
 
     .sets-gridview {

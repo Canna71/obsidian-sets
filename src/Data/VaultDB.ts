@@ -36,7 +36,6 @@ export type QueryResult = {
 
 // TODO: support also "folder-recursive"
 
-
 export type ScopeType = "type" | "collection" | "folder" | "vault";
 
 // export type Scope = {"type": string} | {"collection": string} | {"folder": string | undefined} | {"vault": undefined};
@@ -53,7 +52,6 @@ function escapeURI(e: string) {
 }
 
 export class VaultDB {
-    
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
@@ -100,7 +98,7 @@ export class VaultDB {
     }
 
     dispose() {
-        console.log("disposing vaultdb"); 
+        console.log("disposing vaultdb");
         this.app.metadataCache.off("resolved", this.onMetadataChanged);
         this.app.vault.off("delete", this.onMetadataChanged);
         this.app.vault.off("rename", this.onMetadataChanged);
@@ -202,7 +200,7 @@ export class VaultDB {
         };
     }
 
-    async createNewType(name:string) {
+    async createNewType(name: string) {
         const typename = name.toLowerCase();
         const archetypeFolder = this.getArchetypeFolder();
         const archetypeName = this.getArchetypeName(name);
@@ -220,21 +218,23 @@ export class VaultDB {
         const setFolder = await this.getSetFolder(typename);
         this.createSetFile(setFolder as TFolder, typename);
 
-        await this.app.workspace.openLinkText(newFile.path,"/","tab");
+        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
 
-
-        return newFile;
-    } 
-
-    private async createSetFile(setFolder: TFolder, typename:string){
-        const filename = setFolder.name + ".md";
-        const def = {scope: ["type", typename] as Scope};
-        const content = generateCodeblock(def);
-        const newFile = await this.app.vault.create(setFolder.path + "/" + filename,content);
         return newFile;
     }
 
-    private compare( 
+    private async createSetFile(setFolder: TFolder, typename: string) {
+        const filename = setFolder.name + ".md";
+        const def = { scope: ["type", typename] as Scope };
+        const content = generateCodeblock(def);
+        const newFile = await this.app.vault.create(
+            setFolder.path + "/" + filename,
+            content
+        );
+        return newFile;
+    }
+
+    private compare(
         attr: AttributeDefinition,
         a: ObjectData,
         b: ObjectData
@@ -243,7 +243,7 @@ export class VaultDB {
         const bval = attr.getValue(b);
 
         if (aval === bval) return 0;
-        if (!aval && !bval) return 0;  // we treat falsy values as equal
+        if (!aval && !bval) return 0; // we treat falsy values as equal
 
         // we consider null and undefined values as less than any other value
         if (
@@ -309,9 +309,13 @@ export class VaultDB {
                     ) {
                         frontMatter[key] = defaults[key];
                     }
-                    if(Array.isArray(frontMatter[key]) && !frontMatter[key].includes(defaults[key])){
-                        frontMatter[key] = frontMatter[key]
-                            .concat(defaults[key]);
+                    if (
+                        Array.isArray(frontMatter[key]) &&
+                        !frontMatter[key].includes(defaults[key])
+                    ) {
+                        frontMatter[key] = frontMatter[key].concat(
+                            defaults[key]
+                        );
                     }
                 }
             });
@@ -319,11 +323,21 @@ export class VaultDB {
         }
     }
     private async getTemplate(results: QueryResult) {
+        // gets the type constraint, if any.
         const type = results.query.inferSetType();
         if (type) {
             // const typeDisplayName = this.getTypeDisplayName(type);
-            const folder = this.plugin.settings.createObjectsInSetsFolder ? await this.getSetFolder(type) 
-            : results.query.context?.file.parent;
+            let folder;
+            if (results.query.scopeFolder) {
+                // we have to ensure that items are created in a way that
+                // they are returned by the query
+                folder = results.query.scopeFolder;
+            } else {
+                folder = this.plugin.settings.createObjectsInSetsFolder
+                    ? await this.getSetFolder(type)
+                    : results.query.context?.file.parent;
+            }
+
             let template = this.getArchetypeFile(type);
             if (!template) {
                 template = await this.inferType(type);
@@ -335,7 +349,8 @@ export class VaultDB {
             const folder = results.query.context.file.parent;
             if (folder) return { template: undefined, folder };
         }
-        if(results.query.scopeFolder) return { template: undefined, folder: results.query.scopeFolder };
+        if (results.query.scopeFolder)
+            return { template: undefined, folder: results.query.scopeFolder };
         const folder = results.query.context?.file.parent;
         return { template: undefined, folder };
     }
@@ -416,22 +431,26 @@ export class VaultDB {
     // return the available type names by accessing the
     // frontmater of the TFiles returned by getTypes
     getTypeNames(): string[] {
-        return this.getTypes().map((f) => {
-            const cache = this.app.metadataCache.getFileCache(f);
-            if (cache) {
-                return cache.frontmatter?.[ this.plugin.settings.typeAttributeKey ] as string;
-            }
-        }).filter(t => t !== undefined) as string[];
+        return this.getTypes()
+            .map((f) => {
+                const cache = this.app.metadataCache.getFileCache(f);
+                if (cache) {
+                    return cache.frontmatter?.[
+                        this.plugin.settings.typeAttributeKey
+                    ] as string;
+                }
+            })
+            .filter((t) => t !== undefined) as string[];
     }
 
     // returns all the available collections
     getCollectionNames(): string[] {
-        return this.getCollections().map((f) => {   
-            return f.file.basename
-        }).filter(t => t !== undefined) as string[];
+        return this.getCollections()
+            .map((f) => {
+                return f.file.basename;
+            })
+            .filter((t) => t !== undefined) as string[];
     }
-
-
 
     getAttributeDefinition(key: string): AttributeDefinition {
         if (this.accessors.has(key)) {

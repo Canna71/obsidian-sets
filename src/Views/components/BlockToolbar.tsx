@@ -73,7 +73,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const scopeDetails = () => {
-        const [scopeType, what] = definition().scope || [];
+        const [scopeType] = definition().scope || [];
         if (scopeType === "collection") {
             return `Collection`;
         }
@@ -123,16 +123,17 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                 onClick={onRefresh}
                 title="Refresh data"
             ></div>
+            
+            <div ref={copyBtn!} class="clickable-icon editmode-only"
+                onClick={onCopy}
+                title="Copy Block"
+            ></div>
             <Show when={canAdd()}>
                 <button class="sets-toolbar-addbutton mod-cta" 
                 title="Add new item"
                 onClick={onAdd}>Add</button>
 
             </Show>
-            <div ref={copyBtn!} class="clickable-icon editmode-only"
-                onClick={onCopy}
-                title="Copy Block"
-            ></div>
         </div>
     
     )
