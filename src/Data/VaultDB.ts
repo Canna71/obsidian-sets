@@ -215,11 +215,24 @@ export class VaultDB {
         this.app.fileManager.processFrontMatter(newFile, (fm) => {
             fm[this.plugin.settings.typeAttributeKey] = typename;
         });
-        await this.app.workspace.openLinkText(newFile.path,"/",true);
+        // create the set folder
+        const setFolder = await this.getSetFolder(typename);
+        this.createSetFile(setFolder as TFolder, typename);
+
+        await this.app.workspace.openLinkText(newFile.path,"/","tab");
+
+
         return newFile;
     } 
 
-    private compare(
+    private async createSetFile(setFolder: TFolder, typename:string){
+        const filename = setFolder.name + ".md";
+        const content = "```set\nscope:\n- type\n- " + typename + "\n```"
+        const newFile = await this.app.vault.create(setFolder.path + "/" + filename,content);
+        return newFile;
+    }
+
+    private compare( 
         attr: AttributeDefinition,
         a: ObjectData,
         b: ObjectData
@@ -303,7 +316,8 @@ export class VaultDB {
         const type = results.query.inferSetType();
         if (type) {
             // const typeDisplayName = this.getTypeDisplayName(type);
-            const folder = this.plugin.settings.createObjectsInSetsFolder ? await this.getSetFolder(type) : undefined;
+            const folder = this.plugin.settings.createObjectsInSetsFolder ? await this.getSetFolder(type) 
+            : results.query.context?.file.parent;
             let template = this.getArchetypeFile(type);
             if (!template) {
                 template = await this.inferType(type);
