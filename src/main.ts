@@ -19,6 +19,7 @@ import { processCodeBlock } from "./Views/processCodeBlock";
 import { VaultDB } from "./Data/VaultDB";
 import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";
+import { NameInputModal } from "./Views/NameInputModal";
 
 const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 `;
@@ -61,6 +62,18 @@ export default class SetsPlugin extends Plugin {
             callback: () => this.activateView(),
         });
 
+        this.addCommand({
+            id: "sets-new-type",
+            name: "Create New Type",
+            callback: () => {
+                new NameInputModal(this.app, "Type Name", (name) => {
+                    this._vaultDB.createNewType(name);
+                })
+                .open()
+                ;
+            }
+        });
+
         this.app.workspace.onLayoutReady(() => {
             if (this.settings.showAtStartup) {
                 this.activateView();
@@ -83,14 +96,7 @@ export default class SetsPlugin extends Plugin {
             this
         );
 
-        this.app.workspace.on(
-            "codemirror",
-            (cm: CodeMirror.Editor) => {
-                console.log("codemirror", cm);
-            },
-            this
-        );
-
+        
         this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));

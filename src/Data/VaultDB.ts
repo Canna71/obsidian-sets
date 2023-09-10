@@ -52,6 +52,7 @@ function escapeURI(e: string) {
 }
 
 export class VaultDB {
+    
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
@@ -98,6 +99,7 @@ export class VaultDB {
     }
 
     dispose() {
+        console.log("disposing vaultdb"); 
         this.app.metadataCache.off("resolved", this.onMetadataChanged);
         this.app.vault.off("delete", this.onMetadataChanged);
         this.app.vault.off("rename", this.onMetadataChanged);
@@ -198,6 +200,24 @@ export class VaultDB {
             total: ret.length,
         };
     }
+
+    async createNewType(name:string) {
+        const typename = name.toLowerCase();
+        const archetypeFolder = this.getArchetypeFolder();
+        const archetypeName = this.getArchetypeName(name);
+        const newFile = await this.app.fileManager.createNewFile(
+            archetypeFolder,
+            archetypeName,
+            undefined,
+            `${name} Archetype: add the properties of the ${name} here`
+        );
+        // adds the metadata type attribute
+        this.app.fileManager.processFrontMatter(newFile, (fm) => {
+            fm[this.plugin.settings.typeAttributeKey] = typename;
+        });
+        await this.app.workspace.openLinkText(newFile.path,"/",true);
+        return newFile;
+    } 
 
     private compare(
         attr: AttributeDefinition,
