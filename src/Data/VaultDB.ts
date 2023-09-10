@@ -20,7 +20,7 @@ import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
-export type DBEvent = "metadata-changed";
+export type DBEvent = "metadata-changed" | "initialized";
 
 export type QueryResult = {
     data: ObjectData[];
@@ -52,6 +52,7 @@ function escapeURI(e: string) {
 }
 
 export class VaultDB {
+    
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
@@ -91,6 +92,10 @@ export class VaultDB {
         // }
         console.log("metadata changed, clearing cache");
         this.accessors.clear();
+        // if(!this.dbInitialized) {
+        //     this.dbInitialized = true;
+        //     this.observer.notify("initialized");
+        // }
         this.dbInitialized = true;
         this._collectionCache = undefined;
         this._typesCache = undefined;
@@ -103,6 +108,7 @@ export class VaultDB {
         this.app.vault.off("delete", this.onMetadataChanged);
         this.app.vault.off("rename", this.onMetadataChanged);
         this.app.vault.off("create", this.onMetadataChanged);
+        
     }
 
     on(event: DBEvent, observer: (...args: any[]) => void) {
@@ -141,7 +147,7 @@ export class VaultDB {
     // }
 
     execute(query: Query, top = Number.MAX_VALUE): QueryResult {
-        if (!this.dbInitialized) {
+        if (!this.dbInitialized) { 
             throw Error("VaultDB not initialized yet");
         }
         const startTime = Date.now();
@@ -223,6 +229,13 @@ export class VaultDB {
         return newFile;
     }
 
+    async createNewInstance(type: string): Promise<TFile> {
+        // gets a query for a type
+        const qyery = Query.__fromClauses(this, ["vault"] , [this.plugin.settings.typeAttributeKey , "eq", type], [], undefined);
+        const newFile = await this.addToSet(qyery, undefined);
+        return newFile!;
+    }
+
     private async createSetFile(setFolder: TFolder, typename: string) {
         const filename = setFolder.name + ".md";
         const def = { scope: ["type", typename] as Scope };
@@ -281,8 +294,8 @@ export class VaultDB {
         return results.query.canCreate;
     }
 
-    async addToSet(results: QueryResult, properties: FieldDefinition[]) {
-        const tmp = await this.getTemplate(results);
+    async addToSet(query: Query, properties?: FieldDefinition[]) {
+        const tmp = await this.getTemplate(query);
 
         const { template, folder } = tmp;
         let content = "";
@@ -291,7 +304,10 @@ export class VaultDB {
         }
 
         if (folder instanceof TFolder) {
-            const defaults = this.inferProperties(properties, results);
+            let defaults = {};
+            if(properties) {
+                defaults = this.inferProperties(properties, query);
+            }
 
             const newFile = await this.app.fileManager.createNewFile(
                 folder as TFolder,
@@ -322,20 +338,21 @@ export class VaultDB {
             return newFile;
         }
     }
-    private async getTemplate(results: QueryResult) {
+
+    private async getTemplate(query: Query) {
         // gets the type constraint, if any.
-        const type = results.query.inferSetType();
+        const type = query.inferSetType();
         if (type) {
             // const typeDisplayName = this.getTypeDisplayName(type);
             let folder;
-            if (results.query.scopeFolder) {
+            if (query.scopeFolder) {
                 // we have to ensure that items are created in a way that
                 // they are returned by the query
-                folder = results.query.scopeFolder;
+                folder = query.scopeFolder;
             } else {
-                folder = this.plugin.settings.createObjectsInSetsFolder
+                folder = (this.plugin.settings.createObjectsInSetsFolder || !query.context?.file.parent)
                     ? await this.getSetFolder(type)
-                    : results.query.context?.file.parent;
+                    : query.context.file.parent;
             }
 
             let template = this.getArchetypeFile(type);
@@ -344,20 +361,20 @@ export class VaultDB {
             }
             return { template, folder };
         }
-        const collection = results.query.inferCollection();
-        if (collection && results.query.context) {
-            const folder = results.query.context.file.parent;
+        const collection = query.inferCollection();
+        if (collection && query.context) {
+            const folder = query.context.file.parent;
             if (folder) return { template: undefined, folder };
         }
-        if (results.query.scopeFolder)
-            return { template: undefined, folder: results.query.scopeFolder };
-        const folder = results.query.context?.file.parent;
+        if (query.scopeFolder)
+            return { template: undefined, folder: query.scopeFolder };
+        const folder = query.context?.file.parent;
         return { template: undefined, folder };
     }
 
     inferProperties(
         properties: FieldDefinition[],
-        results: QueryResult
+        query: Query
     ): Record<string, any> {
         // build defaults from properties filtering the ones that begins with double underscore
         let defaults = properties
@@ -366,11 +383,11 @@ export class VaultDB {
                 return { ...def, [key]: null };
             }, {} as Record<string, any>);
 
-        const constraints = results.query.clauses
+        const constraints = query.clauses
             .filter(([at]) => at !== this.plugin.settings.typeAttributeKey)
             // .filter(c => getOperatorById(c.op).isConstraint)
             .filter(([at]) => !this.getAttributeDefinition(at).isIntrinsic);
-        const context = results.query.context;
+        const context = query.context;
 
         defaults = constraints.reduce((def, [at, op, val]) => {
             const operator = getOperatorById(op);

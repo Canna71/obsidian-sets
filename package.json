@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-sets",
-	"version": "1.0.0",
-	"description": "TODO:",
+	"version": "0.0.5",
+	"description": "A plugin for Obsidian.md that allows you to create and manage sets of notes like Notion or Anytype DBs",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -10,7 +10,7 @@
 		"scss": "ode-sass -w  styles.scss styles.css"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Gabriele Cannata",
 	"license": "MIT",
 	"devDependencies": {
 		"@codemirror/language": "^6.2.1",

@@ -28,7 +28,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     const { definition, save, setDefinition, setNewFile,refresh } = useBlock()!;
 
     const onAdd = async () => {
-        const newFile = await db.addToSet(props.queryResult, definition().fields || []);
+        const newFile = await db.addToSet(props.queryResult.query, definition().fields || []);
         // props.queryResult.query.newFile = newFile?.path;
         setNewFile(newFile?.path || "");
     }

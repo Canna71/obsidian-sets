@@ -1,3 +1,4 @@
+import { prettify } from 'src/Utils/prettify';
 import { CODEBLOCK_NAME, DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
 import {
     addIcon,
@@ -6,6 +7,7 @@ import {
     MarkdownView,
     Menu,
     MenuItem,
+    Notice,
     TAbstractFile,
     TFile,
 } from "obsidian";
@@ -74,6 +76,8 @@ export default class SetsPlugin extends Plugin {
             }
         });
 
+        
+
         this.app.workspace.onLayoutReady(() => {
             if (this.settings.showAtStartup) {
                 this.activateView();
@@ -102,6 +106,11 @@ export default class SetsPlugin extends Plugin {
         this.addSettingTab(new SetsSettingsTab(this.app, this));
 
         this._vaultDB = new VaultDB(this);
+        this.onVaultDBInitialized();
+        // this.onVaultDBInitialized = this.onVaultDBInitialized.bind(this);
+
+        // this._vaultDB.on("initialized", this.onVaultDBInitialized);
+
 
         this.onFileMenu = this.onFileMenu.bind(this);
 
@@ -127,6 +136,25 @@ export default class SetsPlugin extends Plugin {
         };
     }
 
+    onVaultDBInitialized() {
+        // creates a command for each type to create a new item
+        this._vaultDB.getTypeNames().forEach((type) => {
+            this.addCommand({
+                id: `sets-new-${type}`,
+                name: `Create New ${prettify(type)}`,
+                callback: async () => {
+                    const file:TFile = await this._vaultDB.createNewInstance(type);
+                    // open file
+                    if(file) {
+                        await this.app.workspace.openLinkText(file.path, file.path, true);
+                    } else {
+                        new Notice("Could not create file");
+                    }
+                }
+            });
+        });
+    }
+
     registerNewTypes() {
         registerPasswordPropertyType(this.app);
         // registerLinkPropertyType(this.app);
@@ -135,6 +163,7 @@ export default class SetsPlugin extends Plugin {
 
     onunload() {
         this.app.workspace.detachLeavesOfType(SETS_VIEW);
+        this.vaultDB.off("initialized", this.onVaultDBInitialized);
         this.vaultDB.dispose();
         this.app.workspace.off("file-menu", this.onFileMenu);
         this.app.workspace.off("editor-menu", this.onEditorMenu);
