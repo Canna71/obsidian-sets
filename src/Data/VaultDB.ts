@@ -17,6 +17,7 @@ import { getOperatorById } from "./Operator";
 import { getDynamicValue, isDynamic } from "./DynamicValues";
 import { FieldDefinition } from "src/Views/components/renderCodeBlock";
 import { stableSort } from "src/Utils/stableSort";
+import { generateCodeblock } from "src/Utils/generateCodeblock";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export type DBEvent = "metadata-changed";
@@ -227,7 +228,8 @@ export class VaultDB {
 
     private async createSetFile(setFolder: TFolder, typename:string){
         const filename = setFolder.name + ".md";
-        const content = "```set\nscope:\n- type\n- " + typename + "\n```"
+        const def = {scope: ["type", typename] as Scope};
+        const content = generateCodeblock(def);
         const newFile = await this.app.vault.create(setFolder.path + "/" + filename,content);
         return newFile;
     }
@@ -306,6 +308,10 @@ export class VaultDB {
                         frontMatter[key] === undefined
                     ) {
                         frontMatter[key] = defaults[key];
+                    }
+                    if(Array.isArray(frontMatter[key]) && !frontMatter[key].includes(defaults[key])){
+                        frontMatter[key] = frontMatter[key]
+                            .concat(defaults[key]);
                     }
                 }
             });

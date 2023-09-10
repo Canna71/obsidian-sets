@@ -29,3 +29,4 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     createObjectsInSetsFolder: false
 }
 
+export const CODEBLOCK_NAME = "set";

@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
+import { CODEBLOCK_NAME, DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
 import {
     addIcon,
     Editor,
@@ -176,7 +176,7 @@ export default class SetsPlugin extends Plugin {
     async registerCodeBlock() {
         await loadMathJax();
         await finishRenderMath();
-        this.registerMarkdownCodeBlockProcessor("set", (source, el, ctx) => {
+        this.registerMarkdownCodeBlockProcessor(CODEBLOCK_NAME, (source, el, ctx) => {
             processCodeBlock(source, el, this, ctx);
         });
     }

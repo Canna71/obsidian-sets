@@ -10,6 +10,7 @@ import { SetDefinition } from "./renderCodeBlock";
 import { FieldSelectModal } from "../FieldSelectModal";
 import SortingEditorModal from "../SortingEditorModal";
 import { ScopeEditorModal } from "../ScopeEditorModal";
+import { generateCodeblock } from "src/Utils/generateCodeblock";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
 
@@ -17,6 +18,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     let fieldsBtn: HTMLDivElement;
     let sortBtn: HTMLDivElement;
     let refreshBtn: HTMLDivElement;
+    let copyBtn: HTMLDivElement;
 
     const { app, db } = useApp()!;
     // const view = app.workspace.getActiveViewOfType(MarkdownView);
@@ -64,11 +66,18 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsModal.open();
     }
 
+    const onCopy = () => {
+        const newDef = { ...definition() };
+        const sontent = generateCodeblock(newDef);
+        navigator.clipboard.writeText(sontent);
+    }
+
     onMount(() => {
         filterBtn && setIcon(filterBtn, "filter")
         fieldsBtn && setIcon(fieldsBtn, "list")
         fieldsBtn && setIcon(sortBtn, "arrow-up-down")
         fieldsBtn && setIcon(refreshBtn, "refresh-cw")
+        fieldsBtn && setIcon(copyBtn, "copy")
     })
 
     return (
@@ -101,6 +110,10 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                 onClick={onAdd}>Add</button>
 
             </Show>
+            <div ref={copyBtn!} class="clickable-icon editmode-only"
+                onClick={onCopy}
+                title="Copy Block"
+            ></div>
         </div>
     
     )
