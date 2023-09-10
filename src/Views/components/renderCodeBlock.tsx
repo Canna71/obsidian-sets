@@ -34,7 +34,8 @@ export interface SetDefinition {
     transientState?: any;
     grid?: {
         columnWidths?: Record<string,string>;
-    }
+    },
+    timestamp?: number;
 }
 
 const stateMap = new Map<string, any>();
@@ -69,6 +70,12 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     // we measur when the component was last rendered
     const lastRendered = Date.now();
 
+    const refresh = () => {
+        console.log(`refreshing ${ctx.docId} ${ctx.sourcePath}`);
+        const newData = db.execute(query);
+        setData(newData);
+    }
+
     const onDataChanged =() => {
         // cech id this codeblock is still mounted
         if (!el.isConnected) {
@@ -80,10 +87,10 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         // we refresh the data only if component was last rendered more than 100ms ago
         if (Date.now() - lastRendered < 100) return;
         console.log(`data changed ${ctx.docId} ${ctx.sourcePath}`, JSON.stringify(query.clauses));
-        const newData = db.execute(query);
-        
-        setData(newData);
+        refresh();
     };
+
+
 
     onMount(() => {
         setTimeout(() => {
@@ -141,7 +148,9 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     render(() =>
         <AppProvider app={{app, db}}>
-            <BlockProvider setDefinition={definition} updateDefinition={updateDefinition} >
+            <BlockProvider setDefinition={definition} 
+            refresh={refresh}
+            updateDefinition={updateDefinition} >
                 <CodeBlock queryResult={data} attributes={attributes} viewMode={{
                     viewMode, setViewMode
                 }} />

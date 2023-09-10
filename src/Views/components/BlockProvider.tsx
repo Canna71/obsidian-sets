@@ -7,6 +7,7 @@ import { AttributeKey, Clause, SortField } from "src/Data/Query";
 
 export interface BlockStateContext {
     definition: Accessor<SetDefinition>;
+    refresh: () => void;
     reorder: (from: string, to: string) => void;
     reorderSort: (from: string, to: string) => void;
     // updateFields: (fields: FieldDefinition[]) => void;
@@ -29,7 +30,10 @@ const BlockContext = createContext<BlockStateContext>();
 
 
 
-export function BlockProvider(props: { setDefinition: SetDefinition, updateDefinition: (definition: SetDefinition) => void, children?: JSX.Element }) {
+export function BlockProvider(props: { setDefinition: SetDefinition, 
+    updateDefinition: (definition: SetDefinition) => void, 
+    refresh?: () => void,
+    children?: JSX.Element }) {
 
     const [definition, setState] = createSignal(props.setDefinition);
 
@@ -39,6 +43,7 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
 
     const blockState = {
         definition,
+        refresh: props.refresh? props.refresh : () => {},
         reorder: (from: string, to: string) => {
             const updatedItems = definition().fields?.slice();
             if (!updatedItems) throw Error("No items to reoreder!")
@@ -116,7 +121,10 @@ export function BlockProvider(props: { setDefinition: SetDefinition, updateDefin
             }))
         },
         setDefinition: (def: SetDefinition) => { setState(def); },
-        save: () => props.updateDefinition(definition()),
+        save: () => {
+            setState(state => ({ ...state, timestamp: Date.now() }))
+            props.updateDefinition(definition())
+        },
         setNewFile: (path: string) => {
             hiddenState.newFile = path;
         },

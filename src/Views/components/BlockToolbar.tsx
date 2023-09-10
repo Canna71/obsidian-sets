@@ -16,13 +16,14 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     let filterBtn: HTMLDivElement;
     let fieldsBtn: HTMLDivElement;
     let sortBtn: HTMLDivElement;
+    let refreshBtn: HTMLDivElement;
 
     const { app, db } = useApp()!;
     // const view = app.workspace.getActiveViewOfType(MarkdownView);
 
     // const isEditMode = view?.getMode() === "source";
 
-    const { definition, save, setDefinition, setNewFile } = useBlock()!;
+    const { definition, save, setDefinition, setNewFile,refresh } = useBlock()!;
 
     const onAdd = async () => {
         const newFile = await db.addToSet(props.queryResult, definition().fields || []);
@@ -54,6 +55,10 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsModal.open();
     }
 
+    const onRefresh = () => {
+        refresh();
+    }
+
     const onScope = () => {
         const fieldsModal = new ScopeEditorModal(app, db, definition(), update);
         fieldsModal.open();
@@ -63,7 +68,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         filterBtn && setIcon(filterBtn, "filter")
         fieldsBtn && setIcon(fieldsBtn, "list")
         fieldsBtn && setIcon(sortBtn, "arrow-up-down")
-
+        fieldsBtn && setIcon(refreshBtn, "refresh-cw")
     })
 
     return (
@@ -71,19 +76,29 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         <div class="sets-codeblock-toolbar">
             <div  class="clickable-icon editmode-only"
                 onClick={onScope}
+                title="Change scope"
             >Scope</div>
 
             <div ref={sortBtn!} class="clickable-icon editmode-only"
                 onClick={onSorting}
+                title="Set Sorting properties"
             ></div>
             <div ref={fieldsBtn!} class="clickable-icon editmode-only"
                 onClick={onFieldsSelect}
+                title="Select fields to display"
             ></div>
             <div ref={filterBtn!} class="clickable-icon editmode-only"
                 onClick={onFilter}
+                title="Set filters"
+            ></div>
+            <div ref={refreshBtn!} class="clickable-icon editmode-only"
+                onClick={onRefresh}
+                title="Refresh data"
             ></div>
             <Show when={canAdd()}>
-                <button class="sets-toolbar-addbutton mod-cta" onClick={onAdd}>Add</button>
+                <button class="sets-toolbar-addbutton mod-cta" 
+                title="Add new item"
+                onClick={onAdd}>Add</button>
 
             </Show>
         </div>

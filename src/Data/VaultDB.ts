@@ -295,6 +295,7 @@ export class VaultDB {
             const folder = results.query.context.file.parent;
             if (folder) return { template: undefined, folder };
         }
+        if(results.query.scopeFolder) return { template: undefined, folder: results.query.scopeFolder };
         const folder = results.query.context?.file.parent;
         return { template: undefined, folder };
     }

@@ -1,4 +1,4 @@
-import { Component, For, Show, createSignal } from "solid-js";
+import { Component, Show, createSignal } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { useApp } from "./components/AppProvider";
 import { ScopeType } from "src/Data/VaultDB";
@@ -100,14 +100,6 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // return ret.filter((collection) => collection.label.toLowerCase().contains(scopeSpecifier().toLowerCase()));
         return ret;
     }
-
-    // implement onCollectionChange
-    const onCollectionChange = (e: Event) => {
-        const select = e.target as HTMLSelectElement;
-        const val = select.value;
-        setScopeSpecifier(val);
-    }
-
 
     const folders = () => {
         // return folder names from querying VaultDB

@@ -12,7 +12,7 @@ export type ViewMode = "grid";
 export interface CodeBlockProps {
     queryResult: QueryResult,
     attributes: AttributeDefinition[],
-    viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void }
+    viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void },
 }
 
 

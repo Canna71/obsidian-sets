@@ -30,7 +30,9 @@ export class FilterEditorModal extends Modal {
 
         render(() => <AppProvider app={{app: this.app, db:this._db}}>
             {/* <ClauseEditor db={this._db} /> */}
-            <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
+            <BlockProvider setDefinition={this.definition} updateDefinition={this._update} 
+            
+            >
                 <FilterEditor exit={()=>{this.close()}} />
             </BlockProvider>
             
