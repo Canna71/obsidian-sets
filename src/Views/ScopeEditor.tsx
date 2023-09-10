@@ -49,7 +49,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // return type names from querying VaultDB
         
         return types()
-        .filter((type) => type.toLowerCase().contains(scopeSpecifier().toLowerCase()))
+        // .filter((type) => type.toLowerCase().contains(scopeSpecifier().toLowerCase()))
         .map((type) => {
             return {
                 value: type,
@@ -90,14 +90,15 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
     const collections = () => {
         // return collection names from querying VaultDB
         // together with their corresponding wiki link
-        return db.getCollections().map((collection) => {
+        const ret =  db.getCollections().map((collection) => {
             return {
                 label: collection.file.basename,
                 value: db.generateWikiLink(collection.file, "/")
             }
-        }).concat([{ label: "This", value: LinkToThis }])
-        .filter((collection) => collection.label.toLowerCase().contains(scopeSpecifier().toLowerCase()));
-        
+        })
+        ret.unshift({ label: "This", value: LinkToThis })
+        // return ret.filter((collection) => collection.label.toLowerCase().contains(scopeSpecifier().toLowerCase()));
+        return ret;
     }
 
     // implement onCollectionChange
@@ -112,7 +113,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
         // return folder names from querying VaultDB
         return getFolders(app)
         .filter((folder) => folder !== "/" && folder !== "")
-        .filter((folder) => folder.toLowerCase().contains(scopeSpecifier().toLowerCase()))
+        // .filter((folder) => folder.toLowerCase().contains(scopeSpecifier().toLowerCase()))
         .map((folder) => {
             return {
                 value: folder,
@@ -140,22 +141,7 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             {/* if the scopeType is "type" we should allow the user to select a type
             from the ones available */}
             <Show when={scopeType() === "type"}>
-                {/*
-                <select value={scopeSpecifier()}
-                    onChange={(e) => setScopeSpecifier(e.target.value)}
-                >
-                    
-                     <option disabled hidden value={""}>Select type...</option>
-                    <For each={types()}>
-                        {
-                            (type) => {
-                                return <option value={type}>{type}</option>
-                            }
-                        }
-                    </For> 
-                   
-                </select>
-                */}
+                
                 <InputSuggest value={scopeSpecifier} setValue={setScopeSpecifier} options={typeOptions}
                     placeholder={() => "Select type..."} />
             </Show>
@@ -166,11 +152,11 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
                     onChange={onCollectionChange}
                 >
                     <option disabled hidden value={""}>Select collection...</option>
-                    <option value={LinkToThis}>This</option>
+                     <option value={LinkToThis}>This</option> 
                     <For each={collections()}>
                         {
                             (collection) => {
-                                return <option value={collection.link}>{collection.name}</option>
+                                return <option value={collection.value}>{collection.label}</option>
                             }
                         }
                     </For>

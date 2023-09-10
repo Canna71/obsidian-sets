@@ -95,8 +95,19 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
         }
     }
 
-    onMount(() => {
+    const filteredOptions = () => {
+        return props.options().filter(o => o.label.toLowerCase().includes(props.value().toLowerCase()));
+    }
 
+    const text = () => {
+        // if current value is a valid option, return the label
+        const option = props.options().find(o => o.value === props.value());
+        if (option) return option.label;
+        return props.value();
+    }
+
+    onMount(() => {
+        //
     });
 
     onCleanup(() => {
@@ -108,16 +119,15 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
             onFocus={onInputFocus}
             onBlur={onInputBlur}
             type="text"
-            value={props.value()}
+            value={text()}
             onInput={onInput}
             onkeydown={onInputKeyDown}
             placeholder={props.placeholder?.()}
         />
-        {/* <Choice value={scopeSpecifier()} onChange={onFolderChange} /> */}
         <Show when={isTooltipVisible()}>
             <div ref={tooltip!} role="tooltip" class="sets-tooltip suggestion-container">
                 <div class="suggestion">
-                    <For each={props.options()}>
+                    <For each={filteredOptions()}>
                         {
                             (option, index) => {
                                 return <div classList={{ "suggestion-item": true, "is-selected": selected() === index() }}
