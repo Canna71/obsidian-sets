@@ -38,10 +38,14 @@
         display: flex;
         flex-direction: row;
         gap: 8px;
-        justify-content: end;
+        justify-content: start;
         padding-right: var(--size-4-4);
         visibility: hidden;
         max-width: 600px;
+
+        .sets-scope {
+            border: 1px solid var(--divider-color);
+        }
     }
 
     .sets-gridview {

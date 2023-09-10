@@ -72,6 +72,22 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         navigator.clipboard.writeText(sontent);
     }
 
+    const scopeDetails = () => {
+        const [scopeType, what] = definition().scope || [];
+        if (scopeType === "collection") {
+            return `Collection`;
+        }
+        if(scopeType === "type") {
+            return `Type`;
+        }
+        if(scopeType === "folder") {
+            return `Folder`;
+        }
+        if(scopeType === "vault") {
+            return `Vault`;
+        }
+    }
+
     onMount(() => {
         filterBtn && setIcon(filterBtn, "filter")
         fieldsBtn && setIcon(fieldsBtn, "list")
@@ -83,10 +99,13 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     return (
     
         <div class="sets-codeblock-toolbar">
-            <div  class="clickable-icon editmode-only"
+            <div  
+                class="clickable-icon editmode-only sets-scope"
                 onClick={onScope}
                 title="Change scope"
-            >Scope</div>
+            >{scopeDetails()}
+            
+            </div>
 
             <div ref={sortBtn!} class="clickable-icon editmode-only"
                 onClick={onSorting}
