@@ -31,7 +31,6 @@
 		"@jalik/observer": "github:jalik/js-observer",
 		"@thisbeyond/solid-dnd": "^0.7.4",
 		"babel-preset-solid": "^1.7.7",
-		"popper.js": "^1.16.1",
 		"solid-js": "^1.7.11"
 	}
 }
