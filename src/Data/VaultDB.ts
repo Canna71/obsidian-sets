@@ -14,7 +14,7 @@ import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
 import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { getOperatorById } from "./Operator";
-import { getDynamicValue, isDynamic } from "./DynamicValues";
+import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
 import { FieldDefinition } from "src/Views/components/renderCodeBlock";
 import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
@@ -52,6 +52,7 @@ function escapeURI(e: string) {
 }
 
 export class VaultDB {
+    
     
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
@@ -224,7 +225,7 @@ export class VaultDB {
         const setFolder = await this.getSetFolder(typename);
         this.createSetFile(setFolder as TFolder, typename);
 
-        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+        // await this.app.workspace.openLinkText(newFile.path, "/", "tab");
 
         return newFile;
     }
@@ -234,6 +235,22 @@ export class VaultDB {
         const qyery = Query.__fromClauses(this, ["vault"] , [this.plugin.settings.typeAttributeKey , "eq", type], [], undefined);
         const newFile = await this.addToSet(qyery, undefined);
         return newFile!;
+    }
+
+    async createNewCollection(name: string) {
+        const collectionName = name;
+        const collectionFolder = `${this.plugin.settings.collectionsRoot}/${collectionName}`;
+        const _folder = await this.ensureFolder(collectionFolder);
+        const collectionPath = `${collectionFolder}/${collectionName}.md`;
+        const def = { scope: ["collection", LinkToThis] as Scope };
+        const content = generateCodeblock(def);
+        const newFile = await this.app.vault.create(collectionPath, content);
+        // set this file as collection
+        this.app.fileManager.processFrontMatter(newFile, (fm) => {
+            fm[this.plugin.settings.typeAttributeKey] = 
+            this.plugin.settings.collectionType;
+        });
+        return newFile;
     }
 
     private async createSetFile(setFolder: TFolder, typename: string) {

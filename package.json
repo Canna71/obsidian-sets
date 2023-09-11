@@ -1,36 +1,37 @@
 {
-	"name": "obsidian-sets",
-	"version": "0.0.5",
-	"description": "A plugin for Obsidian.md that allows you to create and manage sets of notes like Notion or Anytype DBs",
-	"main": "main.js",
-	"scripts": {
-		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"scss": "ode-sass -w  styles.scss styles.css"
-	},
-	"keywords": [],
-	"author": "Gabriele Cannata",
-	"license": "MIT",
-	"devDependencies": {
-		"@codemirror/language": "^6.2.1",
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "latest",
-		"@typescript-eslint/parser": "latest",
-		"builtin-modules": "3.3.0",
-		"esbuild": "latest",
-		"esbuild-plugin-solid": "^0.5.0",
-		"esbuild-plugin-svgr": "^1.0.1",
-		"esbuild-sass-plugin": "^2.3.2",
-		"obsidian": "^1.4.4",
-		"tslib": "latest",
-		"typescript": "latest"
-	},
-	"dependencies": {
-		"@floating-ui/dom": "^1.5.1",
-		"@jalik/observer": "github:jalik/js-observer",
-		"@thisbeyond/solid-dnd": "^0.7.4",
-		"babel-preset-solid": "^1.7.7",
-		"solid-js": "^1.7.11"
-	}
+  "name": "obsidian-sets",
+  "version": "0.0.5",
+  "description": "A plugin for Obsidian.md that allows you to create and manage sets of notes like Notion or Anytype DBs",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "version": "node version-bump.mjs && git add manifest.json versions.json",
+    "scss": "ode-sass -w  styles.scss styles.css"
+  },
+  "keywords": [],
+  "author": "Gabriele Cannata",
+  "license": "MIT",
+  "devDependencies": {
+    "@codemirror/language": "^6.2.1",
+    "@types/node": "^16.11.6",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "builtin-modules": "3.3.0",
+    "esbuild": "latest",
+    "esbuild-plugin-solid": "^0.5.0",
+    "esbuild-plugin-svgr": "^1.0.1",
+    "esbuild-sass-plugin": "^2.3.2",
+    "obsidian": "^1.4.4",
+    "tslib": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.5.1",
+    "@jalik/observer": "github:jalik/js-observer",
+    "@thisbeyond/solid-dnd": "^0.7.4",
+    "babel-preset-solid": "^1.7.7",
+    
+    "solid-js": "^1.7.11"
+  }
 }

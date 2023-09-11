@@ -47,15 +47,15 @@ export default class SetsPlugin extends Plugin {
 
         // if (this.settings.addRibbonIcon) {
         //     // This creates an icon in the left ribbon.
-            const ribbonIconEl = this.addRibbonIcon(
-                "sigma",
-                "Open Sets",
-                (evt: MouseEvent) => {
-                    this.activateView();
-                }
-            );
-            // Perform additional things with the ribbon
-            ribbonIconEl.addClass("Sets-ribbon-class");
+        const ribbonIconEl = this.addRibbonIcon(
+            "database",
+            "Open Sets",
+            (evt: MouseEvent) => {
+                this.activateView();
+            }
+        );
+        // Perform additional things with the ribbon
+        ribbonIconEl.addClass("Sets-ribbon-class");
         // }
 
         this.addCommand({
@@ -68,15 +68,29 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-type",
             name: "Create New Type",
             callback: () => {
-                new NameInputModal(this.app, "Type Name", (name) => {
-                    this._vaultDB.createNewType(name);
+                new NameInputModal(this.app, "Type Name", async (name) => {
+                    const newFile = await this._vaultDB.createNewType(name);
+                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
                 })
                 .open()
                 ;
             }
         });
 
-        
+        // register command to create new collection
+        this.addCommand({
+            id: "sets-new-collection",
+            name: "Create New Collection",
+            callback: () => {
+                new NameInputModal(this.app, "Collection Name", async (name) => {
+                    const newFile = await this._vaultDB.createNewCollection(name);
+                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+                })
+                .open()
+                ;
+            }
+        });
+
 
         this.app.workspace.onLayoutReady(() => {
             if (this.settings.showAtStartup) {
@@ -100,7 +114,7 @@ export default class SetsPlugin extends Plugin {
             this
         );
 
-        
+
         this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
@@ -143,9 +157,9 @@ export default class SetsPlugin extends Plugin {
                 id: `sets-new-${type}`,
                 name: `Create New ${prettify(type)}`,
                 callback: async () => {
-                    const file:TFile = await this._vaultDB.createNewInstance(type);
+                    const file: TFile = await this._vaultDB.createNewInstance(type);
                     // open file
-                    if(file) {
+                    if (file) {
                         await this.app.workspace.openLinkText(file.path, file.path, true);
                     } else {
                         new Notice("Could not create file");

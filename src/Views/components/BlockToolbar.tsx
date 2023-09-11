@@ -58,7 +58,8 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const onRefresh = () => {
-        refresh();
+        // refresh();
+        save();
     }
 
     const onScope = () => {
