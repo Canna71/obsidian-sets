@@ -1,6 +1,6 @@
 # Obsidian Sets
 
-This plugin is a work in progress
+This plugin is currently under development
 
 This plugins is inspired by Notion and AnyType and implements a way to strucure data using obsidian notes, specifically the recently released properies.
 
@@ -27,6 +27,7 @@ A view consists of the following:
 `type`: items are restricted to a given typw.
 `collection`: items are restricted to a given collection.
 `folder`: items are restricted to a given folder.
+`value`: items can be anywhere
 
 ## Filter
 
@@ -35,10 +36,6 @@ A filter can be applied to the view. Filter are boolean expression that can be c
 ## Sort
 
 Sort is used to order items in the view. It is a list of properties and directions.
-
-## Group
-
-Group is used to group items in the view. It is a list of properties.
 
 ## Fields
 
