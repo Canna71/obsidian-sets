@@ -9,7 +9,7 @@ export interface FolderSelectProps {
 }
 
 const FolderSelect : Component<FolderSelectProps> = (props) => {
-    const {  app } = useApp()!;
+    // const {  app } = useApp()!;
 
     const folders = () => {
         // return folder names from querying VaultDB
@@ -23,7 +23,7 @@ const FolderSelect : Component<FolderSelectProps> = (props) => {
             }
         })
     }
-
+ 
     return (
         <InputSuggest 
                 value={props.value} 

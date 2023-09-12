@@ -91,7 +91,7 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
             setSelected(selected() - 1);
         }
         if (e.key === "Enter") {
-            props.setValue(props.options()[selected()].value);
+            props.setValue(filteredOptions()[selected()].value);
         }
     }
 
