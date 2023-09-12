@@ -23,8 +23,8 @@ import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";
 import { NameInputModal } from "./Views/NameInputModal";
 
-const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
-`;
+// const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
+// `;
 
 // Remember to rename these classes and interfaces!
 
@@ -41,9 +41,9 @@ export default class SetsPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
-        this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf, this));
+        // this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf, this));
 
-        addIcon("sigma", sigma);
+        // addIcon("sigma", sigma);
 
         // if (this.settings.addRibbonIcon) {
         //     // This creates an icon in the left ribbon.
@@ -100,7 +100,7 @@ export default class SetsPlugin extends Plugin {
 
         this.registerCodeBlock();
         this.registerPostProcessor();
-        this.registerEditorExtensions();
+        // this.registerEditorExtensions();
 
         this.app.workspace.on(
             "active-leaf-change",
