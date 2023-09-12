@@ -43,7 +43,29 @@ export class SetsSettingsTab extends PluginSettingTab {
             //     }
             // ));
 		
-        
+            // add a settings for typeAttributeKey
+            new Setting(containerEl)
+            .setName("Type Attribute Key")
+            .setDesc("The name of the attribute that will be used to store the type of a note.")
+            .addText(text => text
+                .setValue(this.plugin.settings.typeAttributeKey)
+                .onChange(async (value) => {
+                    this.plugin.settings.typeAttributeKey = value;
+                    await this.plugin.saveSettings();
+                }   
+            ));
+
+            // add a settings for collectionAttributeKey
+            new Setting(containerEl)
+            .setName("Collection Attribute Key")
+            .setDesc("The name of the attribute that will be used to store the collection of a note.")
+            .addText(text => text
+                .setValue(this.plugin.settings.collectionAttributeKey)
+                .onChange(async (value) => {
+                    this.plugin.settings.collectionAttributeKey = value;
+                    await this.plugin.saveSettings();
+                }
+            ));
 
        
 	}

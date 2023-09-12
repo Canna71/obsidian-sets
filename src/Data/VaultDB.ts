@@ -239,8 +239,10 @@ export class VaultDB {
 
     async createNewCollection(name: string) {
         const collectionName = name;
-        const collectionFolder = `${this.plugin.settings.collectionsRoot}/${collectionName}`;
-        const _folder = await this.ensureFolder(collectionFolder);
+        const collectionsFolder = `${this.plugin.settings.setsRoot}/${this.plugin.settings.collectionsRoot}`;
+        await this.ensureFolder(collectionsFolder);
+        const collectionFolder = `${collectionsFolder}/${collectionName}`;
+        await this.ensureFolder(collectionFolder);
         const collectionPath = `${collectionFolder}/${collectionName}.md`;
         const def = { scope: ["collection", LinkToThis] as Scope };
         const content = generateCodeblock(def);
@@ -542,15 +544,15 @@ export class VaultDB {
 
     private getArchetypeFolder() {
         return this.app.vault.getAbstractFileByPath(
-            this.plugin.settings.typesFolder
+            // appends the sets root to the types folder
+            `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`
+            
         ) as TFolder;
     }
 
     private getArchetypePath(typeDisplayName: string) {
         return (
-            this.plugin.settings.typesFolder +
-            "/" +
-            this.getArchetypeName(typeDisplayName)
+            `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}/${this.getArchetypeName(typeDisplayName)}`
         );
     }
 
@@ -603,7 +605,7 @@ export class VaultDB {
         console.log("inferred type: ", archeType);
         const archetypeName = this.getArchetypeName(typeDisplayName);
         const archetypeFolder = await this.ensureFolder(
-            this.plugin.settings.typesFolder
+            `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`
         );
         const newFIle = await this.app.fileManager.createNewFile(
             archetypeFolder,
