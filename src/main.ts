@@ -75,7 +75,7 @@ export default class SetsPlugin extends Plugin {
                 .open()
                 ;
             }
-        });
+        }); 
 
         // register command to create new collection
         this.addCommand({

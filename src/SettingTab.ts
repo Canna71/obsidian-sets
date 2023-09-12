@@ -15,17 +15,8 @@ export class SetsSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Sets Settings'});
-
-        this.createToggle(containerEl, "Add Ribbon Icon",
-            "Adds an icon to the ribbon to launch scan",
-            "addRibbonIcon"
-        );
-
-        this.createToggle(containerEl, "Show Sets Sidebar",
-        "Opens Sets sidebar at startup",
-        "showAtStartUp"
-    	);
+		
+        
 
        
 	}

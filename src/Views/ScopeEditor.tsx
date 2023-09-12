@@ -6,6 +6,7 @@ import { LinkToThis } from "src/Data/DynamicValues";
 import { TFolder } from "obsidian";
 import InputSuggest from "./components/InputSuggest";
 import { getFolders } from "src/Utils/getFolders";
+import FolderSelect from "./components/FolderSelect";
 
 export interface ScopeEditorProps {
 
@@ -157,11 +158,10 @@ const ScopeEditor: Component<ScopeEditorProps> = (props) => {
             </Show>
 
             <Show when={scopeType() === "folder"}>
-               <InputSuggest 
+               <FolderSelect 
                 value={scopeSpecifier} 
                 setValue={setScopeSpecifier} 
-                placeholder={() => "Select folder..."}
-                options={folders} />
+                />
             </Show>
 
 
