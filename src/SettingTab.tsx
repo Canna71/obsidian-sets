@@ -42,6 +42,18 @@ export class SetsSettingsTab extends PluginSettingTab {
             //         await this.plugin.saveSettings();
             //     }
             // ));
+
+            // setting for the typeSetSuffix
+            new Setting(containerEl)
+            .setName("Type Set Suffix")
+            .setDesc("The suffix that will be added to the name of the type set.")
+            .addText(text => text
+                .setValue(this.plugin.settings.typeSetSuffix)
+                .onChange(async (value) => {
+                    this.plugin.settings.typeSetSuffix = value;
+                    await this.plugin.saveSettings();
+                }
+            ));
 		
             // add a settings for typeAttributeKey
             new Setting(containerEl)

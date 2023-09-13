@@ -4,6 +4,7 @@ export interface SetsSettings {
     showAtStartup: boolean;
     setsRoot: string;
     typesFolder: string;
+    typeSetSuffix: string;
     typeAttributeKey: string;
     collectionsRoot: string;
     collectionAttributeKey: string;
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     addRibbonIcon: true,
     showAtStartup: false,
     setsRoot: "Sets",
+    typeSetSuffix: "Set",
     typesFolder: "Types",
     typeAttributeKey: "type",
     collectionsRoot: "Collections",
