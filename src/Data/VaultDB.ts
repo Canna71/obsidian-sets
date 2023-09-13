@@ -209,7 +209,9 @@ export class VaultDB {
 
     async createNewType(name: string) {
         const typename = name.toLowerCase();
-        const archetypeFolder = this.getArchetypeFolder();
+        const archetypeFolder = await this.ensureFolder(
+            `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`
+        );
         const archetypeName = this.getArchetypeName(name);
         const newFile = await this.app.fileManager.createNewFile(
             archetypeFolder,
@@ -258,7 +260,7 @@ export class VaultDB {
     private async createSetFile(setFolder: TFolder, typename: string) {
         const filename = setFolder.name + ".md";
         const def = { scope: ["type", typename] as Scope };
-        const content = generateCodeblock(def);
+        const content = `\n${generateCodeblock(def)}`;
         const newFile = await this.app.vault.create(
             setFolder.path + "/" + filename,
             content
@@ -567,7 +569,7 @@ export class VaultDB {
     private async getSetFolder(type: string) {
         const setsRoot = this.plugin.settings.setsRoot;
         const typeDisplayName = this.getTypeDisplayName(type);
-        const setFolder = `${setsRoot}/${typeDisplayName}Set`;
+        const setFolder = `${setsRoot}/${typeDisplayName}${this.plugin.settings.typeSetSuffix}`;
 
         let folder = this.app.vault.getAbstractFileByPath(setFolder);
         if (!folder || !(folder instanceof TFolder)) {
