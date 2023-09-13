@@ -3,28 +3,10 @@ import { getSetsSettings } from "../main";
 import { SetsSettings } from "../Settings";
 import { OperatorName, getOperatorById } from "./Operator";
 import { AttributeDefinition } from "./AttributeDefinition";
-import { Scope, ScopeType, VaultDB } from "./VaultDB";
+import { VaultDB } from "./VaultDB";
 import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
 import { TFolder } from "obsidian";
-
-export enum IntrinsicAttributeKey {
-    FileName = "__bname",
-    FileCreationDate = "__ctime",
-    FileModificationDate = "__mtime",
-    FilePath = "__path",
-}
-
-export function isIntrinsicAttribute(key: IntrinsicAttributeKey | string): key is IntrinsicAttributeKey {
-    return (Object.values(IntrinsicAttributeKey).includes(key as IntrinsicAttributeKey) );
-}
-
-export type ExtrinsicAttributeKey = string;
-
-export type AttributeKey = IntrinsicAttributeKey | ExtrinsicAttributeKey;
-
-export type Clause = [AttributeKey, OperatorName, any];
-
-export type SortField = [AttributeKey, boolean]; // false = ascending, true = descendig
+import { AttributeKey, Clause, Scope, ScopeType, SortField, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
 
 // export type Clause = {
 //     at: AttributeClause,

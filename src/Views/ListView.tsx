@@ -4,8 +4,8 @@
 
 import { Component, For, Show } from "solid-js";
 import { SetViewProps } from "./components/GridView";
-import { IntrinsicAttributeKey } from "src/Data/Query";
 import FileName from "./components/FileName";
+import { IntrinsicAttributeKey } from "./components/SetDefinition";
 
 const ListView: Component<SetViewProps> = (props) => {
 

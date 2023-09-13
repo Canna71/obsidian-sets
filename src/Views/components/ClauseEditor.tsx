@@ -4,9 +4,9 @@ import { AttributeModal } from "./AttributeModal";
 import { OperatorName, getOperatorById, getOperatorsForType } from "src/Data/Operator";
 import { DropdownComponent, setIcon } from "obsidian";
 import { mapBy } from "src/Utils/indexBy";
-import { Clause } from "src/Data/Query";
 import { PropertyData, getPropertyData } from "src/Data/PropertyData";
 import { getDynamicValuesForType, isDynamic } from "src/Data/DynamicValues";
+import { Clause } from "./SetDefinition";
 
 export interface ClauseEditorProps {
     // db: VaultDB,

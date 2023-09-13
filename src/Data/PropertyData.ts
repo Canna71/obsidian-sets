@@ -2,8 +2,8 @@ import { App } from "obsidian";
 import { indexBy } from "src/Utils/indexBy";
 import { sortBy } from "src/Utils/sortBy";
 import { PropertyInfo } from "src/obsidian-ex";
-import { IntrinsicAttributeKey } from "./Query";
 import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
+import { IntrinsicAttributeKey } from "src/Views/components/SetDefinition";
 
 export interface PropertyData {
     key: string;

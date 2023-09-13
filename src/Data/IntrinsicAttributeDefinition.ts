@@ -1,7 +1,7 @@
 import { ObjectData } from "./ObjectData";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { App, moment } from "obsidian";
-import { IntrinsicAttributeKey } from "./Query";
+import { IntrinsicAttributeKey } from "src/Views/components/SetDefinition";
 
 // function getFileAttribute(file: TFile, key: IntrinsicAttributeKey) {
 //     switch(key){

@@ -1,5 +1,5 @@
 import { App, Modal } from "obsidian";
-import { SetDefinition } from "./components/renderCodeBlock";
+import { SetDefinition } from "./components/SetDefinition";
 import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";

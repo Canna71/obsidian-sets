@@ -1,6 +1,7 @@
 import { MarkdownPostProcessorContext, parseYaml } from "obsidian";
 import SetsPlugin from "../main";
-import renderCodeBlock, { SetDefinition } from "src/Views/components/renderCodeBlock";
+import renderCodeBlock from "src/Views/components/renderCodeBlock";
+import { SetDefinition } from "./components/SetDefinition";
 
 
 

@@ -1,7 +1,6 @@
 
 import { createSignal, createContext, useContext, JSX, Accessor } from "solid-js";
-import { SetDefinition } from "./renderCodeBlock";
-import { AttributeKey, Clause, SortField } from "src/Data/Query";
+import { AttributeKey, Clause, SetDefinition, SortField } from "./SetDefinition";
 
 
 

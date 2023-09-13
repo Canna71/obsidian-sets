@@ -8,17 +8,15 @@ import { useBlock } from "./BlockProvider";
 import ListView from "../ListView";
 // import { useBlock } from "./BlockProvider";
 
-export type ViewMode = "grid";
 
 export interface CodeBlockProps {
     queryResult: QueryResult,
-    attributes: AttributeDefinition[],
-    viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void },
+    attributes: AttributeDefinition[]
 }
 
 
 const CodeBlock: Component<CodeBlockProps> = (props) => {
-    const { getNewFile } = useBlock()!;
+    const { getNewFile, definition } = useBlock()!;
 
     // if newFile is set, put the new file in the first row
 
@@ -46,14 +44,18 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
     }
 
     return <div class="sets-codeblock">
-        <BlockToolbar queryResult={props.queryResult} attributes={props.attributes} viewMode={props.viewMode} />
-        <GridProvider gridState={{
-            hovering: undefined,
-            // fields: definition().fields
-        }}>
-            <GridView data={reorderedResults()} attributes={props.attributes} />
-        </GridProvider>
-        <ListView data={reorderedResults()} attributes={props.attributes} />
+        <BlockToolbar queryResult={props.queryResult} attributes={props.attributes}  />
+        <Show when={definition().viewMode === "grid" || !definition().viewMode}>
+            <GridProvider gridState={{
+                hovering: undefined,
+                // fields: definition().fields
+            }}>
+                <GridView data={reorderedResults()} attributes={props.attributes} />
+            </GridProvider>
+        </Show>
+        <Show when={definition().viewMode === "list"}>
+            <ListView data={reorderedResults()} attributes={props.attributes} />
+        </Show>
         <Show when={moreItemsAvailable()}>
             <div class="sets-codeblock-more">
                 {/* <button class="sets-codeblock-more-button" onClick={() => {
@@ -62,7 +64,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                 }> More
                 </button>
                 */}
-                Showing first {props.queryResult.data.length} items of {props.queryResult.total} 
+                Showing first {props.queryResult.data.length} items of {props.queryResult.total}
             </div>
         </Show>
 

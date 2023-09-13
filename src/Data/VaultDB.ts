@@ -1,12 +1,9 @@
 import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
 import SetsPlugin from "../main";
 import {
-    AttributeKey,
-    Clause,
-    IntrinsicAttributeKey,
-    Query,
-    SortField,
-    isIntrinsicAttribute,
+    
+    Query
+    
 } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
@@ -15,9 +12,9 @@ import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { getOperatorById } from "./Operator";
 import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
-import { FieldDefinition } from "src/Views/components/renderCodeBlock";
 import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
+import { AttributeKey, Clause, FieldDefinition, IntrinsicAttributeKey, Scope, SortField, VaultScope, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
 // import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 
 export type DBEvent = "metadata-changed" | "initialized";
@@ -36,13 +33,7 @@ export type QueryResult = {
 
 // TODO: support also "folder-recursive"
 
-export type ScopeType = "type" | "collection" | "folder" | "vault";
 
-// export type Scope = {"type": string} | {"collection": string} | {"folder": string | undefined} | {"vault": undefined};
-
-export type Scope = [ScopeType, string?];
-// export const VaultScope = {"vault": undefined} as Scope;
-export const VaultScope: Scope = ["vault"];
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function escapeURI(e: string) {
     // eslint-disable-next-line no-control-regex

@@ -1,42 +1,23 @@
 
 import { render } from "solid-js/web";
-import { Clause, IntrinsicAttributeKey, SortField } from "src/Data/Query";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { Scope, VaultDB, VaultScope } from "src/Data/VaultDB";
+import { VaultDB } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup, onMount } from "solid-js";
-import CodeBlock, { ViewMode } from "./CodeBlock";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
 import { BlockProvider } from "./BlockProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
 import { getSetsSettings } from "src/main";
+import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
+import CodeBlock from "./CodeBlock";
 
 // export interface FieldDefinition {
 //     key: string;
     
 // }
 
-export type FieldDefinition = string;
 
-// export interface BlockContext {
-//     state: SetDefinition,
-//     update: (def:SetDefinition) => void;
-// }
-
-export interface SetDefinition {
-    scope?: Scope;
-    // type?: string;
-    // collection?: string;
-    filter?: Clause[];
-    fields?: FieldDefinition[];
-    sortby?: SortField[];
-    transientState?: any;
-    grid?: {
-        columnWidths?: Record<string,string>;
-    },
-    timestamp?: number;
-}
 
 const stateMap = new Map<string, any>();
 
@@ -65,7 +46,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     const [data, setData] = createStore(initialdata);
 
-    const [viewMode, setViewMode] = createSignal<ViewMode>("grid" as ViewMode);
+    // const [viewMode, setViewMode] = createSignal<ViewMode>("grid" as ViewMode);
     console.log("rendering code block", ctx.docId, ctx.sourcePath);
     // we measur when the component was last rendered
     const lastRendered = Date.now();
@@ -151,9 +132,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
             <BlockProvider setDefinition={definition} 
             refresh={refresh}
             updateDefinition={updateDefinition} >
-                <CodeBlock queryResult={data} attributes={attributes} viewMode={{
-                    viewMode, setViewMode
-                }} />
+                <CodeBlock queryResult={data} attributes={attributes}  />
             </BlockProvider>
 
         </AppProvider>, el);

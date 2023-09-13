@@ -1,12 +1,12 @@
 import { Component, Show, createSignal } from "solid-js";
 import { useBlock } from "./components/BlockProvider";
 import { useApp } from "./components/AppProvider";
-import { ScopeType } from "src/Data/VaultDB";
 import { LinkToThis } from "src/Data/DynamicValues";
 import { TFolder } from "obsidian";
 import InputSuggest from "./components/InputSuggest";
 import { getFolders } from "src/Utils/getFolders";
 import FolderSelect from "./components/FolderSelect";
+import { ScopeType } from "./components/SetDefinition";
 
 export interface ScopeEditorProps {
 

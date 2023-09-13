@@ -1,18 +1,17 @@
 import { Accessor, Component, Show, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { ViewMode } from "./CodeBlock";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
 import { FilterEditorModal } from "../FilterEditorModal";
 import { useBlock } from "./BlockProvider";
 import { useApp } from "./AppProvider";
-import { SetDefinition } from "./renderCodeBlock";
+import { SetDefinition } from "./SetDefinition";
 import { FieldSelectModal } from "../FieldSelectModal";
 import SortingEditorModal from "../SortingEditorModal";
 import { ScopeEditorModal } from "../ScopeEditorModal";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
 
-const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[], viewMode: { viewMode: Accessor<ViewMode>, setViewMode: (vm: ViewMode) => void } }> = (props) => {
+const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[] }> = (props) => {
 
     let filterBtn: HTMLDivElement;
     let fieldsBtn: HTMLDivElement;
