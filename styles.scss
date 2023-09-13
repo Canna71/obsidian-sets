@@ -215,6 +215,18 @@
         }
     }
 
+    .sets-listview {
+        .sets-listview-body {
+            .sets-listview-item {
+                display: flex;
+                gap: var(--size-4-1);
+                .sets-listview-field {
+                    display: inline-block
+                }
+            }
+        }
+    }
+
 
     .sets-codeblock-more {
         // show the message in a muted text centered in the middle of the codeblock

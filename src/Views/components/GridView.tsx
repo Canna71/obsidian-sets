@@ -8,14 +8,14 @@ import HeaderRow from "./HeaderRow";
 import { useBlock } from "./BlockProvider";
 
 
-export interface GridViewProps {
+export interface SetViewProps {
     data: ObjectData[];
     attributes: AttributeDefinition[];
 }
 
 // TODO: use https://github.com/minht11/solid-virtual-container
 // TODO: use https://tanstack.com/table/v8/docs/guide/introduction
-const GridView: Component<GridViewProps> = (props) => {
+const GridView: Component<SetViewProps> = (props) => {
     // const gridContext = useGrid();
 
 

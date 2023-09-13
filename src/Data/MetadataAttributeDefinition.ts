@@ -23,7 +23,7 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
     }
 
     format(data: ObjectData) { 
-        return this.getValue(data).toString();
+        return this.getValue(data)?.toString() || "";
         // return getMetadataAttribute(data, { "tag": "md", "key": this._key }); 
     }
     // TODO: remove dependency from app

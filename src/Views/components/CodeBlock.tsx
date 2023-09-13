@@ -5,6 +5,7 @@ import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 import { GridProvider } from "./GridProvider";
 import { useBlock } from "./BlockProvider";
+import ListView from "../ListView";
 // import { useBlock } from "./BlockProvider";
 
 export type ViewMode = "grid";
@@ -52,6 +53,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
         }}>
             <GridView data={reorderedResults()} attributes={props.attributes} />
         </GridProvider>
+        <ListView data={reorderedResults()} attributes={props.attributes} />
         <Show when={moreItemsAvailable()}>
             <div class="sets-codeblock-more">
                 {/* <button class="sets-codeblock-more-button" onClick={() => {
