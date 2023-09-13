@@ -79,6 +79,18 @@ export class SetsSettingsTab extends PluginSettingTab {
                 }
             ));
 
+            // add a setting for topResults
+            new Setting(containerEl)
+            .setName("Top Results")
+            .setDesc("The number of notes to show in the views")
+            .addText(text => text
+                .setValue(this.plugin.settings.topResults.toString())
+                .onChange(async (value) => {
+                    this.plugin.settings.topResults = parseInt(value);
+                    await this.plugin.saveSettings();
+                }
+            ));
+
        
 	}
 

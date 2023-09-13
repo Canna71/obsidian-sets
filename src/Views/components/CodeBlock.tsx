@@ -1,4 +1,4 @@
-import { Accessor, Component } from "solid-js";
+import { Accessor, Component, Show } from "solid-js";
 import GridView from "./GridView";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import BlockToolbar from "./BlockToolbar";
@@ -39,6 +39,11 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
 
     }
 
+    // function that returns if more items were available
+    const moreItemsAvailable = () => {
+        return props.queryResult.total > props.queryResult.data.length;
+    }
+
     return <div class="sets-codeblock">
         <BlockToolbar queryResult={props.queryResult} attributes={props.attributes} viewMode={props.viewMode} />
         <GridProvider gridState={{
@@ -47,6 +52,19 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
         }}>
             <GridView data={reorderedResults()} attributes={props.attributes} />
         </GridProvider>
+        <Show when={moreItemsAvailable()}>
+            <div class="sets-codeblock-more">
+                {/* <button class="sets-codeblock-more-button" onClick={() => {
+                    props.queryResult.more();
+                }
+                }> More
+                </button>
+                */}
+                Showing first {props.queryResult.data.length} items of {props.queryResult.total} 
+            </div>
+        </Show>
+
+
     </div>
 
 }

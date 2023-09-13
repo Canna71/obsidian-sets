@@ -26,6 +26,8 @@
             visibility: visible;
         }
     }
+
+    
 }
 
 .sets-codeblock {
@@ -211,6 +213,20 @@
                 }
             }
         }
+    }
+
+
+    .sets-codeblock-more {
+        // show the message in a muted text centered in the middle of the codeblock
+        // with a border around it
+       
+        border: 1px solid var(--divider-color);
+        // background-color: var(--background-modifier-hover);
+        color: var(--text-muted);
+        padding: 4px;
+        border-radius: 4px;
+        z-index: 1;
+        text-align: center;
     }
 }
 
