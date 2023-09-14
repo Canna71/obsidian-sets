@@ -1,9 +1,9 @@
-import { App, CachedMetadata, TFile, TFolder, debounce } from "obsidian";
+import { App, CachedMetadata, TFile, TFolder, debounce, moment } from "obsidian";
 import SetsPlugin from "../main";
 import {
-    
+
     Query
-    
+
 } from "./Query";
 import { ObjectData } from "./ObjectData";
 import Observer from "@jalik/observer";
@@ -15,7 +15,7 @@ import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
 import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
 import { AttributeKey, Clause, FieldDefinition, IntrinsicAttributeKey, Scope, SortField, VaultScope, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
-// import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
+import * as Sqrl from "squirrelly";
 
 export type DBEvent = "metadata-changed" | "initialized";
 
@@ -43,8 +43,8 @@ function escapeURI(e: string) {
 }
 
 export class VaultDB {
-    
-    
+
+
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
@@ -100,7 +100,7 @@ export class VaultDB {
         this.app.vault.off("delete", this.onMetadataChanged);
         this.app.vault.off("rename", this.onMetadataChanged);
         this.app.vault.off("create", this.onMetadataChanged);
-        
+
     }
 
     on(event: DBEvent, observer: (...args: any[]) => void) {
@@ -139,8 +139,8 @@ export class VaultDB {
     // }
 
     execute(query: Query, top?: number): QueryResult {
-        if(!top) top = this.plugin.settings.topResults;
-        if (!this.dbInitialized) { 
+        if (!top) top = this.plugin.settings.topResults;
+        if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
         const startTime = Date.now();
@@ -226,7 +226,7 @@ export class VaultDB {
 
     async createNewInstance(type: string): Promise<TFile> {
         // gets a query for a type
-        const qyery = Query.__fromClauses(this, ["vault"] , [this.plugin.settings.typeAttributeKey , "eq", type], [], undefined);
+        const qyery = Query.__fromClauses(this, ["vault"], [this.plugin.settings.typeAttributeKey, "eq", type], [], undefined);
         const newFile = await this.addToSet(qyery, undefined);
         return newFile!;
     }
@@ -243,8 +243,8 @@ export class VaultDB {
         const newFile = await this.app.vault.create(collectionPath, content);
         // set this file as collection
         this.app.fileManager.processFrontMatter(newFile, (fm) => {
-            fm[this.plugin.settings.typeAttributeKey] = 
-            this.plugin.settings.collectionType;
+            fm[this.plugin.settings.typeAttributeKey] =
+                this.plugin.settings.collectionType;
         });
         return newFile;
     }
@@ -314,11 +314,13 @@ export class VaultDB {
         let content = "";
         if (template instanceof TFile) {
             content = await this.app.vault.read(template);
+            // TODO: transform the content interpreting it as a squirrelly template
+            content = this.expandTemplate(content, template, folder, query, properties);
         }
 
         if (folder instanceof TFolder) {
             let defaults = {};
-            if(properties) {
+            if (properties) {
                 defaults = this.inferProperties(properties, query);
             }
 
@@ -350,6 +352,24 @@ export class VaultDB {
             });
             return newFile;
         }
+    }
+
+    private expandTemplate(content: string, template: TFile, folder: any, query: Query, properties: string[] | undefined) {
+        try {
+            content = Sqrl.render(content, {
+                time: moment().format("HH:mm:ss"),
+                date: moment().format("YYYY-MM-DD"),
+                file: template,
+                folder: folder,
+                context: query.context,
+                query: query,
+                properties: properties
+            });
+        } catch (e) {
+            console.error(e);
+            console.error(`Error while rendering template ${template.path}`);
+        }
+        return content;
     }
 
     private async getTemplate(query: Query) {
@@ -511,7 +531,7 @@ export class VaultDB {
             if (cache) {
                 if (
                     cache.frontmatter?.[
-                        this.plugin.settings.typeAttributeKey
+                    this.plugin.settings.typeAttributeKey
                     ] === type
                 )
                     return true;
@@ -540,7 +560,7 @@ export class VaultDB {
         return this.app.vault.getAbstractFileByPath(
             // appends the sets root to the types folder
             `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`
-            
+
         ) as TFolder;
     }
 
