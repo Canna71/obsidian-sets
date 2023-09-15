@@ -224,10 +224,10 @@ export class VaultDB {
         return newFile;
     }
 
-    async createNewInstance(type: string): Promise<TFile> {
+    async createNewInstance(type: string, name?: string): Promise<TFile> {
         // gets a query for a type
-        const qyery = Query.__fromClauses(this, ["vault"], [this.plugin.settings.typeAttributeKey, "eq", type], [], undefined);
-        const newFile = await this.addToSet(qyery, undefined);
+        const query = Query.__fromClauses(this, VaultScope, [this.plugin.settings.typeAttributeKey, "eq", type], [], undefined);
+        const newFile = await this.addToSet(query, undefined, name);
         return newFile!;
     }
 
@@ -238,7 +238,7 @@ export class VaultDB {
         const collectionFolder = `${collectionsFolder}/${collectionName}`;
         await this.ensureFolder(collectionFolder);
         const collectionPath = `${collectionFolder}/${collectionName}.md`;
-        const def = { scope: ["collection", LinkToThis] as Scope };
+        const def = { scope: [this.plugin.settings.collectionAttributeKey, LinkToThis] as Scope };
         const content = generateCodeblock(def);
         const newFile = await this.app.vault.create(collectionPath, content);
         // set this file as collection
@@ -307,7 +307,7 @@ export class VaultDB {
         return results.query.canCreate;
     }
 
-    async addToSet(query: Query, properties?: FieldDefinition[]) {
+    async addToSet(query: Query, properties?: FieldDefinition[], fileName?: string) {
         const tmp = await this.getTemplate(query);
 
         const { template, folder } = tmp;
@@ -326,7 +326,7 @@ export class VaultDB {
 
             const newFile = await this.app.fileManager.createNewFile(
                 folder as TFolder,
-                undefined,
+                fileName,
                 undefined,
                 content
             );
@@ -370,7 +370,7 @@ export class VaultDB {
             });
 
             if(name !== newFile.basename){
-                const newPath = `${newFile.parent?.path || ""}/${name}.md`
+                const newPath = `${newFile.parent?.path || ""}/${name}.${newFile.extension}`
                 await this.app.fileManager.renameFile(newFile, newPath);
                 return this.app.vault.getAbstractFileByPath(newPath) as TFile;
             }

@@ -2,6 +2,7 @@ import { prettify } from 'src/Utils/prettify';
 import { CODEBLOCK_NAME, DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
 import {
     addIcon,
+    Command,
     Editor,
     MarkdownFileInfo,
     MarkdownView,
@@ -38,6 +39,8 @@ export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
 
     _vaultDB: VaultDB;
+    _instanceCommands: Command[] = [];
+
     async onload() {
         await this.loadSettings();
 
@@ -58,38 +61,13 @@ export default class SetsPlugin extends Plugin {
         // ribbonIconEl.addClass("Sets-ribbon-class");
         // }
 
-        this.addCommand({
-            id: "show-Sets-view",
-            name: "Show Sets Sidebar",
-            callback: () => this.activateView(),
-        });
+        // this.addCommand({
+        //     id: "show-Sets-view",
+        //     name: "Show Sets Sidebar",
+        //     callback: () => this.activateView(),
+        // });
 
-        this.addCommand({
-            id: "sets-new-type",
-            name: "Create New Type",
-            callback: () => {
-                new NameInputModal(this.app, "Type Name", async (name) => {
-                    const newFile = await this._vaultDB.createNewType(name);
-                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                })
-                .open()
-                ;
-            }
-        }); 
 
-        // register command to create new collection
-        this.addCommand({
-            id: "sets-new-collection",
-            name: "Create New Collection",
-            callback: () => {
-                new NameInputModal(this.app, "Collection Name", async (name) => {
-                    const newFile = await this._vaultDB.createNewCollection(name);
-                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                })
-                .open()
-                ;
-            }
-        });
 
 
         this.app.workspace.onLayoutReady(() => {
@@ -166,6 +144,95 @@ export default class SetsPlugin extends Plugin {
                     }
                 }
             });
+        });
+
+        this.registerCommands();
+    }
+
+    registerCommands() {
+        this.addCommand({
+            id: "sets-new-type",
+            name: "Create New Type",
+            callback: () => {
+                new NameInputModal(this.app, "Type Name", async (name) => {
+                    const newFile = await this._vaultDB.createNewType(name);
+                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+                    this.registerNewInstancesCommands();
+                })
+                    .open()
+                    ;
+            }
+        }); 
+
+        // register command to create new collection
+        this.addCommand({
+            id: "sets-new-collection",
+            name: "Create New Collection",
+            callback: () => {
+                new NameInputModal(this.app, "Collection Name", async (name) => {
+                    const newFile = await this._vaultDB.createNewCollection(name);
+                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+                })
+                    .open()
+                    ;
+            }
+        });
+
+        // register a command for each type to create a new item
+        this.registerNewInstancesCommands();
+
+    }
+
+    private registerNewInstancesCommands() {
+
+        // removes all comands for new instances
+        // this._instanceCommands.forEach((cmd) => {
+        //     this.app.commands.removeCommand(cmd.id);
+        // });
+        // this._instanceCommands = [];
+        // this.app.commands.removeCommand((cmd) => cmd.id.startsWith("sets-new-instance-"));
+
+        const actualTypes = this._vaultDB.getTypeNames();
+
+        actualTypes.forEach((type) => {
+            // check if command already exists
+            if(this._instanceCommands.find((cmd) => cmd.id === `sets-new-instance-${type}`)) return;
+
+            const cmd = this.addCommand({
+                id: `sets-new-instance-${type}`,
+                name: `Create New ${prettify(type)}`,
+                callback: async () => {
+                    // asks the user the name of the new item
+                    new NameInputModal(this.app, "Item Name", async (name) => {
+
+                        const file: TFile = await this._vaultDB.createNewInstance(type, name);
+                        // open file
+                        if (file) {
+                            await this.app.workspace.openLinkText(file.path, file.path, true);
+                        } else {
+                            new Notice("Could not create file");
+                        }
+                    })
+                        .open();
+
+                }
+            });
+            this._instanceCommands.push(cmd);
+        });
+        let toRemove: Command[] = [];
+        // removes commands that are not more corresponding to a type
+        this._instanceCommands.forEach((cmd) => {
+            if(!actualTypes.includes(cmd.id.replace(`${this.manifest.id}:sets-new-instance-`, ""))) {
+                this.app.commands.removeCommand(cmd.id);
+                toRemove.push(cmd);
+            }
+        });
+        toRemove.forEach((cmd) => {
+            this._instanceCommands.splice(this._instanceCommands.indexOf(cmd), 1);
+        });
+
+        this._vaultDB.on("metadata-changed", () => {
+            this.registerNewInstancesCommands();
         });
     }
 
