@@ -29,7 +29,9 @@ export function getPropertyData(app: App): PropertyData[] {
     }
     let propInfo: PropertyInfo[] = Object.values(
         app.metadataTypeManager.properties
-    ).filter((property) => property.name && property.name.length);
+    ).filter((property) => property.name && property.name.length)
+    .filter((property) => !property.name.startsWith("__"))   
+    ;
     propInfo = sortBy("name", propInfo);
     const ret = propInfo.map((pi) => {
         //this._types.find(rtw => rtw.type === pi.type);

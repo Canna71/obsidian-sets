@@ -330,7 +330,10 @@ export class VaultDB {
                 undefined,
                 content
             );
-            this.app.fileManager.processFrontMatter(newFile, (frontMatter) => {
+
+            let name = newFile.basename;
+
+            await this.app.fileManager.processFrontMatter(newFile, (frontMatter) => {
                 // Object.assign(frontMatter, defaults);
                 // merge defaults with frontmatter trying to give priority to fields with valies
                 for (const key in defaults) {
@@ -349,7 +352,28 @@ export class VaultDB {
                         );
                     }
                 }
+                // remove attributes starting with double underscore
+                for (const key in frontMatter) {
+                    if (key.startsWith("__")) {
+                        if(key === "__name_prefix"){
+                            // this.app.fileManager.renameFile(newFile, `${newFile.parent?.path || ""}/${frontMatter[key]}${newFile.basename}`)
+                            name = `${frontMatter[key]}${name}`;
+                        }
+                        if(key === "__name_suffix"){
+                            // this.app.fileManager.renameFile(newFile, `${newFile.parent?.path || ""}/${frontMatter[key]}${newFile.basename}`)
+                            name = `${name}${frontMatter[key]}`;
+                        }
+                        delete frontMatter[key];
+                    }
+                }
+
             });
+
+            if(name !== newFile.basename){
+                const newPath = `${newFile.parent?.path || ""}/${name}.md`
+                await this.app.fileManager.renameFile(newFile, newPath);
+                return this.app.vault.getAbstractFileByPath(newPath) as TFile;
+            }
             return newFile;
         }
     }
