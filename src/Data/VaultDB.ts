@@ -550,7 +550,7 @@ export class VaultDB {
                 return Object.keys(cache.frontmatter);
             }
         }
-    }
+    } 
 
     getFolder(path: string) {
         return this.app.vault.getAbstractFileByPath(path) as TFolder;

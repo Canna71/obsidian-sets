@@ -24,7 +24,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
     // const isEditMode = view?.getMode() === "source";
 
-    const { definition, save, setDefinition, setNewFile,refresh } = useBlock()!;
+    const { definition, save, setDefinition, setNewFile, refresh } = useBlock()!;
 
     const onAdd = async () => {
         const newFile = await db.addToSet(props.queryResult.query, definition().fields || []);
@@ -72,20 +72,26 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         navigator.clipboard.writeText(sontent);
     }
 
+    const scope = () => {
+        return definition().scope;
+    }
+
+
     const scopeDetails = () => {
-        const [scopeType] = definition().scope || [];
+        const [scopeType] = scope() || [];
         if (scopeType === "collection") {
             return `Collection`;
         }
-        if(scopeType === "type") {
+        if (scopeType === "type") {
             return `Type`;
         }
-        if(scopeType === "folder") {
+        if (scopeType === "folder") {
             return `Folder`;
         }
-        if(scopeType === "vault") {
+        if (scopeType === "vault") {
             return `Vault`;
         }
+        return "Select scope"
     }
 
     onMount(() => {
@@ -97,45 +103,47 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     })
 
     return (
-    
+
         <div class="sets-codeblock-toolbar">
-            <div  
+            <div
                 class="clickable-icon editmode-only sets-scope"
                 onClick={onScope}
                 title="Change scope"
             >{scopeDetails()}
-            
+
             </div>
 
-            <div ref={sortBtn!} class="clickable-icon editmode-only"
-                onClick={onSorting}
-                title="Set Sorting properties"
-            ></div>
-            <div ref={fieldsBtn!} class="clickable-icon editmode-only"
-                onClick={onFieldsSelect}
-                title="Select fields to display"
-            ></div>
-            <div ref={filterBtn!} class="clickable-icon editmode-only"
-                onClick={onFilter}
-                title="Set filters"
-            ></div>
-            <div ref={refreshBtn!} class="clickable-icon editmode-only"
-                onClick={onRefresh}
-                title="Refresh data"
-            ></div>
-            
-            <div ref={copyBtn!} class="clickable-icon editmode-only"
-                onClick={onCopy}
-                title="Copy Block"
-            ></div>
-            <Show when={canAdd()}>
-                <button class="sets-toolbar-addbutton mod-cta" 
-                title="Add new item"
-                onClick={onAdd}>Add</button>
+            <Show when={scope()}>
+                <div ref={sortBtn!} class="clickable-icon editmode-only"
+                    onClick={onSorting}
+                    title="Set Sorting properties"
+                ></div>
+                <div ref={fieldsBtn!} class="clickable-icon editmode-only"
+                    onClick={onFieldsSelect}
+                    title="Select fields to display"
+                ></div>
+                <div ref={filterBtn!} class="clickable-icon editmode-only"
+                    onClick={onFilter}
+                    title="Set filters"
+                ></div>
+                <div ref={refreshBtn!} class="clickable-icon editmode-only"
+                    onClick={onRefresh}
+                    title="Refresh data"
+                ></div>
 
+                <div ref={copyBtn!} class="clickable-icon editmode-only"
+                    onClick={onCopy}
+                    title="Copy Block"
+                ></div>
+                <Show when={canAdd()}>
+                    <button class="sets-toolbar-addbutton mod-cta"
+                        title="Add new item"
+                        onClick={onAdd}>Add</button>
+
+                </Show>
             </Show>
         </div>
-    
+
     )
 }
 

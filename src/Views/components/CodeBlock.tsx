@@ -18,6 +18,8 @@ export interface CodeBlockProps {
 const CodeBlock: Component<CodeBlockProps> = (props) => {
     const { getNewFile, definition } = useBlock()!;
 
+    const scope = definition().scope ;
+
     // if newFile is set, put the new file in the first row
 
     const reorderedResults = () => {
@@ -45,30 +47,38 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
 
     return <div class="sets-codeblock">
         <BlockToolbar queryResult={props.queryResult} attributes={props.attributes}  />
-        <Show when={definition().viewMode === "grid" || !definition().viewMode}>
-            <GridProvider gridState={{
-                hovering: undefined,
-                // fields: definition().fields
-            }}>
-                <GridView data={reorderedResults()} attributes={props.attributes} />
-            </GridProvider>
+        <Show when={scope}>
+            <Show when={definition().viewMode === "grid" || !definition().viewMode}>
+                <GridProvider gridState={{
+                    hovering: undefined,
+                    // fields: definition().fields
+                }}>
+                    <GridView data={reorderedResults()} attributes={props.attributes} />
+                </GridProvider>
+            </Show>
+            <Show when={definition().viewMode === "list"}>
+                <ListView data={reorderedResults()} attributes={props.attributes} />
+            </Show>
+            <Show when={moreItemsAvailable()}>
+                <div class="sets-codeblock-more">
+                    {/* <button class="sets-codeblock-more-button" onClick={() => {
+                        props.queryResult.more();
+                    }
+                    }> More
+                    </button>
+                    */}
+                    Showing first {props.queryResult.data.length} items of {props.queryResult.total}
+                </div>
+            </Show>
         </Show>
-        <Show when={definition().viewMode === "list"}>
-            <ListView data={reorderedResults()} attributes={props.attributes} />
-        </Show>
-        <Show when={moreItemsAvailable()}>
-            <div class="sets-codeblock-more">
-                {/* <button class="sets-codeblock-more-button" onClick={() => {
-                    props.queryResult.more();
-                }
-                }> More
-                </button>
-                */}
-                Showing first {props.queryResult.data.length} items of {props.queryResult.total}
+        <Show when={!scope}>
+            <div class="sets-codeblock-empty">
+                <div class="sets-codeblock-empty-text">
+                    No scope selected
+                </div>
             </div>
         </Show>
-
-
+        
     </div>
 
 }

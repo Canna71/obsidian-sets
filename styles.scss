@@ -41,7 +41,7 @@
         flex-direction: row;
         gap: 8px;
         justify-content: start;
-        padding-right: var(--size-4-4);
+        padding-right: var(--size-4-8);
         visibility: hidden;
         // max-width: 600px;
 
@@ -228,7 +228,7 @@
     }
 
 
-    .sets-codeblock-more {
+    .sets-codeblock-more, .sets-codeblock-empty {
         // show the message in a muted text centered in the middle of the codeblock
         // with a border around it
        
