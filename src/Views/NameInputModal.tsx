@@ -18,10 +18,11 @@ export class NameInputModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        contentEl.createEl("h3", { text: this.message });
+        contentEl.createEl("div", { text: this.message, cls: "sets-modal-title" });
 
         const input = contentEl.createEl("input", { attr: { type: "text" },
             placeholder: this.placeholder,
+            cls: "sets-name-input"
         });
         input.focus();
         input.addEventListener("keydown", (e) => {
