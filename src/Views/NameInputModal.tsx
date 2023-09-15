@@ -4,12 +4,14 @@ import { App, Modal, Setting } from "obsidian";
 
 export class NameInputModal extends Modal {
     message: string;
+    placeholder: string;
     onSubmit: (result: string) => void;
     result: any;
     
-    constructor(app: App, message:string, onSubmit: (result: string) => void) {
+    constructor(app: App, message:string,placeholder:string, onSubmit: (result: string) => void) {
         super(app);
         this.message = message;
+        this.placeholder = placeholder;
         this.onSubmit = onSubmit;
     }
 
@@ -19,7 +21,7 @@ export class NameInputModal extends Modal {
         contentEl.createEl("h3", { text: this.message });
 
         const input = contentEl.createEl("input", { attr: { type: "text" },
-            placeholder: this.message,
+            placeholder: this.placeholder,
         });
         input.focus();
         input.addEventListener("keydown", (e) => {

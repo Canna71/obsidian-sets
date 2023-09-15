@@ -129,23 +129,6 @@ export default class SetsPlugin extends Plugin {
     }
 
     onVaultDBInitialized() {
-        // creates a command for each type to create a new item
-        this._vaultDB.getTypeNames().forEach((type) => {
-            this.addCommand({
-                id: `sets-new-${type}`,
-                name: `Create New ${prettify(type)}`,
-                callback: async () => {
-                    const file: TFile = await this._vaultDB.createNewInstance(type);
-                    // open file
-                    if (file) {
-                        await this.app.workspace.openLinkText(file.path, file.path, true);
-                    } else {
-                        new Notice("Could not create file");
-                    }
-                }
-            });
-        });
-
         this.registerCommands();
     }
 
@@ -154,7 +137,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-type",
             name: "Create New Type",
             callback: () => {
-                new NameInputModal(this.app, "Type Name", async (name) => {
+                new NameInputModal(this.app, "Enter Type Name","Type Name", async (name) => {
                     const newFile = await this._vaultDB.createNewType(name);
                     await this.app.workspace.openLinkText(newFile.path, "/", "tab");
                     this.registerNewInstancesCommands();
@@ -169,7 +152,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-collection",
             name: "Create New Collection",
             callback: () => {
-                new NameInputModal(this.app, "Collection Name", async (name) => {
+                new NameInputModal(this.app,"Enter Collection Name", "Collection Name", async (name) => {
                     const newFile = await this._vaultDB.createNewCollection(name);
                     await this.app.workspace.openLinkText(newFile.path, "/", "tab");
                 })
@@ -203,7 +186,7 @@ export default class SetsPlugin extends Plugin {
                 name: `Create New ${prettify(type)}`,
                 callback: async () => {
                     // asks the user the name of the new item
-                    new NameInputModal(this.app, "Item Name", async (name) => {
+                    new NameInputModal(this.app, `Enter ${prettify(type)} Name`,`${prettify(type)} Name`, async (name) => {
 
                         const file: TFile = await this._vaultDB.createNewInstance(type, name);
                         // open file
