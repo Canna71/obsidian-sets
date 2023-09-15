@@ -315,7 +315,7 @@ export class VaultDB {
         if (template instanceof TFile) {
             content = await this.app.vault.read(template);
             // TODO: transform the content interpreting it as a squirrelly template
-            content = this.expandTemplate(content, template, folder, query, properties);
+            content = this.expandTemplate(content, template, folder, query, properties, fileName);
         }
 
         if (folder instanceof TFolder) {
@@ -378,16 +378,19 @@ export class VaultDB {
         }
     }
 
-    private expandTemplate(content: string, template: TFile, folder: any, query: Query, properties: string[] | undefined) {
+    private expandTemplate(content: string, template: TFile, folder: any, query: Query, properties?: FieldDefinition[], filename?: string ) {
         try {
             content = Sqrl.render(content, {
                 time: moment().format("HH:mm:ss"),
                 date: moment().format("YYYY-MM-DD"),
-                file: template,
+                archetype: template,
                 folder: folder,
-                context: query.context,
+                context: query.context?.file,
                 query: query,
-                properties: properties
+                properties: properties,
+                name: filename
+            },{
+                autoTrim: false
             });
         } catch (e) {
             console.error(e);
