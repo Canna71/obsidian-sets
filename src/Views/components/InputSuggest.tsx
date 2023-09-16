@@ -1,5 +1,6 @@
 import { Accessor, Component, For, Setter, Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
+import { on } from "events";
 
 export interface InputSuggestProps {
     value: Accessor<string>,
@@ -114,6 +115,11 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
         cleanup && cleanup();
     });
 
+    const onClick = (option) => {
+        props.setValue(option.value);
+        console.log(option);
+    }
+
     return (<>
         <input ref={input!}
             onFocus={onInputFocus}
@@ -131,7 +137,7 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
                         {
                             (option, index) => {
                                 return <div classList={{ "suggestion-item": true, "is-selected": selected() === index() }}
-                                    onClick={() => { props.setValue(option.value), console.log(option.value) }}
+                                    onClick={() => { onClick(option) }}
                                     onMouseOver={() => { setSelected(index()) }}
                                 >
                                     {option.label}

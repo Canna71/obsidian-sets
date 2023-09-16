@@ -219,9 +219,10 @@
         .sets-listview-body {
             .sets-listview-item {
                 display: flex;
-                gap: var(--size-4-1);
+                gap: var(--size-4-2);
                 .sets-listview-field {
-                    display: inline-block
+                    display: inline;
+                    white-space: nowrap;
                 }
             }
         }
@@ -464,5 +465,11 @@
     .sets-modal-title {
         padding: var(--size-4-2);
         
+    }
+}
+
+.sets-markdown-renderer {
+    p {
+        display: inline;
     }
 }
