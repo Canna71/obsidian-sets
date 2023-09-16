@@ -50,12 +50,13 @@ const FileName: Component<FileNameProps> = (props) => {
     const text = () => props.attribute.format(props.data);
     const { getNewFile } = useBlock()!;
 
-    const editable = props.editable ?? true;
+    const editable = () => props.editable ?? true;
     // const isEdit = () => {
     //     getNewFile() === props.data.file.path;
     // }
 
     const isEditFile = () => {
+        if(!editable()) return false;
         const tmp = getNewFile() === props.data.file.path;
         // if (tmp) setNewFile(""); 
         return tmp;
@@ -164,7 +165,7 @@ const FileName: Component<FileNameProps> = (props) => {
                     class="internal-link sets-cell-filename-link"
                     target="_blank"
                     rel="noopener">{text()}</a>
-                <Show when={editable}>
+                <Show when={editable()}>
                     <div ref={pencil!} class="sets-cell-filename-edit clickable-icon" onClick={onEdit} ></div>
                 </Show>
             </div>
