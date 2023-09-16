@@ -13,11 +13,21 @@ import MarkdownText from "./MarkdownText";
 
 const ListView: Component<SetViewProps> = (props) => {
 
-    const displayAsText = (attribute: AttributeDefinition) => {
-        if (attribute.getPropertyInfo().type === "checkbox") return false;
+    
+
+    const displayAsEditProps = (attribute: AttributeDefinition) => {
         if (attribute.isIntrinsic && attribute.key === IntrinsicAttributeKey.FileName) return false;
-        return true
+        // return true;
+        if (attribute.getPropertyInfo().type === "checkbox") return true;
+        if(attribute.getPropertyInfo().type === "date") return true;
+        if(attribute.getPropertyInfo().type === "datetime") return true;
     }
+
+    const displayAsText = (attribute: AttributeDefinition) => {
+        if (attribute.isIntrinsic && attribute.key === IntrinsicAttributeKey.FileName) return false;
+        return !displayAsEditProps(attribute);
+    }
+
 
     const reorderedAttributes = createMemo(() => {
         // reorder attributes tu put chackboxes first
@@ -52,7 +62,7 @@ const ListView: Component<SetViewProps> = (props) => {
                                         <FileName data={item} attribute={attribute} editable={false} />
                                     </div>
                                 </Show>
-                                <Show when={attribute.getPropertyInfo().type === "checkbox"}>
+                                <Show when={displayAsEditProps(attribute)}>
                                     <div class="sets-listview-field">
                                         <EditProp data={item} attribute={attribute} />
                                     </div>

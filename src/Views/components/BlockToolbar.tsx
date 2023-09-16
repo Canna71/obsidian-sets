@@ -97,7 +97,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
     onMount(() => {
         filterBtn && setIcon(filterBtn, "filter")
-        fieldsBtn && setIcon(fieldsBtn, "list")
+        fieldsBtn && setIcon(fieldsBtn, "list-plus")
         fieldsBtn && setIcon(sortBtn, "arrow-up-down")
         fieldsBtn && setIcon(refreshBtn, "refresh-cw")
         fieldsBtn && setIcon(copyBtn, "copy")

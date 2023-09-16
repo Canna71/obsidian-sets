@@ -2,6 +2,7 @@ import { create } from "domain";
 import { useBlock } from "./BlockProvider";
 import { Component, createEffect } from "solid-js";
 import { Menu, setIcon } from "obsidian";
+import { prettify } from "src/Utils/prettify";
 
 const ViewMode:Component = () => {
     const { definition, setDefinition, save } = useBlock()!;
@@ -20,6 +21,11 @@ const ViewMode:Component = () => {
                 break;
         }
     })
+
+    const tooltip = () => {
+        const mode = viewMode();
+        return  `${prettify(mode)} view: click to change`;
+    }
 
     const onClick = (e:MouseEvent) => {
         const menu = new Menu();
@@ -45,7 +51,10 @@ const ViewMode:Component = () => {
         
     }
 
-    return <div ref={icon!} class="clickable-icon" onClick={onClick}></div>
+    return <div ref={icon!} 
+        class="clickable-icon" 
+        title={tooltip()}
+        onClick={onClick}></div>
 }
 
 export default ViewMode;
