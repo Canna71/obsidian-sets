@@ -3,14 +3,76 @@ import { SetViewProps } from "./GridView";
 import { useBlock } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
 import { useApp } from "./AppProvider";
-import AttributeView from "./AttributeView";
+import AttributeView, { AttributeViewProps } from "./AttributeView";
 import { EditProp } from "./EditProp";
 import FileName from "./FileName";
+import { ObjectData } from "src/Data/ObjectData";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
+import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable, createDraggable, createDroppable } from "@thisbeyond/solid-dnd";
+
+type BoardItemProps = {
+    attributes: AttributeDefinition[];
+    data: ObjectData;
+}
+
+const BoardItem: Component<BoardItemProps> = (props) => {
+    const draggable = createDraggable(props.data.file.path, props.data);
+    const { data } = props;
+
+    return (
+        <div class="sets-board-item" use: draggable>
+            <For each={props.attributes}>{(attribute, i) =>
+                <div class="sets-board-item-field" title={attribute.displayName()}>
+                    {/* <AttributeView attribute={attribute} data={item} /> */}
+                    <Show when={attribute.readonly}>
+                        <div class="sets-cell-read">{attribute.format(data)}</div>
+                    </Show>
+                    <Show when={!attribute.isIntrinsic}>
+
+                        <div class="sets-view-field">
+                            <EditProp data={data} attribute={attribute} />
+                        </div>
+                    </Show>
+                    <Show when={attribute.isIntrinsic && !attribute.readonly}>
+                        <div class="sets-view-field">
+                            <FileName data={data} attribute={attribute} />
+                        </div>
+                    </Show>
+                </div>
+            }</For>
+        </div>
+    )
+}
+
+type LaneViewProps = {
+    attributes: AttributeDefinition[];
+    data: ObjectData[];
+    lane: string; //temporarily
+}
+
+const LaneView: Component<LaneViewProps> = (props) => {
+
+    const droppable = createDroppable(props.lane, props);
+
+    return (
+        <div class="sets-board-lane" use: droppable >
+
+            <div class="sets-board-lane-header">
+                {props.lane}
+            </div>
+
+            <For each={props.data}>{(data, i) =>
+                <BoardItem attributes={props.attributes} data={data} />
+            }</For>
+
+        </div>
+    );
+}
 
 const BoardView: Component<SetViewProps> = (props) => {
     const { definition } = useBlock()!;
     // get db
-    const { db } = useApp()!;
+    const { app, db } = useApp()!;
 
 
     const lanes = ["null", "On Hold", "Canceled", "To Do", "In Progress", "Done"];
@@ -29,40 +91,35 @@ const BoardView: Component<SetViewProps> = (props) => {
         return grouped;
     })
 
+    const onDragEnd: DragEventHandler = ({ droppable, draggable }) => {
+        console.log("drop",draggable,droppable)
+        if (droppable && draggable) {
+            app.fileManager.processFrontMatter(draggable.data.file, (fm) => {
+                fm["status"] = droppable.data.lane;
+            });
+        } 
+    };
+
     return (<div class="sets-board-view">
         <div class="sets-board-lanes-container">
             <div class="sets-board-lanes-scroller">
-                <For each={lanes}>{(lane, i) =>
-                    <div class="sets-board-lane">
-                        <div class="sets-board-lane-header">
-                            {lane}
-                        </div>
+                <DragDropProvider onDragEnd={onDragEnd}>
+                    <DragDropSensors />
+                    <For each={lanes}>{(lane, i) =>
+                        // <div class="sets-board-lane" >
 
-                        <For each={groupedData()[lane]}>{(data, i) =>
-                            <div class="sets-board-item">
-                                <For each={props.attributes}>{(attribute, i) =>
-                                    <div class="sets-board-item-field" title={attribute.displayName()}>
-                                        {/* <AttributeView attribute={attribute} data={item} /> */}
-                                        <Show when={attribute.readonly}>
-                                            <div class="sets-cell-read">{attribute.format(data)}</div>
-                                        </Show>
-                                        <Show when={!attribute.isIntrinsic}>
+                        //     <div class="sets-board-lane-header">
+                        //         {lane}
+                        //     </div>
 
-                                            <div class="sets-view-field">
-                                                <EditProp data={data} attribute={attribute} />
-                                            </div>
-                                        </Show>
-                                        <Show when={attribute.isIntrinsic && !attribute.readonly}>
-                                            <div class="sets-view-field">
-                                                <FileName data={data} attribute={attribute} />
-                                            </div>
-                                        </Show>
-                                    </div>
-                                }</For>
-                            </div>
-                        }</For>
-                    </div>
-                }</For>
+                        //     <For each={groupedData()[lane]}>{(data, i) =>
+                        //         <BoardItem attributes={props.attributes} data={data} />
+                        //     }</For>
+
+                        // </div>
+                        <LaneView attributes={props.attributes} data={groupedData()[lane]} lane={lane} />
+                    }</For>
+                </DragDropProvider>
             </div>
         </div>
     </div>);

@@ -12,6 +12,7 @@ declare module "solid-js" {
             clickOutside: ()=>void;
             
             draggable: boolean;
+            droppable: boolean;
             sortable: boolean;
             headerResize: (ev:ResizeEvent)=>void;
         }

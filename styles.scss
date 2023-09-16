@@ -503,6 +503,8 @@
                     border: 1px solid var(--divider-color);
                     display: flex;
                     flex-direction: column;
+                    padding-top: 24px;
+                    cursor: grab;
 
                     .sets-board-item-field {
 
