@@ -482,6 +482,12 @@
             flex-direction: row;
             gap: var(--size-4-2);
 
+            // &.dragging {
+            //     .sets-board-lane:hover {
+            //         background: var(--background-modifier-hover);
+            //     }
+            // }
+
             .sets-board-lane {
                 display: flex;
                 flex-direction: column;
@@ -492,6 +498,10 @@
                 padding: var(--size-4-2);
                 gap: var(--size-4-2);
                 flex: 1;
+
+                &.accept-drop {
+                    background: var(--background-modifier-hover);
+                }
 
                 .sets-board-lane-header {
                     border: 1px solid var(--divider-color);

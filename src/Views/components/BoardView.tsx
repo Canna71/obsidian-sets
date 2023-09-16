@@ -1,4 +1,4 @@
-import { Component, For, Show, createMemo } from "solid-js";
+import { Component, For, Show, createMemo, createSignal } from "solid-js";
 import { SetViewProps } from "./GridView";
 import { useBlock } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
@@ -9,6 +9,7 @@ import FileName from "./FileName";
 import { ObjectData } from "src/Data/ObjectData";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable, createDraggable, createDroppable } from "@thisbeyond/solid-dnd";
+import { classList } from "solid-js/web";
 
 type BoardItemProps = {
     attributes: AttributeDefinition[];
@@ -55,7 +56,11 @@ const LaneView: Component<LaneViewProps> = (props) => {
     const droppable = createDroppable(props.lane, props);
 
     return (
-        <div class="sets-board-lane" use: droppable >
+        <div class="sets-board-lane" use: droppable 
+            classList={{
+                "accept-drop": droppable.isActiveDroppable
+            }}
+        >
 
             <div class="sets-board-lane-header">
                 {props.lane}
@@ -79,6 +84,7 @@ const BoardView: Component<SetViewProps> = (props) => {
     const group = "status";
     const fields = () => definition().fields || props.attributes.map(at => (at.key));
     const attributeDefinition = db.getAttributeDefinition(group);
+    const [dragging, setDragging] = createSignal<any>(null);
 
     const groupedData = createMemo(() => {
         const grouped = groupBy(props.data,
@@ -98,12 +104,28 @@ const BoardView: Component<SetViewProps> = (props) => {
                 fm["status"] = droppable.data.lane;
             });
         } 
+        setDragging(null);
     };
+
+    const onDragStart: DragEventHandler = ({ draggable }) => {
+        console.log("drag",draggable)
+        if (draggable) {
+            setDragging(draggable.data);
+        }
+    }
 
     return (<div class="sets-board-view">
         <div class="sets-board-lanes-container">
-            <div class="sets-board-lanes-scroller">
-                <DragDropProvider onDragEnd={onDragEnd}>
+            <div class="sets-board-lanes-scroller"
+                classList={{
+                    
+                    "dragging": !!dragging()
+                }}
+            >
+                <DragDropProvider 
+                    onDragEnd={onDragEnd}
+                    onDragStart={onDragStart}
+                >
                     <DragDropSensors />
                     <For each={lanes}>{(lane, i) =>
                         // <div class="sets-board-lane" >

@@ -1,4 +1,4 @@
-import { MarkdownRenderer } from "obsidian";
+import { MarkdownRenderer, Component as ObsidianComponent } from "obsidian";
 import { Component, createEffect } from "solid-js";
 import { useApp } from "./components/AppProvider";
 
@@ -13,7 +13,7 @@ const MarkdownText :Component<MarkdownTextProps> = (props) => {
 
     createEffect(() => {
         //ts-ignore
-        MarkdownRenderer.render(app,props.markdown,div,"/",undefined)
+        MarkdownRenderer.render(app,props.markdown,div,"/",undefined as unknown as ObsidianComponent)
     });
 
     return <div ref={div!} class="sets-markdown-renderer"></div>
