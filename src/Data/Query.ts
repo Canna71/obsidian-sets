@@ -70,6 +70,9 @@ export class Query {
     }
 
     static __fromClauses(db: VaultDB,scope:Scope, clauses: Clause[] | Clause, sort: SortField[], context?: ObjectData) {
+        // copy clauses to avoid mutating the original array
+        clauses = clauses.slice();
+
         if(Array.isArray(clauses)){
             if(clauses.length > 0){
                 if(Array.isArray(clauses[0])){

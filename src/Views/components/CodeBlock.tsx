@@ -24,7 +24,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
     // if newFile is set, put the new file in the first row
 
     const reorderedResults = () => {
-        if (getNewFile() && viewMode === "grid") {
+        if (getNewFile() && viewMode === "grid" || viewMode === "board") {
             // props.queryResult.data.unshift(getNewFile());
             const newFileRowIndex = props.queryResult.data.findIndex(row => row.file.path === getNewFile());
 

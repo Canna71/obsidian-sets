@@ -11,6 +11,8 @@ import SortingEditorModal from "../SortingEditorModal";
 import { ScopeEditorModal } from "../ScopeEditorModal";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
 import ViewMode from "./ViewMode";
+import { AttributeModal } from "./AttributeModal";
+import { PropertyData } from "src/Data/PropertyData";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[] }> = (props) => {
 
@@ -103,6 +105,35 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsBtn && setIcon(copyBtn, "copy")
     })
 
+    const viewMode = () => {
+        return definition().viewMode;
+    }
+
+    const groupingDetails = () => {
+        const groupField = definition().board?.groupField;
+        // get the attribute definition
+        if (groupField) {
+            const attribute = db.getAttributeDefinition(groupField);
+            return `${attribute.displayName()}`;
+        }
+        return "Select.."
+    }
+
+    const onGrouping = () => {
+        const am = new AttributeModal(app!,(pd:PropertyData)=>{
+            const key = pd.key;
+            setDefinition({ ...definition(), board: { ...definition().board, groupField: key } });
+            save();
+        },
+        (pd:PropertyData) => {
+            // filters only property with type text
+            return pd.typeKey === "text";
+        }
+        );
+        am.open();
+
+    }
+
     return (
 
         <div class="sets-codeblock-toolbar">
@@ -137,6 +168,17 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                     title="Copy Block"
                 ></div>
                 <ViewMode />
+
+                <Show when={viewMode() === "board"}>
+                    <div
+                        class="clickable-icon editmode-only sets-grouping"
+                        onClick={onGrouping}
+                        title="Grouping property"
+                    >{groupingDetails()}
+
+                    </div>
+                </Show>
+
                 <Show when={canAdd()}>
                     <button class="sets-toolbar-addbutton mod-cta"
                         title="Add new item"

@@ -80,10 +80,16 @@ const BoardView: Component<SetViewProps> = (props) => {
     const { app, db } = useApp()!;
 
 
+
     const lanes = ["null", "On Hold", "Canceled", "To Do", "In Progress", "Done"];
-    const group = "status";
+    const groupField = definition().board?.groupField;
+
+    if(!groupField) {
+        return <div class="sets-codeblock-empty">Please select grouping property</div>
+    }
+ 
     const fields = () => definition().fields || props.attributes.map(at => (at.key));
-    const attributeDefinition = db.getAttributeDefinition(group);
+    const attributeDefinition = db.getAttributeDefinition(groupField);
     const [dragging, setDragging] = createSignal<any>(null);
 
     const groupedData = createMemo(() => {

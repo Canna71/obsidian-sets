@@ -6,12 +6,14 @@ import type { PropertyData } from "src/Data/PropertyData";
 export class AttributeModal extends SuggestModal<PropertyData> {
     // private _types: any;
     private _onSelect: (PropertyData: any) => void;
+    private _filter?: (PropertyData: any) => boolean;
     // private _app: App;
-    constructor(app: App, onSelect:(PropertyData)=>void) {
+    constructor(app: App, onSelect:(PropertyData)=>void, filter?: (PropertyData)=>boolean) {
         super(app);
         // this._types = indexBy<any>("type",Object.values(app.metadataTypeManager.registeredTypeWidgets));
         // this._types = app.metadataTypeManager.registeredTypeWidgets;
         this._onSelect = onSelect;
+        this._filter = filter;
     }
     // Returns all available suggestions.
     getSuggestions(query: string): PropertyData[] {
@@ -36,7 +38,9 @@ export class AttributeModal extends SuggestModal<PropertyData> {
         const pds = getPropertyData(this.app);
         return pds.filter(pd => 
             pd.name && pd.name.length && 
-            pd.name.toLowerCase().includes(query));
+            pd.name.toLowerCase().includes(query))
+            .filter(pd => !this._filter || this._filter(pd))
+            ;
         
     }
 
