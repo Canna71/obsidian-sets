@@ -4,8 +4,9 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 import { GridProvider } from "./GridProvider";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 import ListView from "../ListView";
+import BoardView from "./BoardView";
 // import { useBlock } from "./BlockProvider";
 
 
@@ -59,6 +60,9 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
             <Show when={definition().viewMode === "list"}>
                 <ListView data={reorderedResults()} attributes={props.attributes} />
             </Show>
+            <Show when={definition().viewMode === "board"}>
+                <BoardView data={reorderedResults()} attributes={props.attributes} /> 
+            </Show>
             <Show when={moreItemsAvailable()}>
                 <div class="sets-codeblock-more">
                     {/* <button class="sets-codeblock-more-button" onClick={() => {
@@ -70,6 +74,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                     Showing first {props.queryResult.data.length} items of {props.queryResult.total}
                 </div>
             </Show>
+            
         </Show>
         <Show when={!scope}>
             <div class="sets-codeblock-empty">

@@ -1,5 +1,5 @@
 import { Component, Show, createSignal } from "solid-js";
-import { useBlock } from "./components/BlockProvider";
+import { useBlock } from "./components/SetProvider";
 import { useApp } from "./components/AppProvider";
 import { LinkToThis } from "src/Data/DynamicValues";
 import { TFolder } from "obsidian";

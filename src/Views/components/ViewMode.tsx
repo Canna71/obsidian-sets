@@ -1,20 +1,23 @@
 import { create } from "domain";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 import { Component, createEffect } from "solid-js";
 import { Menu, setIcon } from "obsidian";
 import { prettify } from "src/Utils/prettify";
 
-const ViewMode:Component = () => {
+const ViewMode: Component = () => {
     const { definition, setDefinition, save } = useBlock()!;
-    let icon:HTMLDivElement;
+    let icon: HTMLDivElement;
     const viewMode = () => definition().viewMode || "grid";
 
     createEffect(() => {
         const mode = viewMode();
         switch (mode) {
-           
+
             case "list":
                 setIcon(icon, "list");
+                break;
+            case "board":
+                setIcon(icon, "board");
                 break;
             default:
                 setIcon(icon, "table");
@@ -24,35 +27,34 @@ const ViewMode:Component = () => {
 
     const tooltip = () => {
         const mode = viewMode();
-        return  `${prettify(mode)} view: click to change`;
+        return `${prettify(mode)} view: click to change`;
     }
 
-    const onClick = (e:MouseEvent) => {
+
+    const onClick = (e: MouseEvent) => {
         const menu = new Menu();
-        menu.addItem((item) => {
-            item.setTitle("Grid");
-            item.setIcon("table");
-            item.onClick(() => {
-                setDefinition({...definition(), viewMode: "grid"});
-                save();
-            })
-        }
-        );
-        menu.addItem((item) => {
-            item.setTitle("List");
-            item.setIcon("list");
-            item.onClick(() => {
-                setDefinition({...definition(), viewMode: "list"});
-                save();
-            })
-        }
-        );
-        menu.showAtMouseEvent(e);
-        
-    }
+        const views = [
+            { title: "Grid", icon: "table", viewMode: "grid" },
+            { title: "List", icon: "list", viewMode: "list" },
+            { title: "Board", icon: "board", viewMode: "board" },
+        ];
 
-    return <div ref={icon!} 
-        class="clickable-icon" 
+        views.forEach(view => {
+            menu.addItem((item) => {
+                item.setTitle(view.title);
+                item.setIcon(view.icon);
+                item.onClick(() => {
+                    setDefinition({ ...definition(), viewMode: view.viewMode });
+                    save();
+                });
+            });
+        });
+
+        menu.showAtMouseEvent(e);
+    };
+
+    return <div ref={icon!}
+        class="clickable-icon"
         title={tooltip()}
         onClick={onClick}></div>
 }

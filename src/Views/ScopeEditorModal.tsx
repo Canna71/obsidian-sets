@@ -3,7 +3,7 @@ import { SetDefinition } from "./components/SetDefinition";
 import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
-import { BlockProvider } from "./components/BlockProvider";
+import { SetProvider } from "./components/SetProvider";
 import ScopeEditor from "./ScopeEditor";
 
 
@@ -30,11 +30,11 @@ export class ScopeEditorModal extends Modal {
 
         render(() => <AppProvider app={{app: this.app, db:this._db}}>
             {/* <ClauseEditor db={this._db} /> */}
-            <BlockProvider setDefinition={this.definition} 
+            <SetProvider setDefinition={this.definition} 
             
             updateDefinition={this._update} >
                 <ScopeEditor exit={()=>{this.close()}} />
-            </BlockProvider>
+            </SetProvider>
             
         </AppProvider>, contentEl);
 

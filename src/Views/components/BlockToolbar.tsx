@@ -3,7 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
 import { FilterEditorModal } from "../FilterEditorModal";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 import { useApp } from "./AppProvider";
 import { SetDefinition } from "./SetDefinition";
 import { FieldSelectModal } from "../FieldSelectModal";

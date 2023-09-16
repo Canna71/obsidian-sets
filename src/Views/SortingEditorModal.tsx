@@ -4,7 +4,7 @@ import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
 
-import { BlockProvider } from "./components/BlockProvider";
+import { SetProvider } from "./components/SetProvider";
 import SortingEditor  from "./components/SortingEditor";
 
 export default class SortingEditorModal extends Modal {
@@ -29,11 +29,11 @@ export default class SortingEditorModal extends Modal {
 
         render(() => <AppProvider app={{ app: this.app, db: this._db }}>
             {/* <ClauseEditor db={this._db} /> */}
-            <BlockProvider setDefinition={this.definition} updateDefinition={this._update} >
+            <SetProvider setDefinition={this.definition} updateDefinition={this._update} >
                 <SortingEditor 
                     exit={() => { this.close() }}
                 />
-            </BlockProvider>
+            </SetProvider>
 
         </AppProvider>, contentEl);
 

@@ -5,7 +5,7 @@ import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
 // import { useGrid } from "./GridProvider";
 import HeaderRow from "./HeaderRow";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 
 
 export interface SetViewProps {

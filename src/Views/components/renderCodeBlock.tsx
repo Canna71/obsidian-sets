@@ -6,7 +6,7 @@ import { createStore } from "solid-js/store";
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import { AppProvider } from "./AppProvider";
-import { BlockProvider } from "./BlockProvider";
+import { SetProvider } from "./SetProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
 import { getSetsSettings } from "src/main";
 import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
@@ -129,11 +129,11 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     render(() =>
         <AppProvider app={{app, db}}>
-            <BlockProvider setDefinition={definition} 
+            <SetProvider setDefinition={definition} 
             refresh={refresh}
             updateDefinition={updateDefinition} >
                 <CodeBlock queryResult={data} attributes={attributes}  />
-            </BlockProvider>
+            </SetProvider>
 
         </AppProvider>, el);
 }

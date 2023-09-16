@@ -4,7 +4,7 @@ import { render } from "solid-js/web";
 import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
 import FilterEditor from "./FilterEditor";
-import { BlockProvider } from "./components/BlockProvider";
+import { SetProvider } from "./components/SetProvider";
 
 
 
@@ -30,11 +30,11 @@ export class FilterEditorModal extends Modal {
 
         render(() => <AppProvider app={{app: this.app, db:this._db}}>
             {/* <ClauseEditor db={this._db} /> */}
-            <BlockProvider setDefinition={this.definition} updateDefinition={this._update} 
+            <SetProvider setDefinition={this.definition} updateDefinition={this._update} 
             
             >
                 <FilterEditor exit={()=>{this.close()}} />
-            </BlockProvider>
+            </SetProvider>
             
         </AppProvider>, contentEl);
 

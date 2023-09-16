@@ -1,5 +1,5 @@
 import { useApp } from "./AppProvider";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 import { Component, For, createSignal, onMount } from "solid-js";
 import { PropertyData, getPropertyData, getPropertyDataById } from "src/Data/PropertyData";
 import { Property } from "./Property";

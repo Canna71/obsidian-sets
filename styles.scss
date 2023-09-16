@@ -26,8 +26,6 @@
             visibility: visible;
         }
     }
-
-    
 }
 
 .sets-codeblock {
@@ -52,7 +50,7 @@
         .sets-toolbar-addbutton {
             /* makes it float to the right in the flex container */
             margin-left: auto;
-        };
+        }
     }
 
     .sets-gridview {
@@ -229,11 +227,11 @@
         }
     }
 
-
-    .sets-codeblock-more, .sets-codeblock-empty {
+    .sets-codeblock-more,
+    .sets-codeblock-empty {
         // show the message in a muted text centered in the middle of the codeblock
         // with a border around it
-       
+
         border: 1px solid var(--divider-color);
         // background-color: var(--background-modifier-hover);
         color: var(--text-muted);
@@ -331,7 +329,7 @@
     &.available-props {
         max-height: 120px;
         min-height: 32px;
-        
+
         .sets-field-item {
             cursor: initial;
         }
@@ -420,12 +418,12 @@
 
 .sets-scope-editor {
     // .sets-scope-header {
-        
+
     // }
     .sets-scope-body {
         display: flex;
-        gap: var(--size-4-2)
-    };
+        gap: var(--size-4-2);
+    }
 }
 
 .sets-tooltip {
@@ -453,7 +451,6 @@
 
     .sets-field-item {
         flex-grow: 1;
-        
     }
 }
 
@@ -465,12 +462,48 @@
 
     .sets-modal-title {
         padding: var(--size-4-2);
-        
     }
 }
 
 .sets-markdown-renderer {
     p {
         display: inline;
+    }
+}
+
+.sets-board-view {
+    .sets-board-lanes-container {
+        display: flex;
+        overflow-x: auto;
+
+        .sets-board-lanes-scroller {
+            display: flex;
+            flex-direction: row;
+            gap: var(--size-4-2);
+
+            .sets-board-lane {
+                display: flex;
+                flex-direction: column;
+                width: 200px;
+                min-height: 400px;
+                border: 1px solid var(--divider-color);
+                border-radius: 8px;
+                padding: var(--size-4-2);
+                gap: var(--size-4-2);
+                flex: 1;
+
+                .sets-board-lane-header {
+                    border: 1px solid var(--divider-color);
+                    color: var(--text-muted);
+                    text-align: center;
+                }
+
+                .sets-board-item {
+                    border: 1px solid var(--divider-color);
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
     }
 }

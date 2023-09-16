@@ -1,5 +1,5 @@
 import { Component, For, onMount } from "solid-js";
-import { useBlock } from "./components/BlockProvider";
+import { useBlock } from "./components/SetProvider";
 import ClauseEditor from "./components/ClauseEditor";
 import { setIcon } from "obsidian";
 import { Clause, IntrinsicAttributeKey } from "./components/SetDefinition";

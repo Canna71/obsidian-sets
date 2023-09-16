@@ -4,7 +4,7 @@ import { AttributeKey, Clause, SetDefinition, SortField } from "./SetDefinition"
 
 
 
-export interface BlockStateContext {
+export interface SetStateContext {
     definition: Accessor<SetDefinition>;
     refresh: () => void;
     reorder: (from: string, to: string, save?: boolean) => void;
@@ -25,11 +25,11 @@ export interface BlockStateContext {
     updateFilter: (index: number, clause: Clause) => void;
     removeFilter: (index: number) => void;
 }
-const BlockContext = createContext<BlockStateContext>();
+const SetContext = createContext<SetStateContext>();
 
 
 
-export function BlockProvider(props: { setDefinition: SetDefinition, 
+export function SetProvider(props: { setDefinition: SetDefinition, 
     updateDefinition: (definition: SetDefinition) => void, 
     refresh?: () => void,
     children?: JSX.Element }) {
@@ -151,10 +151,10 @@ export function BlockProvider(props: { setDefinition: SetDefinition,
 
 
     return (
-        <BlockContext.Provider value={blockState as BlockStateContext}>
+        <SetContext.Provider value={blockState as SetStateContext}>
             {props.children}
-        </BlockContext.Provider>
+        </SetContext.Provider>
     );
 }
 
-export function useBlock() { return useContext(BlockContext); }
+export function useBlock() { return useContext(SetContext); }

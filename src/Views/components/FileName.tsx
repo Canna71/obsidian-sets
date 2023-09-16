@@ -4,7 +4,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 import { useApp } from "./AppProvider";
 import { Dialog } from "../Dialog";
-import { useBlock } from "./BlockProvider";
+import { useBlock } from "./SetProvider";
 
 const regexChars = /[.?*+^$[\]\\(){}|-]/g
 function escape(exp) {
