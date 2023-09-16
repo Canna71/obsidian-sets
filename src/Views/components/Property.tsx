@@ -16,7 +16,7 @@ export const Property: Component<PropertyProps> = (props) => {
 
     onMount(()=>{
         setIcon(typeicon, props.typeIcon || "file-question");
-        props.icon && setIcon(toggleicon, props.icon);
+        props.icon && toggleicon && setIcon(toggleicon, props.icon);
     })
 
     const onClick = (e:MouseEvent) => {

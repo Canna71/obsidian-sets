@@ -329,11 +329,23 @@
     &.available-props {
         max-height: 120px;
         min-height: 32px;
+        
+        .sets-field-item {
+            cursor: initial;
+        }
     }
 
     &.selected-props {
         max-height: 120px;
         min-height: 32px;
+
+        .sets-field-item {
+            cursor: grab;
+
+            .sets-field-property-toggle {
+                cursor: initial;
+            }
+        }
     }
 }
 
@@ -344,7 +356,7 @@
     overflow: hidden;
     align-self: stretch;
     min-height: var(--input-height);
-    cursor: pointer;
+    // cursor: pointer;
 
     .sets-field-property-icon {
         // align-items: center;
@@ -422,6 +434,25 @@
     padding: 5px;
     border-radius: 4px;
     border: 1px solid var(--divider-color);
+}
+
+.sortable-property-wrapper {
+    display: flex;
+
+    .sets-sort-handle {
+        // cursor: grab;
+        // padding: 0 0.2em 0 0.5em;
+        width: 20px;
+        color: var(--text-muted);
+        flex-grow: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .sets-field-item {
+        flex-grow: 1;
+        
+    }
 }
 
 .modal-content {

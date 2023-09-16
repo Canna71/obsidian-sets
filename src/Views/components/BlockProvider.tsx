@@ -7,7 +7,7 @@ import { AttributeKey, Clause, SetDefinition, SortField } from "./SetDefinition"
 export interface BlockStateContext {
     definition: Accessor<SetDefinition>;
     refresh: () => void;
-    reorder: (from: string, to: string) => void;
+    reorder: (from: string, to: string, save?: boolean) => void;
     reorderSort: (from: string, to: string) => void;
     // updateFields: (fields: FieldDefinition[]) => void;
     updateSize: (field: string, size?: string) => void;
@@ -43,7 +43,7 @@ export function BlockProvider(props: { setDefinition: SetDefinition,
     const blockState = {
         definition,
         refresh: props.refresh? props.refresh : () => {},
-        reorder: (from: string, to: string) => {
+        reorder: (from: string, to: string, save?: boolean) => {
             const updatedItems = definition().fields?.slice();
             if (!updatedItems) throw Error("No items to reoreder!")
             const ids = updatedItems;
@@ -53,7 +53,8 @@ export function BlockProvider(props: { setDefinition: SetDefinition,
                 updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
             }
             const newDef = { ...definition(), fields: updatedItems }
-            props.updateDefinition(newDef)
+            if(!save) setState(newDef);
+            else props.updateDefinition(newDef)
             // setItems(updatedItems);
         },
         reorderSort: (from: string, to: string) => {

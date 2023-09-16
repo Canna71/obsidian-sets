@@ -112,7 +112,7 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
                 // const updatedItems = currentItems.slice();
                 // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));
                 // setItems(updatedItems);
-                block.reorder(draggable.id, droppable.id);
+                block.reorder(draggable.id, droppable.id, true);
             }
         }
         setActiveItem(null);
