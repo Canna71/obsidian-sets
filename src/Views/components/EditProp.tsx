@@ -31,13 +31,13 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
             }
 
         }
-        if (msc && msc.classList.contains("metadata-input-longtext")) {
-            const range = document.createRange();
-            range.selectNodeContents(msc);
-            const selection = window.getSelection();
-            selection!.removeAllRanges();
-            selection!.addRange(range);
-        }
+        // if (msc && msc.classList.contains("metadata-input-longtext")) {
+        //     const range = document.createRange();
+        //     range.selectNodeContents(msc);
+        //     const selection = window.getSelection();
+        //     selection!.removeAllRanges();
+        //     selection!.addRange(range);
+        // }
     }
 
     onMount(() => {
