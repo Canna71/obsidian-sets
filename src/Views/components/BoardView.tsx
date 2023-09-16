@@ -3,6 +3,7 @@ import { SetViewProps } from "./GridView";
 import { useBlock } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
 import { useApp } from "./AppProvider";
+import AttributeView from "./AttributeView";
 
 const BoardView: Component<SetViewProps> = (props) => {
     const { definition } = useBlock()!;
@@ -37,8 +38,10 @@ const BoardView: Component<SetViewProps> = (props) => {
 
                         <For each={groupedData()[lane]}>{(item, i) =>
                             <div class="sets-board-item">
-                                <For each={fields()}>{(field, i) =>
-                                    <div class="sets-board-item-field">TODO</div>
+                                <For each={props.attributes}>{(attribute, i) =>
+                                    <div class="sets-board-item-field">
+                                        <AttributeView attribute={attribute} data={item} />
+                                    </div>
                                 }</For>
                             </div>
                         }</For>

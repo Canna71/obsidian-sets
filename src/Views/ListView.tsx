@@ -10,23 +10,13 @@ import { EditProp } from "./components/EditProp";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { MarkdownView } from "obsidian";
 import MarkdownText from "./MarkdownText";
+import AttributeView from "./components/AttributeView";
 
 const ListView: Component<SetViewProps> = (props) => {
 
     
 
-    const displayAsEditProps = (attribute: AttributeDefinition) => {
-        if (attribute.isIntrinsic && attribute.key === IntrinsicAttributeKey.FileName) return false;
-        // return true;
-        if (attribute.getPropertyInfo().type === "checkbox") return true;
-        if(attribute.getPropertyInfo().type === "date") return true;
-        if(attribute.getPropertyInfo().type === "datetime") return true;
-    }
-
-    const displayAsText = (attribute: AttributeDefinition) => {
-        if (attribute.isIntrinsic && attribute.key === IntrinsicAttributeKey.FileName) return false;
-        return !displayAsEditProps(attribute);
-    }
+    
 
 
     const reorderedAttributes = createMemo(() => {
@@ -49,24 +39,7 @@ const ListView: Component<SetViewProps> = (props) => {
                     <div class="sets-listview-item">
                         <For each={reorderedAttributes()}>{
                             (attribute, i) => <>
-                                <Show when={displayAsText(attribute)}>
-                                    <div class="sets-listview-field">
-                                        {/* {
-                                            attribute.format(item)
-                                        } */}
-                                        <MarkdownText markdown={attribute.format(item)} />
-                                    </div>
-                                </Show>
-                                <Show when={attribute.isIntrinsic && attribute.key === IntrinsicAttributeKey.FileName}>
-                                    <div class="sets-listview-field">
-                                        <FileName data={item} attribute={attribute} editable={false} />
-                                    </div>
-                                </Show>
-                                <Show when={displayAsEditProps(attribute)}>
-                                    <div class="sets-listview-field">
-                                        <EditProp data={item} attribute={attribute} />
-                                    </div>
-                                </Show>
+                                <AttributeView attribute={attribute} data={item} />
                             </>
                         }
                         </For>

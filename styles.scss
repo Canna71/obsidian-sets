@@ -218,7 +218,8 @@
             .sets-listview-item {
                 display: flex;
                 gap: var(--size-4-2);
-                .sets-listview-field {
+
+                .sets-view-field, .sets-view-field-prop {
                     display: flex;
                     white-space: nowrap;
                     align-items: center;
@@ -484,7 +485,7 @@
             .sets-board-lane {
                 display: flex;
                 flex-direction: column;
-                width: 200px;
+                width: 250px;
                 min-height: 400px;
                 border: 1px solid var(--divider-color);
                 border-radius: 8px;
@@ -502,6 +503,12 @@
                     border: 1px solid var(--divider-color);
                     display: flex;
                     flex-direction: column;
+
+                    .sets-board-item-field {
+                        .sets-view-field {
+                            padding-left: var(--size-4-2);
+                        }
+                    }
                 }
             }
         }
