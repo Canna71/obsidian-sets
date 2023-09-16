@@ -13,26 +13,30 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
 
     // const value = getAttribute(props.data, props.attribute);
     let value = props.attribute.getValue(props.data);
-    if(Array.isArray(value)) value = value.slice();
-    if(!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
-    const {key, type} = props.attribute.getPropertyInfo();
+    if (Array.isArray(value)) value = value.slice();
+    if (!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
+    const { key, type } = props.attribute.getPropertyInfo();
     // eslint-disable-next-line prefer-const
     let div: HTMLDivElement | undefined = undefined;
 
-    const onClick = (e:MouseEvent) => {
+    const onClick = (e: MouseEvent) => {
         console.log(e);
         const msc = e.target as HTMLDivElement;
-        if(msc && msc.classList.contains("multi-select-container")){
+        if (msc && msc.classList.contains("multi-select-container")) {
             const input = msc.querySelector(".multi-select-input") as HTMLDivElement;
-            if(input){
-                // const range = document.createRange();
+            if (input) {
+
                 input.focus();
-                // range.selectNodeContents(input);
-                // const selection = window.getSelection();
-                // selection!.removeAllRanges();
-                // selection!.addRange(range);
+
             }
-            
+
+        }
+        if (msc && msc.classList.contains("metadata-input-longtext")) {
+            const range = document.createRange();
+            range.selectNodeContents(msc);
+            const selection = window.getSelection();
+            selection!.removeAllRanges();
+            selection!.addRange(range);
         }
     }
 
