@@ -505,8 +505,17 @@
                     flex-direction: column;
 
                     .sets-board-item-field {
+
+
                         .sets-view-field {
-                            padding-left: var(--size-4-2);
+                            // padding-left: var(--size-4-2);
+
+                            .sets-cell-filename {
+                                padding-left: var(--size-4-2);
+                            }                       }
+
+                        .sets-cell-filename-edit {
+                            display: inline;
                         }
                     }
                 }
