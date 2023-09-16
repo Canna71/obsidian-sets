@@ -24,7 +24,15 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
         const msc = e.target as HTMLDivElement;
         if(msc && msc.classList.contains("multi-select-container")){
             const input = msc.querySelector(".multi-select-input") as HTMLDivElement;
-            input?.focus();
+            if(input){
+                // const range = document.createRange();
+                input.focus();
+                // range.selectNodeContents(input);
+                // const selection = window.getSelection();
+                // selection!.removeAllRanges();
+                // selection!.addRange(range);
+            }
+            
         }
     }
 

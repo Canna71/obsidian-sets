@@ -10,6 +10,7 @@ import { FieldSelectModal } from "../FieldSelectModal";
 import SortingEditorModal from "../SortingEditorModal";
 import { ScopeEditorModal } from "../ScopeEditorModal";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
+import ViewMode from "./ViewMode";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[] }> = (props) => {
 
@@ -135,6 +136,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                     onClick={onCopy}
                     title="Copy Block"
                 ></div>
+                <ViewMode />
                 <Show when={canAdd()}>
                     <button class="sets-toolbar-addbutton mod-cta"
                         title="Add new item"

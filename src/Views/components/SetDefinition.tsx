@@ -6,7 +6,9 @@
 
 import { OperatorName } from "src/Data/Operator";
 
-export type ScopeType = "type" | "collection" | "folder" | "vault";
+export const ScopeTypes = ["type", "collection", "folder", "vault"]
+export type ScopeType = typeof ScopeTypes[number];
+// export type ScopeType = "type" | "collection" | "folder" | "vault";
 
 // export type Scope = {"type": string} | {"collection": string} | {"folder": string | undefined} | {"vault": undefined};
 
@@ -36,7 +38,12 @@ export type Clause = [AttributeKey, OperatorName, any];
 
 export type SortField = [AttributeKey, boolean]; // false = ascending, true = descendig
 
-export type ViewMode = "grid" | "list";
+export const ViewModes = ["grid", "list"]
+// type viewmode have all elements of ViewModes
+export type ViewMode = typeof ViewModes[number];
+
+
+// export type ViewMode = 
 
 export interface SetDefinition {
     scope?: Scope;
