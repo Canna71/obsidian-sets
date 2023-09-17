@@ -134,6 +134,35 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
     }
 
+    const transcludingDetails = () => {
+        const transcludeField = definition().gallery?.transclude;
+        // get the attribute definition
+        if (transcludeField) {
+            const attributes = transcludeField.map(field => db.getAttributeDefinition(field))
+            .map(attribute => attribute.displayName())
+            .join(", ");
+            ;
+            return attributes;
+        }
+        return "Select.."
+    }
+
+    const onTransclude = () => {
+        const am = new AttributeModal(app!,(pd:PropertyData)=>{
+            const key = pd.key;
+            setDefinition({ ...definition(), gallery: { ...definition().gallery, transclude: [key] } });
+            save();
+        },
+        (pd:PropertyData) => {
+            // filters only property with type text
+            return pd.typeKey === "text";
+        }
+        );
+        am.open();
+
+    }
+    
+
     return (
 
         <div class="sets-codeblock-toolbar">
@@ -175,6 +204,16 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                         onClick={onGrouping}
                         title="Grouping property"
                     >{groupingDetails()}
+
+                    </div>
+                </Show>
+
+                <Show when={viewMode() === "gallery"}>
+                    <div
+                        class="clickable-icon editmode-only sets-grouping"
+                        onClick={onTransclude}
+                        title="Transcluded property"
+                    >{transcludingDetails()}
 
                     </div>
                 </Show>
