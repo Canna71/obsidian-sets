@@ -1,6 +1,6 @@
 import { Component, For, createMemo, createSignal, onMount } from "solid-js";
 import { SetViewProps } from "./GridView";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
 import { useApp } from "./AppProvider";
 import AttributeView, { AttributeViewProps } from "./AttributeView";
@@ -16,7 +16,7 @@ export type Lane = {
 }
 
 const BoardView: Component<SetViewProps> = (props) => {
-    const { definition } = useBlock()!;
+    const { definition } = useSet()!;
     // get db
     const { app, db } = useApp()!;
 

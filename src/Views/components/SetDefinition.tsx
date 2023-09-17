@@ -38,7 +38,7 @@ export type Clause = [AttributeKey, OperatorName, any];
 
 export type SortField = [AttributeKey, boolean]; // false = ascending, true = descendig
 
-export const ViewModes = ["grid", "list", "board"]
+export const ViewModes = ["grid", "list", "board", "gallery"]
 // type viewmode have all elements of ViewModes
 export type ViewMode = typeof ViewModes[number];
 
@@ -59,6 +59,9 @@ export interface SetDefinition {
     board?: {
         groupField?: FieldDefinition;
         lanes?: string[];
+    };
+    gallery?: {
+        numColumns?: number;
     }
     timestamp?: number;
     viewMode?: ViewMode;

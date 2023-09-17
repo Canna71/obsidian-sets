@@ -1,5 +1,5 @@
 import { Component, Show, createSignal } from "solid-js";
-import { useBlock } from "./components/SetProvider";
+import { useSet } from "./components/SetProvider";
 import { useApp } from "./components/AppProvider";
 import { LinkToThis } from "src/Data/DynamicValues";
 import { TFolder } from "obsidian";
@@ -14,7 +14,7 @@ export interface ScopeEditorProps {
 }
 
 const ScopeEditor: Component<ScopeEditorProps> = (props) => {
-    const { definition, save, setDefinition } = useBlock()!;
+    const { definition, save, setDefinition } = useSet()!;
 
     // get an instance of db frm the app provider
     const { db, app } = useApp()!;

@@ -153,4 +153,4 @@ export function SetProvider(props: { setDefinition: SetDefinition,
     );
 }
 
-export function useBlock() { return useContext(SetContext); }
+export function useSet() { return useContext(SetContext); }

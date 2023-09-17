@@ -1,5 +1,5 @@
 import { useApp } from "./AppProvider";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { Component, For, createSignal, onMount } from "solid-js";
 import { PropertyData, getPropertyData } from "src/Data/PropertyData";
 import { Property, PropertyProps } from "./Property";
@@ -28,7 +28,7 @@ const SortableProperty: Component<PropertyProps> = (props) => {
 
 
 export const FieldSelect: Component<FieldSelectProps> = (props) => {
-    const { definition, save, addField, removeField, reorder } = useBlock()!;
+    const { definition, save, addField, removeField, reorder } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;

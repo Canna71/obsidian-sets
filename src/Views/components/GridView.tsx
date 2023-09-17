@@ -5,7 +5,7 @@ import { ObjectData } from "src/Data/ObjectData";
 import { Cell } from "./Cell";
 // import { useGrid } from "./GridProvider";
 import HeaderRow from "./HeaderRow";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 
 
 export interface SetViewProps {
@@ -19,7 +19,7 @@ const GridView: Component<SetViewProps> = (props) => {
     // const gridContext = useGrid();
 
 
-    const { definition } = useBlock()!;
+    const { definition } = useSet()!;
 
     // const { state } = gridContext!;
     const fields = () => definition().fields || props.attributes.map(at => (at.key));

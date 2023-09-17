@@ -1,5 +1,5 @@
 import { Component, For, Show, createSignal, onMount } from "solid-js";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { EditProBase } from "./EditProp";
 import { createDroppable } from "@thisbeyond/solid-dnd";
 import { BoardItem } from "./BoardItem";
@@ -10,7 +10,7 @@ import { setIcon } from "obsidian";
 
 export const LaneView: Component<LaneViewProps> = (props) => {
 
-    const { definition, setDefinition, save } = useBlock()!;
+    const { definition, setDefinition, save } = useSet()!;
     const [isEdit, setIsEdit] = createSignal(false);
     let deleteBtn: HTMLDivElement | null = null;
     const droppable = createDroppable(props.lane.value, props);

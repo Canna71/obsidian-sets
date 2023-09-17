@@ -3,7 +3,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
 import { FilterEditorModal } from "../FilterEditorModal";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { useApp } from "./AppProvider";
 import { SetDefinition } from "./SetDefinition";
 import { FieldSelectModal } from "../FieldSelectModal";
@@ -27,7 +27,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
     // const isEditMode = view?.getMode() === "source";
 
-    const { definition, save, setDefinition, setNewFile, refresh } = useBlock()!;
+    const { definition, save, setDefinition, setNewFile, refresh } = useSet()!;
 
     const onAdd = async () => {
         const newFile = await db.addToSet(props.queryResult.query, definition().fields || []);

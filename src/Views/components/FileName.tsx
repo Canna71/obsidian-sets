@@ -4,7 +4,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 import { useApp } from "./AppProvider";
 import { Dialog } from "../Dialog";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 
 const regexChars = /[.?*+^$[\]\\(){}|-]/g
 function escape(exp) {
@@ -48,7 +48,7 @@ export interface FileNameProps {
 const FileName: Component<FileNameProps> = (props) => {
     const { app } = useApp()!;
     const text = () => props.attribute.format(props.data);
-    const { getNewFile } = useBlock()!;
+    const { getNewFile } = useSet()!;
 
     const editable = () => props.editable ?? true;
     // const isEdit = () => {

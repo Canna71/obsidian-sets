@@ -4,7 +4,7 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import {
     DragDropProvider, DragDropSensors, DragOverlay, SortableProvider, closestCenter
 } from "@thisbeyond/solid-dnd";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 
 export interface ResizeEvent {
     action: "resize" | "done" | "reset",
@@ -91,8 +91,8 @@ function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>)
 
 const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
     const [activeItem, setActiveItem] = createSignal(null);
-    const { updateSize } = useBlock()!;
-    const block = useBlock()!;
+    const { updateSize } = useSet()!;
+    const block = useSet()!;
 
     const onDragStart = ({ draggable }) => {
 

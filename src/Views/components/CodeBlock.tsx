@@ -4,9 +4,10 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import BlockToolbar from "./BlockToolbar";
 import { QueryResult } from "src/Data/VaultDB";
 import { GridProvider } from "./GridProvider";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import ListView from "../ListView";
 import BoardView from "./BoardView";
+import GalleryView from "../GalleryView";
 // import { useBlock } from "./BlockProvider";
 
 
@@ -17,14 +18,14 @@ export interface CodeBlockProps {
 
 
 const CodeBlock: Component<CodeBlockProps> = (props) => {
-    const { getNewFile, definition } = useBlock()!;
+    const { getNewFile, definition } = useSet()!;
 
     const scope = definition().scope ;
     const viewMode = definition().viewMode || "grid";
     // if newFile is set, put the new file in the first row
 
     const reorderedResults = () => {
-        if (getNewFile() && viewMode === "grid" || viewMode === "board") {
+        if (getNewFile()) {
             // props.queryResult.data.unshift(getNewFile());
             const newFileRowIndex = props.queryResult.data.findIndex(row => row.file.path === getNewFile());
 
@@ -62,6 +63,9 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
             </Show>
             <Show when={definition().viewMode === "board"}>
                 <BoardView data={reorderedResults()} attributes={props.attributes} /> 
+            </Show>
+            <Show when={definition().viewMode === "gallery"}>
+                <GalleryView data={reorderedResults()} attributes={props.attributes} /> 
             </Show>
             <Show when={moreItemsAvailable()}>
                 <div class="sets-codeblock-more">

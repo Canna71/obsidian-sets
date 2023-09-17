@@ -1,5 +1,5 @@
 import { useApp } from "./AppProvider";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { Component, For, createSignal, onMount } from "solid-js";
 import { PropertyData, getPropertyData, getPropertyDataById } from "src/Data/PropertyData";
 import { Property } from "./Property";
@@ -20,7 +20,7 @@ interface SortingPropertyProps {
 
 
 export const SortingProperty: Component<SortingPropertyProps> = (props) => {
-    const { removeSort, setSortDirection } = useBlock()!;
+    const { removeSort, setSortDirection } = useSet()!;
     const { app } = useApp()!;
     let icon: HTMLDivElement;
     // const [state] = useDragDropContext();
@@ -72,7 +72,7 @@ export const SortingProperty: Component<SortingPropertyProps> = (props) => {
 }
 
 const SortingEditor: Component<SortingEditorProps> = (props) => {
-    const { definition, save, addSort, reorderSort } = useBlock()!;
+    const { definition, save, addSort, reorderSort } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;

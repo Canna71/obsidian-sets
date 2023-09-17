@@ -1,28 +1,26 @@
 import { create } from "domain";
-import { useBlock } from "./SetProvider";
+import { useSet } from "./SetProvider";
 import { Component, createEffect } from "solid-js";
 import { Menu, setIcon } from "obsidian";
 import { prettify } from "src/Utils/prettify";
 
 const ViewMode: Component = () => {
-    const { definition, setDefinition, save } = useBlock()!;
+    const { definition, setDefinition, save } = useSet()!;
     let icon: HTMLDivElement;
     const viewMode = () => definition().viewMode || "grid";
 
+    const views = [
+        { title: "Grid", icon: "table", viewMode: "grid" },
+        { title: "List", icon: "list", viewMode: "list" },
+        { title: "Board", icon: "board", viewMode: "board" },
+        { title: "Gallery", icon: "layout-grid", viewMode: "gallery" },
+
+    ];
+
     createEffect(() => {
         const mode = viewMode();
-        switch (mode) {
-
-            case "list":
-                setIcon(icon, "list");
-                break;
-            case "board":
-                setIcon(icon, "board");
-                break;
-            default:
-                setIcon(icon, "table");
-                break;
-        }
+        const view = views.find(v => v.viewMode === mode);
+        if(view) setIcon(icon, view.icon);
     })
 
     const tooltip = () => {
@@ -33,11 +31,7 @@ const ViewMode: Component = () => {
 
     const onClick = (e: MouseEvent) => {
         const menu = new Menu();
-        const views = [
-            { title: "Grid", icon: "table", viewMode: "grid" },
-            { title: "List", icon: "list", viewMode: "list" },
-            { title: "Board", icon: "board", viewMode: "board" },
-        ];
+        
 
         views.forEach(view => {
             menu.addItem((item) => {

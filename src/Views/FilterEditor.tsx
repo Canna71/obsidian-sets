@@ -1,5 +1,5 @@
 import { Component, For, onMount } from "solid-js";
-import { useBlock } from "./components/SetProvider";
+import { useSet } from "./components/SetProvider";
 import ClauseEditor from "./components/ClauseEditor";
 import { setIcon } from "obsidian";
 import { Clause, IntrinsicAttributeKey } from "./components/SetDefinition";
@@ -10,7 +10,7 @@ export interface FilterEditorProps {
 }
 
 const FilterEditor: Component<FilterEditorProps> = (props) => {
-    const { definition, save, addFilter, updateFilter, removeFilter } = useBlock()!;
+    const { definition, save, addFilter, updateFilter, removeFilter } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state, setState] = createStore(definition() || [])
     let addBtn: HTMLDivElement;
