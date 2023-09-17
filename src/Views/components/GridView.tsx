@@ -71,7 +71,9 @@ const GridView: Component<SetViewProps> = (props) => {
                                 <div class="sets-gridview-row" >
                                     <Show when={needsLink(props.attributes)}>
                                         <div class="sets-grid-cell">
+                                            <div class="sets-grid-mini-link">
                                             <MiniLink data={item} />
+                                            </div>
                                         </div>
                                     </Show>
                                     <For each={props.attributes}>{
