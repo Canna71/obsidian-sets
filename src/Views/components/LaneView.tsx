@@ -1,4 +1,4 @@
-import { Component, For, Show } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { useBlock } from "./SetProvider";
 import { EditProBase } from "./EditProp";
 import { createDroppable } from "@thisbeyond/solid-dnd";
@@ -10,6 +10,7 @@ import { ObjectData } from "src/Data/ObjectData";
 export const LaneView: Component<LaneViewProps> = (props) => {
 
     const { definition, setDefinition, save } = useBlock()!;
+    const [isEdit, setIsEdit] = createSignal(false);
 
     const droppable = createDroppable(props.lane.value, props);
 
@@ -29,10 +30,13 @@ export const LaneView: Component<LaneViewProps> = (props) => {
         >
 
             <div class="sets-board-lane-header">
-                <Show when={!props.lane.value}>
-                    <EditProBase attribute={props.attribute} onChange={onValueChange} />
+                <Show when={!props.lane.value || isEdit()}>
+                    <EditProBase attribute={props.attribute} onChange={onValueChange} value={props.lane.value} />
                 </Show>
-                {props.lane.name}
+                <Show when={props.lane.value && !isEdit()}>
+                    <div onClick={() => setIsEdit(true)}>{props.lane.name}</div>
+                </Show>
+                
             </div>
 
             <For each={props.data}>{(data, i) => <BoardItem attributes={props.attributes} data={data} />}</For>

@@ -6,13 +6,14 @@ export type EditPropBaseProps = {
     data?: ObjectData;
     attribute: AttributeDefinition;
     onChange: (val: any) => void;
+    value?: any;
 }
 
 export const EditProBase: Component<EditPropBaseProps> = (props) => {
     const widget = props.attribute.getPropertyWidget?.();
 
     // const value = getAttribute(props.data, props.attribute);
-    let value = props.data && props.attribute.getValue(props.data) || "";
+    let value = props.data && props.attribute.getValue(props.data) || props.value;
     if (Array.isArray(value)) value = value.slice();
     if (!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
     const { key, type } = props.attribute.getPropertyInfo();
