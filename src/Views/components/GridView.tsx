@@ -33,10 +33,7 @@ const GridView: Component<SetViewProps> = (props) => {
 
 
     onMount(() => {
-        // div.scrollLeft = definition().scroll || 0;
-        //TODO: get saved scroll position from somewhere
         requestAnimationFrame(() => { scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
-        // console.log(ctx.)
     });
 
    
@@ -47,7 +44,7 @@ const GridView: Component<SetViewProps> = (props) => {
             
             class="sets-gridview"
         >
-            <div class="sets-gridview-scroller" ref={scroller!}>
+            <div class="sets-gridview-scroller sets-view-scroller" ref={scroller!}>
                 <div class="sets-gridview-scrollwrapper">
                     <div class="sets-gridview-table"
                     style={{ "grid-template-columns": colSizes() }}

@@ -2,17 +2,17 @@ import { Component, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 
-export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinition; }> = (props) => {
+export type EditPropBaseProps = {
+    data?: ObjectData;
+    attribute: AttributeDefinition;
+    onChange: (val: any) => void;
+}
 
-    // const key = props.attribute.key;
-    // const propertyInfo = app.metadataTypeManager.getPropertyInfo(key);
-    // const type = app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
-    // const widget = app.metadataTypeManager.registeredTypeWidgets[type];
-
+export const EditProBase: Component<EditPropBaseProps> = (props) => {
     const widget = props.attribute.getPropertyWidget?.();
 
     // const value = getAttribute(props.data, props.attribute);
-    let value = props.attribute.getValue(props.data);
+    let value = props.data && props.attribute.getValue(props.data) || "";
     if (Array.isArray(value)) value = value.slice();
     if (!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
     const { key, type } = props.attribute.getPropertyInfo();
@@ -31,13 +31,6 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
             }
 
         }
-        // if (msc && msc.classList.contains("metadata-input-longtext")) {
-        //     const range = document.createRange();
-        //     range.selectNodeContents(msc);
-        //     const selection = window.getSelection();
-        //     selection!.removeAllRanges();
-        //     selection!.addRange(range);
-        // }
     }
 
     onMount(() => {
@@ -48,16 +41,12 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
                 app: app,
                 key,
                 onChange: (val) => {
-                    const owner = props.data.file;
-                    // const fm = {...props.data.frontmatter, [key]: val}
-                    app.fileManager.processFrontMatter(owner, (fm) => {
-                        fm[key] = val;
-                    });
+                    props.onChange && props.onChange(val);
                 },
                 rerender: () => {
                     console.log(`re-render called`);
                 },
-                sourcePath: props.data.file.path,
+                sourcePath: props.data?.file.path || "/",
                 blur: () => {
                     console.log(`blur called`);
                 },
@@ -68,4 +57,23 @@ export const EditProp: Component<{ data: ObjectData; attribute: AttributeDefinit
     });
 
     return <div ref={div} onClick={onClick} class="metadata-property"></div>;
+
+}
+
+export type EditPropProps = {
+    data: ObjectData;
+    attribute: AttributeDefinition;
+}
+
+export const EditProp: Component<EditPropProps> = (props) => {
+    const { key } = props.attribute.getPropertyInfo();
+
+    return <EditProBase {...props} onChange={(val) => { 
+        const owner = props.data.file;
+        // const fm = {...props.data.frontmatter, [key]: val}
+        app.fileManager.processFrontMatter(owner, (fm) => {
+            fm[key] = val;
+        });
+    }} />
+
 };

@@ -115,7 +115,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const stateKey = ctx.sourcePath;
     // Saves current scroll position into the state map and deletes it from the definition
     const updateDefinition = (def: SetDefinition) => {
-        const scrollLeft = el.querySelector(".sets-gridview-scroller")?.scrollLeft;
+        const scrollLeft = el.querySelector(".sets-view-scroller")?.scrollLeft;
         // def.scroll = scrollLeft;
         stateMap.set(stateKey, { scroll: scrollLeft });
         delete def.transientState;

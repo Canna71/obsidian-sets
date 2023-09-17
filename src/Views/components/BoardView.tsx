@@ -1,4 +1,4 @@
-import { Component, For, Show, createMemo, createSignal } from "solid-js";
+import { Component, For, Show, createMemo, createSignal, onMount } from "solid-js";
 import { SetViewProps } from "./GridView";
 import { useBlock } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
@@ -8,15 +8,17 @@ import { EditProp } from "./EditProp";
 import FileName from "./FileName";
 import { ObjectData } from "src/Data/ObjectData";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable, createDraggable, createDroppable } from "@thisbeyond/solid-dnd";
+import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable, createDraggable } from "@thisbeyond/solid-dnd";
 import { classList } from "solid-js/web";
+import { setIcon } from "obsidian";
+import { LaneView } from "./LaneView";
 
 type BoardItemProps = {
     attributes: AttributeDefinition[];
     data: ObjectData;
 }
 
-const BoardItem: Component<BoardItemProps> = (props) => {
+export const BoardItem: Component<BoardItemProps> = (props) => {
     const draggable = createDraggable(props.data.file.path, props.data);
     const { data } = props;
 
@@ -45,33 +47,17 @@ const BoardItem: Component<BoardItemProps> = (props) => {
     )
 }
 
-type LaneViewProps = {
-    attributes: AttributeDefinition[];
-    data: ObjectData[];
-    lane: string; //temporarily
+type Lane = {
+    name: string;
+    value: string;
+    index: number;
 }
 
-const LaneView: Component<LaneViewProps> = (props) => {
-
-    const droppable = createDroppable(props.lane, props);
-
-    return (
-        <div class="sets-board-lane" use: droppable 
-            classList={{
-                "accept-drop": droppable.isActiveDroppable
-            }}
-        >
-
-            <div class="sets-board-lane-header">
-                {props.lane}
-            </div>
-
-            <For each={props.data}>{(data, i) =>
-                <BoardItem attributes={props.attributes} data={data} />
-            }</For>
-
-        </div>
-    );
+export type LaneViewProps = {
+    attributes: AttributeDefinition[];
+    data: ObjectData[];
+    attribute: AttributeDefinition;
+    lane: Lane; 
 }
 
 const BoardView: Component<SetViewProps> = (props) => {
@@ -79,14 +65,40 @@ const BoardView: Component<SetViewProps> = (props) => {
     // get db
     const { app, db } = useApp()!;
 
-
-
-    const lanes = ["null", "On Hold", "Canceled", "To Do", "In Progress", "Done"];
     const groupField = definition().board?.groupField;
+    let addLaneBtn: HTMLDivElement | null = null;
+    let scroller: HTMLDivElement;
 
     if(!groupField) {
         return <div class="sets-codeblock-empty">Please select grouping property</div>
     }
+
+    onMount(() => {
+        if (addLaneBtn) {
+            setIcon(addLaneBtn, "plus-square");
+        }
+        requestAnimationFrame(() => { scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
+
+    })
+
+    const groupFieldAttribute = db.getAttributeDefinition(groupField);
+
+    const [values, setValues] = createSignal(definition().board?.lanes || []);
+
+    
+    
+    const lanes = (): Lane[] => [
+        {
+            name: "No " + groupFieldAttribute.displayName(),
+            value: "__NOVALUE__",
+            index: 0,
+        },
+        ...values().map((v,i) => ({
+            name: v,
+            value: v,
+            index: i+1
+        }))
+    ]
  
     const fields = () => definition().fields || props.attributes.map(at => (at.key));
     const attributeDefinition = db.getAttributeDefinition(groupField);
@@ -95,7 +107,7 @@ const BoardView: Component<SetViewProps> = (props) => {
     const groupedData = createMemo(() => {
         const grouped = groupBy(props.data,
             (item) => {
-                return attributeDefinition.getValue(item);
+                return attributeDefinition.getValue(item) || "__NOVALUE__";
             }
         );
         // group props.data by group
@@ -120,9 +132,13 @@ const BoardView: Component<SetViewProps> = (props) => {
         }
     }
 
+    const addLane = () => {
+        setValues([...values(), ""]);
+    }
+
     return (<div class="sets-board-view">
-        <div class="sets-board-lanes-container">
-            <div class="sets-board-lanes-scroller"
+        <div class="sets-board-lanes-scroller sets-view-scroller"  ref={scroller!}>
+            <div class="sets-board-lanes-wrapper"
                 classList={{
                     
                     "dragging": !!dragging()
@@ -133,21 +149,13 @@ const BoardView: Component<SetViewProps> = (props) => {
                     onDragStart={onDragStart}
                 >
                     <DragDropSensors />
-                    <For each={lanes}>{(lane, i) =>
-                        // <div class="sets-board-lane" >
-
-                        //     <div class="sets-board-lane-header">
-                        //         {lane}
-                        //     </div>
-
-                        //     <For each={groupedData()[lane]}>{(data, i) =>
-                        //         <BoardItem attributes={props.attributes} data={data} />
-                        //     }</For>
-
-                        // </div>
-                        <LaneView attributes={props.attributes} data={groupedData()[lane]} lane={lane} />
+                    <For each={lanes()}>{(lane, i) =>
+                        <LaneView attributes={props.attributes} data={groupedData()[lane.value]} lane={lane} attribute={groupFieldAttribute} />
                     }</For>
                 </DragDropProvider>
+                <div ref={addLaneBtn!} 
+                onClick={addLane}
+                class="sets-board-add-lane clickable-icon"></div>
             </div>
         </div>
     </div>);
