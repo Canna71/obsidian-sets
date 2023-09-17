@@ -62,6 +62,7 @@ export interface SetDefinition {
     };
     gallery?: {
         numColumns?: number;
+        minWidth?: number;
         transclude?: string[];
     }
     timestamp?: number;
