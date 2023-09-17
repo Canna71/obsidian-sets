@@ -533,6 +533,7 @@
                     flex-direction: column;
                     // padding-top: 24px;
                     cursor: grab;
+                    position: relative;
 
                     .sets-board-item-handle {
                         height: 24px;
@@ -543,6 +544,20 @@
 
                     &:hover {
                         .sets-board-item-handle {
+                            visibility: visible;
+                        }
+                    }
+
+                    .sets-board-mini-link {
+                        visibility: hidden;
+                        position: absolute;
+                        right: 0px;
+                        top: 0px;
+                        padding: var(--size-4-2);
+                    }
+
+                    &:hover {
+                        .sets-board-mini-link {
                             visibility: visible;
                         }
                     }

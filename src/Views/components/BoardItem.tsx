@@ -1,8 +1,10 @@
-import { Component, onMount } from "solid-js";
+import { Component, Show, onMount } from "solid-js";
 import { createDraggable } from "@thisbeyond/solid-dnd";
 import { CardItem } from "./CardItem";
 import { ItemProps } from "./CardItem";
 import { setIcon } from "obsidian";
+import needsLink from "src/Utils/needsLink";
+import MiniLink from "./MiniLink";
 
 
 export const BoardItem: Component<ItemProps> = (props) => {
@@ -11,7 +13,7 @@ export const BoardItem: Component<ItemProps> = (props) => {
     let grabHandle: HTMLDivElement | null = null;
 
     onMount(() => {
-        if(grabHandle) setIcon(grabHandle, "grip-horizontal");
+        if (grabHandle) setIcon(grabHandle, "grip-horizontal");
     });
 
     return (
@@ -20,6 +22,11 @@ export const BoardItem: Component<ItemProps> = (props) => {
 
             </div>
             <CardItem {...props} />
+            <Show when={needsLink(props.attributes)}>
+                <div class="sets-board-mini-link">
+                    <MiniLink data={props.data} />
+                </div>
+            </Show>
         </div>
     );
 };
