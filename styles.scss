@@ -597,7 +597,7 @@
 
 .sets-gallery-view {
     .sets-gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         grid-gap: var(--size-4-4);
         align-items: stretch;
         display: grid;
@@ -607,6 +607,9 @@
             border: 1px solid var(--divider-color);
             padding: var(--size-4-2);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: var(--size-4-1);
 
             .sets-item-field {
                 .sets-view-field {
