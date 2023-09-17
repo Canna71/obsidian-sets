@@ -531,8 +531,21 @@
                     border: 1px solid var(--divider-color);
                     display: flex;
                     flex-direction: column;
-                    padding-top: 24px;
+                    // padding-top: 24px;
                     cursor: grab;
+
+                    .sets-board-item-handle {
+                        height: 24px;
+                        text-align: center;
+                        color: var(--text-muted);
+                        visibility: hidden;
+                    }
+
+                    &:hover {
+                        .sets-board-item-handle {
+                            visibility: visible;
+                        }
+                    }
 
                     .sets-item-field {
                         .sets-view-field {
