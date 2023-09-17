@@ -13,7 +13,7 @@ export const CardItem: Component<ItemProps> = (props) => {
     const { data } = props;
 
     return (
-        <For each={props.attributes}>{(attribute, i) => <div class="sets-board-item-field" title={attribute.displayName()}>
+        <For each={props.attributes}>{(attribute, i) => <div class="sets-item-field" title={attribute.displayName()}>
             {/* <AttributeView attribute={attribute} data={item} /> */}
             <Show when={attribute.readonly}>
                 <div class="sets-cell-read">{attribute.format(data)}</div>

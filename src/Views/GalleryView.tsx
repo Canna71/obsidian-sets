@@ -13,7 +13,7 @@ const GalleryView: Component<SetViewProps> = (props) => {
     const numOfColumns = definition().gallery?.numColumns || 3;
 
     return (
-        <div class="sets-gallery">
+        <div class="sets-gallery-view">
             <div class="sets-gallery-grid" style={`grid-template-columns: repeat(${numOfColumns}, 1fr)`}>
                 {props.data.map((data, i) =>
                     <div class="sets-gallery-item">

@@ -534,7 +534,7 @@
                     padding-top: 24px;
                     cursor: grab;
 
-                    .sets-board-item-field {
+                    .sets-item-field {
                         .sets-view-field {
                             // padding-left: var(--size-4-2);
 
@@ -553,6 +553,24 @@
             .sets-board-add-lane {
                 width: 32px;
                 height: 32px;
+            }
+        }
+    }
+}
+
+.sets-gallery-view {
+    .sets-gallery-grid {
+        .sets-gallery-item {
+            .sets-item-field {
+                .sets-view-field {
+                    .sets-cell-filename {
+                        padding-left: var(--size-4-2);
+                    }
+                }
+
+                .sets-cell-filename-edit {
+                    display: inline;
+                }
             }
         }
     }

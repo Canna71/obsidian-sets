@@ -131,6 +131,9 @@ export default class SetsPlugin extends Plugin {
 
     onVaultDBInitialized() {
         this.registerCommands();
+        this._vaultDB.on("metadata-changed", () => {
+            this.registerNewInstancesCommands();
+        });
     }
 
     registerCommands() {
@@ -180,7 +183,8 @@ export default class SetsPlugin extends Plugin {
 
         actualTypes.forEach((type) => {
             // check if command already exists
-            if(this._instanceCommands.find((cmd) => cmd.id === `sets-new-instance-${type}`)) return;
+            if(this._instanceCommands.find((cmd) => cmd.id === `${this.manifest.id}:sets-new-instance-${type}`)) return;
+
 
             const cmd = this.addCommand({
                 id: `sets-new-instance-${type}`,
@@ -215,9 +219,6 @@ export default class SetsPlugin extends Plugin {
             this._instanceCommands.splice(this._instanceCommands.indexOf(cmd), 1);
         });
 
-        this._vaultDB.on("metadata-changed", () => {
-            this.registerNewInstancesCommands();
-        });
     }
 
     registerNewTypes() {
@@ -229,6 +230,10 @@ export default class SetsPlugin extends Plugin {
     onunload() {
         this.app.workspace.detachLeavesOfType(SETS_VIEW);
         this.vaultDB.off("initialized", this.onVaultDBInitialized);
+        this._vaultDB.off("metadata-changed", () => {
+            this.registerNewInstancesCommands();
+        });
+
         this.vaultDB.dispose();
         this.app.workspace.off("file-menu", this.onFileMenu);
         this.app.workspace.off("editor-menu", this.onEditorMenu);
