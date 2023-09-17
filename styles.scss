@@ -360,6 +360,14 @@
             }
         }
     }
+
+    .sets-field-selectable {
+        display: flex;
+
+        .sets-field-item {
+            flex-grow: 1;
+        }
+    }
 }
 
 .sets-field-item {

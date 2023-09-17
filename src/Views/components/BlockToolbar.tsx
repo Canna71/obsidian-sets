@@ -1,4 +1,4 @@
-import { Accessor, Component, Show, onMount } from "solid-js";
+import { Accessor, Component, For, Show, createSignal, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { QueryResult } from "src/Data/VaultDB";
 import { setIcon } from "obsidian";
@@ -13,6 +13,7 @@ import { generateCodeblock } from "src/Utils/generateCodeblock";
 import ViewMode from "./ViewMode";
 import { AttributeModal } from "./AttributeModal";
 import { PropertyData } from "src/Data/PropertyData";
+import { GalleryPropsModal } from "../GalleryPropsModal";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[] }> = (props) => {
 
@@ -21,6 +22,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     let sortBtn: HTMLDivElement;
     let refreshBtn: HTMLDivElement;
     let copyBtn: HTMLDivElement;
+    let galleryProps: HTMLDivElement;
 
     const { app, db } = useApp()!;
     // const view = app.workspace.getActiveViewOfType(MarkdownView);
@@ -28,6 +30,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     // const isEditMode = view?.getMode() === "source";
 
     const { definition, save, setDefinition, setNewFile, refresh } = useSet()!;
+    const [isTooltipVisible, setIsTooltipVisible] = createSignal(false);
 
     const onAdd = async () => {
         const newFile = await db.addToSet(props.queryResult.query, definition().fields || []);
@@ -103,6 +106,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsBtn && setIcon(sortBtn, "arrow-up-down")
         fieldsBtn && setIcon(refreshBtn, "refresh-cw")
         fieldsBtn && setIcon(copyBtn, "copy")
+        fieldsBtn && galleryProps && setIcon(galleryProps, "settings-2")
     })
 
     const viewMode = () => {
@@ -120,15 +124,15 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const onGrouping = () => {
-        const am = new AttributeModal(app!,(pd:PropertyData)=>{
+        const am = new AttributeModal(app!, (pd: PropertyData) => {
             const key = pd.key;
             setDefinition({ ...definition(), board: { ...definition().board, groupField: key } });
             save();
         },
-        (pd:PropertyData) => {
-            // filters only property with type text
-            return pd.typeKey === "text";
-        }
+            (pd: PropertyData) => {
+                // filters only property with type text
+                return pd.typeKey === "text";
+            }
         );
         am.open();
 
@@ -139,29 +143,25 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         // get the attribute definition
         if (transcludeField) {
             const attributes = transcludeField.map(field => db.getAttributeDefinition(field))
-            .map(attribute => attribute.displayName())
-            .join(", ");
+                .map(attribute => attribute.displayName())
+                .join(", ");
             ;
             return attributes;
         }
         return "Select.."
     }
 
-    const onTransclude = () => {
-        const am = new AttributeModal(app!,(pd:PropertyData)=>{
-            const key = pd.key;
-            setDefinition({ ...definition(), gallery: { ...definition().gallery, transclude: [key] } });
-            save();
-        },
-        (pd:PropertyData) => {
-            // filters only property with type text
-            return pd.typeKey === "text";
-        }
-        );
-        am.open();
+    const onTransclude = (e: MouseEvent) => {
+        // opens a popup using float-ui/dom
+        // open GalleryPropsModal
+        const galleryPropsModal = new GalleryPropsModal(app, db, definition(),props.attributes, update);
+        galleryPropsModal.open();
+
+    
+
 
     }
-    
+
 
     return (
 
@@ -210,12 +210,14 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
                 <Show when={viewMode() === "gallery"}>
                     <div
-                        class="clickable-icon editmode-only sets-grouping"
+                        ref={galleryProps!}
+                        class="clickable-icon editmode-only"
                         onClick={onTransclude}
-                        title="Transcluded property"
-                    >{transcludingDetails()}
+                        title="Gallery Settings"
+                    >
 
                     </div>
+
                 </Show>
 
                 <Show when={canAdd()}>
