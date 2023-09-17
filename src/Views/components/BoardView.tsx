@@ -1,63 +1,18 @@
-import { Component, For, Show, createMemo, createSignal, onMount } from "solid-js";
+import { Component, For, createMemo, createSignal, onMount } from "solid-js";
 import { SetViewProps } from "./GridView";
 import { useBlock } from "./SetProvider";
 import { groupBy } from "src/Utils/groupBy";
 import { useApp } from "./AppProvider";
 import AttributeView, { AttributeViewProps } from "./AttributeView";
-import { EditProp } from "./EditProp";
-import FileName from "./FileName";
-import { ObjectData } from "src/Data/ObjectData";
-import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable, createDraggable } from "@thisbeyond/solid-dnd";
+import { DragDropProvider, DragDropSensors, DragEventHandler, Droppable } from "@thisbeyond/solid-dnd";
 import { classList } from "solid-js/web";
 import { setIcon } from "obsidian";
 import { LaneView } from "./LaneView";
 
-type BoardItemProps = {
-    attributes: AttributeDefinition[];
-    data: ObjectData;
-}
-
-export const BoardItem: Component<BoardItemProps> = (props) => {
-    const draggable = createDraggable(props.data.file.path, props.data);
-    const { data } = props;
-
-    return (
-        <div class="sets-board-item" use: draggable>
-            <For each={props.attributes}>{(attribute, i) =>
-                <div class="sets-board-item-field" title={attribute.displayName()}>
-                    {/* <AttributeView attribute={attribute} data={item} /> */}
-                    <Show when={attribute.readonly}>
-                        <div class="sets-cell-read">{attribute.format(data)}</div>
-                    </Show>
-                    <Show when={!attribute.isIntrinsic}>
-
-                        <div class="sets-view-field">
-                            <EditProp data={data} attribute={attribute} />
-                        </div>
-                    </Show>
-                    <Show when={attribute.isIntrinsic && !attribute.readonly}>
-                        <div class="sets-view-field">
-                            <FileName data={data} attribute={attribute} />
-                        </div>
-                    </Show>
-                </div>
-            }</For>
-        </div>
-    )
-}
-
-type Lane = {
+export type Lane = {
     name: string;
     value: string;
     index: number;
-}
-
-export type LaneViewProps = {
-    attributes: AttributeDefinition[];
-    data: ObjectData[];
-    attribute: AttributeDefinition;
-    lane: Lane; 
 }
 
 const BoardView: Component<SetViewProps> = (props) => {

@@ -2,7 +2,10 @@ import { Component, For, Show } from "solid-js";
 import { useBlock } from "./SetProvider";
 import { EditProBase } from "./EditProp";
 import { createDroppable } from "@thisbeyond/solid-dnd";
-import { LaneViewProps, BoardItem } from "./BoardView";
+import { BoardItem } from "./BoardItem";
+import { Lane } from "./BoardView";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
+import { ObjectData } from "src/Data/ObjectData";
 
 export const LaneView: Component<LaneViewProps> = (props) => {
 
@@ -36,4 +39,10 @@ export const LaneView: Component<LaneViewProps> = (props) => {
 
         </div>
     );
+};export type LaneViewProps = {
+    attributes: AttributeDefinition[];
+    data: ObjectData[];
+    attribute: AttributeDefinition;
+    lane: Lane;
 };
+
