@@ -560,7 +560,15 @@
 
 .sets-gallery-view {
     .sets-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-gap: var(--size-4-4);
+        align-items: stretch;
+        display: grid;
+
         .sets-gallery-item {
+            // min-width: 300px;
+            border: 1px solid var(--divider-color);
+
             .sets-item-field {
                 .sets-view-field {
                     .sets-cell-filename {

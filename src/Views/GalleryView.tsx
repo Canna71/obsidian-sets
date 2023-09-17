@@ -11,10 +11,10 @@ const GalleryView: Component<SetViewProps> = (props) => {
     const { app, db } = useApp()!;
 
     const numOfColumns = definition().gallery?.numColumns || 3;
-
+    // style={`grid-template-columns: repeat(${numOfColumns}, 1fr)`}
     return (
         <div class="sets-gallery-view">
-            <div class="sets-gallery-grid" style={`grid-template-columns: repeat(${numOfColumns}, 1fr)`}>
+            <div class="sets-gallery-grid" >
                 {props.data.map((data, i) =>
                     <div class="sets-gallery-item">
                         <CardItem data={data} attributes={props.attributes} />
