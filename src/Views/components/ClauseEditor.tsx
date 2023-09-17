@@ -162,11 +162,9 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                         props.update([props.clause[0], props.clause[1], val])
                     },
                     rerender: () => {
-                        console.log(`re-render called`);
                     },
                     sourcePath: "/",
                     blur: () => {
-                        console.log(`blur called`);
                     },
                     metadataEditor: null
                 }

@@ -18,7 +18,6 @@ function  registerPasswordPropertyType(app: App)  {
         const passfield = propertyValue.createEl("input");
             
         const onChange = (e:string) => {
-            console.log(`onChange: `, e);
             property.onChange(e);
 
         };
@@ -62,18 +61,10 @@ function  registerPasswordPropertyType(app: App)  {
         );
         copyBtn.addEventListener("click", 
             async (evt: MouseEvent) => {
-                console.log(passfield.value);
                 await navigator.clipboard.writeText(passfield.value);
             }
         )
         setIcon(copyBtn, "copy"); 
-        // const copyBtn =  new ButtonComponent(element);
-
-        // copyBtn.setIcon("copy");
-        // copyBtn.onClick(async (evt: MouseEvent) => {
-        //     console.log(passfield.value);
-        //     await navigator.clipboard.writeText(passfield.value);
-        // });
 
     }
     }

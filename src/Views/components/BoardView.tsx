@@ -66,12 +66,10 @@ const BoardView: Component<SetViewProps> = (props) => {
             }
         );
         // group props.data by group
-        console.log(`groupedData`, grouped);
         return grouped;
     })
 
     const onDragEnd: DragEventHandler = ({ droppable, draggable }) => {
-        console.log("drop",draggable,droppable)
         if (droppable && draggable) {
             app.fileManager.processFrontMatter(draggable.data.file, (fm) => {
                 fm[groupField] = droppable.data.lane.value;
@@ -81,7 +79,6 @@ const BoardView: Component<SetViewProps> = (props) => {
     };
 
     const onDragStart: DragEventHandler = ({ draggable }) => {
-        console.log("drag",draggable)
         if (draggable) {
             setDragging(draggable.data);
         }

@@ -22,8 +22,6 @@ function registerLinkPropertyType(app: App) {
             console.error(`${file} does not exists!`);
             return false;
         }
-        // const path2 = getLinkpath(e); 
-        console.log(path);
         return true;
     },
     render: app.metadataTypeManager.registeredTypeWidgets.text.render

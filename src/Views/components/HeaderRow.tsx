@@ -31,7 +31,6 @@ function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>)
 
         if (state.resizing) {
             const delta = e.clientX - state.mousex!;
-            console.log(`delta:`, delta)
             const newSize = Math.max(0, state.originalSize! + delta);
             onResize()?.({ action: "resize", size: newSize, index: state.index });
         }
@@ -39,7 +38,6 @@ function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>)
     }
 
     const onMouseUp = (e: MouseEvent) => {
-        console.log('mouseup ');
         if (state.resizing) {
             state.resizing = undefined;
             onResize()?.({ action: "done", size: -1, index: state.index });
@@ -98,7 +96,6 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
 
     const onDragStart = ({ draggable }) => {
 
-        // console.log(`dragStart`, draggable);
         setActiveItem(draggable.id);
     }
 
@@ -107,7 +104,6 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
             // const currentItems = props.attributes.map(attr => attr.key);
             // const fromIndex = currentItems.indexOf(draggable.id);
             // const toIndex = currentItems.indexOf(droppable.id);
-            // console.log(`reorder`,draggable, droppable);
             if (draggable.id !== droppable.id) {
                 // const updatedItems = currentItems.slice();
                 // updatedItems.splice(toIndex, 0, ...updatedItems.splice(fromIndex, 1));

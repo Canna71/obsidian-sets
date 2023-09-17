@@ -132,7 +132,6 @@ const FileName: Component<FileNameProps> = (props) => {
     // }
 
     const onInput = (e: InputEvent) => {
-        // console.log(e, isValidFileName(app, editor.innerText.trim()));
         const msg = isValidFileName(app, props.data.file, editor.innerText.trim())
 
         setMsg(msg);

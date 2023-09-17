@@ -20,12 +20,8 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
     })
 
     const onSave = () => {
-        // const newDef = {...definition(), }
-        // console.log(state);
-        // setDefinition(state);
         save();
         props.exit();
-        // TODO: close
     }
 
     const update = (index: number, clause: Clause) => {

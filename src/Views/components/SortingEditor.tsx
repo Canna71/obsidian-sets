@@ -49,7 +49,6 @@ export const SortingProperty: Component<SortingPropertyProps> = (props) => {
         const inputElement = event.target as HTMLInputElement;
         const val = inputElement.value === "desc";
         setSortDirection(props.key, val);
-        console.log(inputElement.value)
     }
 
     return (
@@ -79,9 +78,6 @@ const SortingEditor: Component<SortingEditorProps> = (props) => {
     const { app } = useApp()!;
     const [keyword, setKeyword] = createSignal("");
     const onSave = () => {
-        // const newDef = {...definition(), }
-        // console.log(state);
-        // setDefinition(state);
         save();
         props.exit();
     };
@@ -108,8 +104,7 @@ const SortingEditor: Component<SortingEditorProps> = (props) => {
 
     const onDragStart = ({ draggable }) => {
 
-        // console.log(`dragStart`, draggable);
-        // setActiveItem(draggable.id);
+       
     }
 
     const onDragEnd = ({ draggable, droppable }) => {

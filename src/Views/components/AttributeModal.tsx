@@ -59,7 +59,6 @@ export class AttributeModal extends SuggestModal<PropertyData> {
 
     // Perform action on the selected suggestion.
     onChooseSuggestion(prop: PropertyData, evt: MouseEvent | KeyboardEvent) {
-        // console.log(`chosen `, prop);
         this._onSelect && this._onSelect(prop);
     }
 }

@@ -117,7 +117,6 @@ const InputSuggest: Component<InputSuggestProps> = (props) => {
 
     const onClick = (option) => {
         props.setValue(option.value);
-        console.log(option);
     }
 
     return (<>

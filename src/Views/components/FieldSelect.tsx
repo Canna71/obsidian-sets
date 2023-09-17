@@ -36,12 +36,8 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     // const [activeItem, setActiveItem] = createSignal<any>(null);
 
     const onSave = () => {
-        // const newDef = {...definition(), }
-        // console.log(state);
-        // setDefinition(state);
         save();
         props.exit();
-        // TODO: close
     };
 
     // const update = () => {
@@ -73,9 +69,6 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     }
 
     const onDragStart = ({ draggable }) => {
-
-        // console.log(`dragStart`, draggable);
-        // setActiveItem(draggable);
     }
 
     const onDragEnd = ({ draggable, droppable }) => {

@@ -21,7 +21,6 @@ export const EditProBase: Component<EditPropBaseProps> = (props) => {
     let div: HTMLDivElement | undefined = undefined;
 
     const onClick = (e: MouseEvent) => {
-        console.log(e);
         const msc = e.target as HTMLDivElement;
         if (msc && msc.classList.contains("multi-select-container")) {
             const input = msc.querySelector(".multi-select-input") as HTMLDivElement;
@@ -45,11 +44,9 @@ export const EditProBase: Component<EditPropBaseProps> = (props) => {
                     props.onChange && props.onChange(val);
                 },
                 rerender: () => {
-                    console.log(`re-render called`);
                 },
                 sourcePath: props.data?.file.path || "/",
                 blur: () => {
-                    console.log(`blur called`);
                 },
                 metadataEditor: null
             }

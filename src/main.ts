@@ -86,7 +86,6 @@ export default class SetsPlugin extends Plugin {
         this.app.workspace.on(
             "active-leaf-change",
             (leaf: WorkspaceLeaf | null) => {
-                // console.log("active-leaf-change", leaf);
                 if (leaf?.view instanceof MarkdownView) {
                     // @ts-expect-error, not typed
                     const editorView = leaf.view.editor.cm as EditorView;
@@ -124,7 +123,6 @@ export default class SetsPlugin extends Plugin {
             if (file) {
                 const md = app.metadataCache.getFileCache(file);
                 if (md?.frontmatter?.__icon) prefix = md?.frontmatter?.__icon;
-                console.log(file);
             }
 
             return prefix + tmp.call(this);
@@ -293,7 +291,6 @@ export default class SetsPlugin extends Plugin {
         source: string,
         leaf?: WorkspaceLeaf
     ) {
-        // console.log("onFileMenu",arguments);
         if (!(file instanceof TFile)) return;
         const collections = this._vaultDB.getCollections();
         const meta = this.app.metadataCache.getFileCache(file);

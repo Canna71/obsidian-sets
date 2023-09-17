@@ -643,7 +643,6 @@ export class VaultDB {
             }
         }
 
-        console.log("inferred type: ", archeType);
         const archetypeName = this.getArchetypeName(typeDisplayName);
         const archetypeFolder = await this.ensureFolder(
             `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`

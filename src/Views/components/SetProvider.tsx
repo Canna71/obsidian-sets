@@ -72,12 +72,8 @@ export function SetProvider(props: { setDefinition: SetDefinition,
             }))
 
 
-            // setItems(updatedItems);
         },
-        // updateFields: (fields: FieldDefinition[]) => {
-        //     console.log(`updateFields`, fields)
-        //     setState(state => ({...state, fields}))
-        // },
+        
         addField: (field: string) => {
             setState(state => ({
                 ...state,
