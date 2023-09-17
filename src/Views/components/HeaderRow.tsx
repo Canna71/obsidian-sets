@@ -1,10 +1,12 @@
-import { Accessor, Component, For, createSignal } from "solid-js";
+import { Accessor, Component, For, Show, createSignal } from "solid-js";
 import { Header } from "./Header";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import {
     DragDropProvider, DragDropSensors, DragOverlay, SortableProvider, closestCenter
 } from "@thisbeyond/solid-dnd";
 import { useSet } from "./SetProvider";
+import { IntrinsicAttributeKey } from "./SetDefinition";
+import needsLink from "src/Utils/needsLink";
 
 export interface ResizeEvent {
     action: "resize" | "done" | "reset",
@@ -146,6 +148,8 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
 
     const ids = () => props.attributes.map(at => at.key)
 
+
+
     return (
         <DragDropProvider
             onDragStart={onDragStart}
@@ -159,6 +163,9 @@ const HeaderRow: Component<{ attributes: AttributeDefinition[] }> = (props) => {
 
                     use: headerResize={onResize}
                 >
+                    <Show when={needsLink(props.attributes)}>
+                        <div class="sets-header-cell"></div>
+                    </Show>
                     <SortableProvider ids={ids()}>
                         <For each={props.attributes}>{(attribute, i) => <Header name={attribute.displayName()} key={attribute.key} />}
                         </For>
