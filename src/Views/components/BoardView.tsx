@@ -74,7 +74,7 @@ const BoardView: Component<SetViewProps> = (props) => {
         console.log("drop",draggable,droppable)
         if (droppable && draggable) {
             app.fileManager.processFrontMatter(draggable.data.file, (fm) => {
-                fm["status"] = droppable.data.lane;
+                fm[groupField] = droppable.data.lane.value;
             });
         } 
         setDragging(null);

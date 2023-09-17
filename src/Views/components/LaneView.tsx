@@ -1,4 +1,4 @@
-import { Component, For, Show, createSignal } from "solid-js";
+import { Component, For, Show, createSignal, onMount } from "solid-js";
 import { useBlock } from "./SetProvider";
 import { EditProBase } from "./EditProp";
 import { createDroppable } from "@thisbeyond/solid-dnd";
@@ -6,12 +6,13 @@ import { BoardItem } from "./BoardItem";
 import { Lane } from "./BoardView";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
+import { setIcon } from "obsidian";
 
 export const LaneView: Component<LaneViewProps> = (props) => {
 
     const { definition, setDefinition, save } = useBlock()!;
     const [isEdit, setIsEdit] = createSignal(false);
-
+    let deleteBtn: HTMLDivElement | null = null;
     const droppable = createDroppable(props.lane.value, props);
 
     const onValueChange = (val: string) => {
@@ -21,6 +22,17 @@ export const LaneView: Component<LaneViewProps> = (props) => {
         setDefinition({ ...definition(), board: { ...definition().board, lanes: newLanes } });
         save();
     };
+
+    const onDelete = () => {
+        const newLanes = [...definition().board?.lanes || []];
+        newLanes.splice(props.lane.index - 1, 1);
+        setDefinition({ ...definition(), board: { ...definition().board, lanes: newLanes } });
+        save();
+    };
+
+    onMount(() => {
+        setIcon(deleteBtn!, "minus");
+    });
 
     return (
         <div class="sets-board-lane" use: droppable
@@ -36,7 +48,9 @@ export const LaneView: Component<LaneViewProps> = (props) => {
                 <Show when={props.lane.value && !isEdit()}>
                     <div onClick={() => setIsEdit(true)}>{props.lane.name}</div>
                 </Show>
-                
+                <Show when={!isEdit()}>
+                    <div class="sets-board-lane-delete clickable-icon" ref={deleteBtn!} onClick={onDelete}></div>
+                </Show>
             </div>
 
             <For each={props.data}>{(data, i) => <BoardItem attributes={props.attributes} data={data} />}</For>
