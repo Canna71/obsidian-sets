@@ -62,6 +62,7 @@ export interface SetDefinition {
     };
     gallery?: {
         numColumns?: number;
+        transclude?: string[];
     }
     timestamp?: number;
     viewMode?: ViewMode;
