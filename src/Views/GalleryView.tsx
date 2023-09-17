@@ -1,9 +1,11 @@
-import { Component } from "solid-js";
+import { Component, Show } from "solid-js";
 import { useApp } from "./components/AppProvider";
 import { BoardItem } from "./components/BoardItem";
 import { SetViewProps } from "./components/GridView";
 import { useSet } from "./components/SetProvider";
 import { CardItem } from "./components/CardItem";
+import needsLink from "src/Utils/needsLink";
+import MiniLink from "./components/MiniLink";
 
 const GalleryView: Component<SetViewProps> = (props) => {
     const { definition } = useSet()!;
@@ -19,6 +21,11 @@ const GalleryView: Component<SetViewProps> = (props) => {
                 {props.data.map((data, i) =>
                     <div class="sets-gallery-item">
                         <CardItem data={data} attributes={props.attributes} transclude={transclude()} />
+                        <Show when={needsLink(props.attributes)}>
+                            <div class="sets-gallery-mini-link">
+                                <MiniLink data={data} />
+                            </div>
+                        </Show>
                     </div>
                 )}
             </div>

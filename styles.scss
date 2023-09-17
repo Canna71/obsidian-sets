@@ -606,6 +606,7 @@
             // min-width: 300px;
             border: 1px solid var(--divider-color);
             padding: var(--size-4-2);
+            position: relative;
 
             .sets-item-field {
                 .sets-view-field {
@@ -616,6 +617,20 @@
 
                 .sets-cell-filename-edit {
                     display: inline;
+                }
+            }
+
+            .sets-gallery-mini-link {
+                visibility: hidden;
+                position: absolute;
+                right: 0px;
+                top: 0px;
+                padding: var(--size-4-2);
+            }
+
+            &:hover {
+                .sets-gallery-mini-link {
+                    visibility: visible;
                 }
             }
         }
