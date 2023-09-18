@@ -31,7 +31,7 @@ const GridView: Component<SetViewProps> = (props) => {
             || "minmax(max-content, 200px)"// "minmax(max-content,250px)"
         ).join(" ")
 
-        if(needsLink(props.attributes)) {
+        if (needsLink(props.attributes)) {
             // adds a column for the link
             tmp = "24px " + tmp;
         }
@@ -39,54 +39,63 @@ const GridView: Component<SetViewProps> = (props) => {
         return tmp;
     }
 
-    
+    // hide grid when there are no fields and no data
+    const showGrid = () => {
+        return definition().fields && definition().fields?.length || props.data.length;
+    }
+
+
+
 
     let scroller: HTMLDivElement;
 
 
     onMount(() => {
-        requestAnimationFrame(() => { scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
+        requestAnimationFrame(() => { scroller && scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
     });
 
 
 
 
     return (
-        <div
+        <Show when={showGrid()}>
+            <div
 
-            class="sets-gridview"
-        >
-            <div class="sets-gridview-scroller sets-view-scroller" ref={scroller!}>
-                <div class="sets-gridview-scrollwrapper">
-                    <div class="sets-gridview-table"
-                        style={{ "grid-template-columns": colSizes() }}
-                    >
-                        <HeaderRow attributes={props.attributes} />
-
-
-                        <div class="sets-gridview-body">
+                class="sets-gridview"
+            >
+                <div class="sets-gridview-scroller sets-view-scroller" ref={scroller!}>
+                    <div class="sets-gridview-scrollwrapper">
+                        <div class="sets-gridview-table"
+                            style={{ "grid-template-columns": colSizes() }}
+                        >
+                            <HeaderRow attributes={props.attributes} />
 
 
-                            <For each={props.data}>{(item, i) =>
-                                <div class="sets-gridview-row" >
-                                    <Show when={needsLink(props.attributes)}>
-                                        <div class="sets-grid-cell">
-                                            <div class="sets-grid-mini-link">
-                                            <MiniLink data={item} />
+                            <div class="sets-gridview-body">
+
+
+                                <For each={props.data}>{(item, i) =>
+                                    <div class="sets-gridview-row" >
+                                        <Show when={needsLink(props.attributes)}>
+                                            <div class="sets-grid-cell">
+                                                <div class="sets-grid-mini-link">
+                                                    <MiniLink data={item} />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Show>
-                                    <For each={props.attributes}>{
-                                        (attribute, i) => <Cell data={item} attribute={attribute} />
-                                    }
-                                    </For>
-                                </div>
-                            }</For>
+                                        </Show>
+                                        <For each={props.attributes}>{
+                                            (attribute, i) => <Cell data={item} attribute={attribute} />
+                                        }
+                                        </For>
+                                    </div>
+                                }</For>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>);
+        </Show>
+    );
 }
 
 export default GridView;

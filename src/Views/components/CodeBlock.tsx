@@ -20,7 +20,7 @@ export interface CodeBlockProps {
 const CodeBlock: Component<CodeBlockProps> = (props) => {
     const { getNewFile, definition } = useSet()!;
 
-    const scope = definition().scope ;
+    const scope = definition().scope;
     const viewMode = definition().viewMode || "grid";
     // if newFile is set, put the new file in the first row
 
@@ -48,7 +48,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
     }
 
     return <div class="sets-codeblock">
-        <BlockToolbar queryResult={props.queryResult} attributes={props.attributes}  />
+        <BlockToolbar queryResult={props.queryResult} attributes={props.attributes} />
         <Show when={scope}>
             <Show when={definition().viewMode === "grid" || !definition().viewMode}>
                 <GridProvider gridState={{
@@ -62,10 +62,10 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                 <ListView data={reorderedResults()} attributes={props.attributes} />
             </Show>
             <Show when={definition().viewMode === "board"}>
-                <BoardView data={reorderedResults()} attributes={props.attributes} /> 
+                <BoardView data={reorderedResults()} attributes={props.attributes} />
             </Show>
             <Show when={definition().viewMode === "gallery"}>
-                <GalleryView data={reorderedResults()} attributes={props.attributes} /> 
+                <GalleryView data={reorderedResults()} attributes={props.attributes} />
             </Show>
             <Show when={moreItemsAvailable()}>
                 <div class="sets-codeblock-more">
@@ -78,7 +78,13 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                     Showing first {props.queryResult.data.length} items of {props.queryResult.total}
                 </div>
             </Show>
-            
+            <Show when={props.queryResult.data.length === 0}>
+                <div class="sets-codeblock-empty">
+                    <div class="sets-codeblock-empty-text">
+                        No items found
+                    </div>
+                </div>
+            </Show>
         </Show>
         <Show when={!scope}>
             <div class="sets-codeblock-empty">
@@ -87,7 +93,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                 </div>
             </div>
         </Show>
-        
+
     </div>
 
 }

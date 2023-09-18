@@ -88,7 +88,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
    // Infer fields
     let fieldDefinitions = definition.fields;
-    if (!fieldDefinitions) {
+    if (!fieldDefinitions || fieldDefinitions.length == 0) {
         if (scopeType == "type") {
             if (getSetsSettings().inferSetFieldsByDefault) {
                 fieldDefinitions = db.inferFields(initialdata)
