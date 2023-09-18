@@ -18,7 +18,7 @@ const code = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ['src/main.ts'],
+	entryPoints: ['src/main.tsx'],
     // outdir: ".",
 	bundle: true,
     minify: prod,

@@ -1,4 +1,7 @@
+import { create } from "domain";
 import { App, Modal, Setting } from "obsidian";
+import { Accessor, Component, createSignal } from "solid-js";
+import { render } from "solid-js/web";
 
 
 
@@ -7,12 +10,18 @@ export class NameInputModal extends Modal {
     placeholder: string;
     onSubmit: (result: string) => void;
     result: any;
+    private _moreInfo: Component<{ value: Accessor<string>; }> | undefined;
     
-    constructor(app: App, message:string,placeholder:string, onSubmit: (result: string) => void) {
+    constructor(app: App, message:string,placeholder:string, 
+        onSubmit: (result: string) => void,
+        moreInfo?: Component<{value:Accessor<string>}>
+        ) {
         super(app);
         this.message = message;
         this.placeholder = placeholder;
         this.onSubmit = onSubmit;
+        this.result = createSignal("");
+        this._moreInfo = moreInfo;
     }
 
     onOpen() {
@@ -27,16 +36,21 @@ export class NameInputModal extends Modal {
         input.focus();
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-                this.result = input.value;
-                this.onSubmit && this.onSubmit(this.result);
+                this.result[1](input.value);
+                this.onSubmit && this.onSubmit(this.result[0]());
                 this.close();
                 e.preventDefault();
             }
         });
         input.addEventListener("change", (e) => {
-            this.result = input.value;
+            // this.result = input.value;
+            this.result[1](input.value);
         });
 
+        if(this._moreInfo) {
+            const mi = contentEl.createDiv();
+            render(() => this._moreInfo!({value: this.result[0]}), mi);
+        }
         // new Setting(contentEl)
         // .addText((text) =>
         //   text.onChange((value) => {

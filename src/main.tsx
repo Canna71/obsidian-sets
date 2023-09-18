@@ -145,7 +145,13 @@ export default class SetsPlugin extends Plugin {
                     const newFile = await this._vaultDB.createNewType(name);
                     await this.app.workspace.openLinkText(newFile.path, "/", "tab");
                     this.registerNewInstancesCommands();
-                })
+                },
+                (props)=>{
+                    return <div>
+                        <p>File will be created in: {props.value()}</p>                  
+                    </div>
+                }
+                )
                     .open()
                     ;
             }

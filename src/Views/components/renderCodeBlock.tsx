@@ -75,6 +75,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     onMount(() => {
         setTimeout(() => {
+            console.info(`mounting ${ctx.docId} ${ctx.sourcePath}`)
             db.on("metadata-changed", onDataChanged);
         },110);
     })
