@@ -23,7 +23,7 @@ import { VaultDB } from "./Data/VaultDB";
 import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";
 import { NameInputModal } from "./Views/NameInputModal";
-import { slugify } from './Utils/slugify';
+import { slugify, unslugify } from './Utils/slugify';
 import { Show } from 'solid-js';
 
 // const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
@@ -143,33 +143,47 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-type",
             name: "Create New Type",
             callback: () => {
-                new NameInputModal(this.app, "Enter Type Name","Type Name", async (name) => {
-                    const newFile = await this._vaultDB.createNewType(name);
-                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                    this.registerNewInstancesCommands();
+                new NameInputModal(this.app, "Enter Type Name", "Type Name", async (name) => {
+                    try {
+                        const newFile = await this._vaultDB.createNewType(name);
+                        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+                        this.registerNewInstancesCommands();
+                    }
+                    catch (e) {
+                        new Notice(e.message);
+                    }
+                    
                 },
-                (props)=>{
-                    return <Show when={props.value()}><div>
-                        <div>Type Archetype will be created as: <code>{`${this.settings.setsRoot}/${this.settings.typesFolder}/${this._vaultDB.getArchetypeName(props.value())}`}</code></div>                  
-                        <div>The Type will have the property: <code>{this.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
-                        <div>Set Folder will be created as: <code>{this._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
-                    </div></Show>
-                }
+                    (props) => {
+                        return <Show when={props.value()}><div>
+                            <div>Type Archetype will be created as: <code>{`${this.settings.setsRoot}/${this.settings.typesFolder}/${this._vaultDB.getArchetypeName(props.value())}`}</code></div>
+                            <div>The Type will have the property: <code>{this.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
+                            <div>Set Folder will be created as: <code>{this._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
+                        </div></Show>
+                    }
                 )
                     .open()
                     ;
             }
-        }); 
+        });
 
         // register command to create new collection
         this.addCommand({
             id: "sets-new-collection",
             name: "Create New Collection",
             callback: () => {
-                new NameInputModal(this.app,"Enter Collection Name", "Collection Name", async (name) => {
-                    const newFile = await this._vaultDB.createNewCollection(name);
-                    await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                })
+                new NameInputModal(this.app, "Enter Collection Name", "Collection Name", async (name) => {
+                    try {
+                        const newFile = await this._vaultDB.createNewCollection(name);
+                        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
+                    } catch (e) {
+                        new Notice(e.message);
+                    }
+                },
+                    (props) => <Show when={props.value()}> <div>
+                        <div>Collection will be created as: <code>{`${this.settings.setsRoot}/${this.settings.collectionsRoot}/${props.value()}/${props.value()}.md`}</code></div>
+                    </div></Show>
+                )
                     .open()
                     ;
             }
@@ -193,22 +207,25 @@ export default class SetsPlugin extends Plugin {
 
         actualTypes.forEach((type) => {
             // check if command already exists
-            if(this._instanceCommands.find((cmd) => cmd.id === `${this.manifest.id}:sets-new-instance-${type}`)) return;
+            if (this._instanceCommands.find((cmd) => cmd.id === `${this.manifest.id}:sets-new-instance-${type}`)) return;
 
 
             const cmd = this.addCommand({
                 id: `sets-new-instance-${type}`,
-                name: `Create New ${prettify(type)}`,
+                name: `Create New ${unslugify(type)}`,
                 callback: async () => {
                     // asks the user the name of the new item
-                    new NameInputModal(this.app, `Enter ${prettify(type)} Name`,`${prettify(type)} Name`, async (name) => {
-
-                        const file: TFile = await this._vaultDB.createNewInstance(type, name);
-                        // open file
-                        if (file) {
-                            await this.app.workspace.openLinkText(file.path, file.path, true);
-                        } else {
-                            new Notice("Could not create file");
+                    new NameInputModal(this.app, `Enter ${unslugify(type)} Name`, `${unslugify(type)} Name`, async (name) => {
+                        try {
+                            const file: TFile = await this._vaultDB.createNewInstance(type, name);
+                            // open file
+                            if (file) {
+                                await this.app.workspace.openLinkText(file.path, file.path, true);
+                            } else {
+                                new Notice("Could not create file");
+                            }
+                        } catch (e) {
+                            new Notice(e.message);
                         }
                     })
                         .open();
@@ -220,7 +237,7 @@ export default class SetsPlugin extends Plugin {
         let toRemove: Command[] = [];
         // removes commands that are not more corresponding to a type
         this._instanceCommands.forEach((cmd) => {
-            if(!actualTypes.includes(cmd.id.replace(`${this.manifest.id}:sets-new-instance-`, ""))) {
+            if (!actualTypes.includes(cmd.id.replace(`${this.manifest.id}:sets-new-instance-`, ""))) {
                 this.app.commands.removeCommand(cmd.id);
                 toRemove.push(cmd);
             }
