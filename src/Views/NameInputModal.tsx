@@ -30,6 +30,7 @@ export class NameInputModal extends Modal {
                 this.result = input.value;
                 this.onSubmit && this.onSubmit(this.result);
                 this.close();
+                e.preventDefault();
             }
         });
         input.addEventListener("change", (e) => {
