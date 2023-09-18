@@ -16,6 +16,7 @@ import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
 import { AttributeKey, Clause, FieldDefinition, IntrinsicAttributeKey, Scope, SortField, VaultScope, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
 import * as Sqrl from "squirrelly";
+import { slugify, unslugify } from "src/Utils/slugify";
 
 export type DBEvent = "metadata-changed" | "initialized";
 
@@ -199,8 +200,10 @@ export class VaultDB {
         };
     }
 
+    
+
     async createNewType(name: string) {
-        const typename = name.toLowerCase();
+        const typename = slugify(name);
         const archetypeFolder = await this.ensureFolder(
             `${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}`
         );
@@ -597,19 +600,24 @@ export class VaultDB {
         );
     }
 
-    private getArchetypeName(typeDisplayName: string) {
-        return `${typeDisplayName}Type.md`;
+    public getArchetypeName(typeDisplayName: string) {
+        return `${typeDisplayName}${this.plugin.settings.typesSuffix}.md`;
     }
 
     private getTypeDisplayName(type: string) {
-        return type.charAt(0).toUpperCase() + type.slice(1);
+        // return type.charAt(0).toUpperCase() + type.slice(1);
+        return unslugify(type);
+    }
+
+    public getSetFolderName(type: string) {
+        return `${this.plugin.settings.setsRoot}/${this.getTypeDisplayName(type)}${this.plugin.settings.typeSetSuffix}`;
     }
 
     private async getSetFolder(type: string) {
-        const setsRoot = this.plugin.settings.setsRoot;
-        const typeDisplayName = this.getTypeDisplayName(type);
-        const setFolder = `${setsRoot}/${typeDisplayName}${this.plugin.settings.typeSetSuffix}`;
-
+        // const setsRoot = this.plugin.settings.setsRoot;
+        // const typeDisplayName = this.getTypeDisplayName(type);
+        // const setFolder = `${setsRoot}/${typeDisplayName}${this.plugin.settings.typeSetSuffix}`;
+        const setFolder = this.getSetFolderName(type);
         let folder = this.app.vault.getAbstractFileByPath(setFolder);
         if (!folder || !(folder instanceof TFolder)) {
             folder = await this.app.vault.createFolder(setFolder);

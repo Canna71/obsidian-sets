@@ -4,6 +4,7 @@ export interface SetsSettings {
     showAtStartup: boolean;
     setsRoot: string;
     typesFolder: string;
+    typesSuffix: string;
     typeSetSuffix: string;
     typeAttributeKey: string;
     collectionsRoot: string;
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     setsRoot: "Sets",
     typeSetSuffix: "Set",
     typesFolder: "Types",
+    typesSuffix: "Type",
     typeAttributeKey: "type",
     collectionsRoot: "Collections",
     collectionAttributeKey: "collection",

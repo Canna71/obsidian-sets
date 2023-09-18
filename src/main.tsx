@@ -23,6 +23,8 @@ import { VaultDB } from "./Data/VaultDB";
 import registerPasswordPropertyType from "./propertytypes/password";
 import registerLinkPropertyType from "./propertytypes/link";
 import { NameInputModal } from "./Views/NameInputModal";
+import { slugify } from './Utils/slugify';
+import { Show } from 'solid-js';
 
 // const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 // `;
@@ -147,9 +149,11 @@ export default class SetsPlugin extends Plugin {
                     this.registerNewInstancesCommands();
                 },
                 (props)=>{
-                    return <div>
-                        <p>File will be created in: {props.value()}</p>                  
-                    </div>
+                    return <Show when={props.value()}><div>
+                        <div>Type Archetype will be created as: <code>{`${this.settings.setsRoot}/${this.settings.typesFolder}/${this._vaultDB.getArchetypeName(props.value())}`}</code></div>                  
+                        <div>The Type will have the property: <code>{this.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
+                        <div>Set Folder will be created as: <code>{this._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
+                    </div></Show>
                 }
                 )
                     .open()

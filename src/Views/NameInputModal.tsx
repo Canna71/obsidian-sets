@@ -1,5 +1,5 @@
 import { create } from "domain";
-import { App, Modal, Setting } from "obsidian";
+import { App, ButtonComponent, Modal, Setting } from "obsidian";
 import { Accessor, Component, createSignal } from "solid-js";
 import { render } from "solid-js/web";
 
@@ -37,14 +37,30 @@ export class NameInputModal extends Modal {
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 this.result[1](input.value);
-                this.onSubmit && this.onSubmit(this.result[0]());
-                this.close();
+                if(input.value.length > 0 ){
+                    this.onSubmit && this.onSubmit(this.result[0]());
+                    this.close();
+                }
                 e.preventDefault();
             }
         });
         input.addEventListener("change", (e) => {
             // this.result = input.value;
             this.result[1](input.value);
+        });
+        input.addEventListener("input", (e) => {
+            // this.result = input.value;
+            this.result[1](input.value);
+            if(input.value.length > 0) {
+                setting.components[0].setDisabled(false);
+                (setting.components[0] as ButtonComponent).buttonEl.removeClass("hidden");
+            }
+            else {
+                setting.components[0].setDisabled(true);
+                (setting.components[0] as ButtonComponent).setClass("hidden");
+
+            }
+
         });
 
         if(this._moreInfo) {
@@ -58,11 +74,13 @@ export class NameInputModal extends Modal {
         //   }));
         
 
-        new Setting(contentEl)
+        const setting = new Setting(contentEl)
             .addButton((btn) =>
                 btn
                     .setButtonText("OK")
                     .setCta()
+                    .setDisabled(true)
+                    .setClass("hidden")
                     .onClick(() => {
                         this.onSubmit && this.onSubmit(this.result);
                         this.close();
@@ -74,6 +92,8 @@ export class NameInputModal extends Modal {
                         this.close();
                     }))         
                 ;
+
+            
     }
 
     onClose() {
