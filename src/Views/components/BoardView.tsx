@@ -72,8 +72,14 @@ const BoardView: Component<SetViewProps> = (props) => {
     const onDragEnd: DragEventHandler = ({ droppable, draggable }) => {
         if (droppable && draggable) {
             app.fileManager.processFrontMatter(draggable.data.file, (fm) => {
-                fm[groupField] = droppable.data.lane.value;
-            });
+                if(droppable.data.lane.index > 0 ){
+                    fm[groupField] = droppable.data.lane.value;
+                } else {
+                    // delete fm[groupField];
+                    // sets it to null
+                    fm[groupField] = undefined;
+                }
+            }); 
         } 
         setDragging(null);
     };
