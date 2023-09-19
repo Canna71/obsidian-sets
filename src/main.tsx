@@ -25,6 +25,8 @@ import registerLinkPropertyType from "./propertytypes/link";
 import { NameInputModal } from "./Views/NameInputModal";
 import { slugify, unslugify } from './Utils/slugify';
 import { Show } from 'solid-js';
+import { NewTypeModal } from './Views/NewTypeModal';
+import { NewCollectionModal } from './Views/NewCollectionModal';
 
 // const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 // `;
@@ -116,6 +118,10 @@ export default class SetsPlugin extends Plugin {
         // this.patchView(tmp);
     }
 
+    // get vaultDB: VaultDB {
+    //     return this._vaultDB;
+    // }
+
     private patchView() {
         const tmp = MarkdownView.prototype.getDisplayText;
         const app = this.app;
@@ -133,7 +139,7 @@ export default class SetsPlugin extends Plugin {
 
     onVaultDBInitialized() {
         this.registerCommands();
-        this._vaultDB.on("metadata-changed", () => {
+        this.vaultDB.on("metadata-changed", () => {
             this.registerNewInstancesCommands();
         });
     }
@@ -143,25 +149,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-type",
             name: "Create New Type",
             callback: () => {
-                new NameInputModal(this.app, "Enter Type Name", "Type Name", async (name) => {
-                    try {
-                        const newFile = await this._vaultDB.createNewType(name);
-                        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                        this.registerNewInstancesCommands();
-                    }
-                    catch (e) {
-                        new Notice(e.message);
-                    }
-                    
-                },
-                    (props) => {
-                        return <Show when={props.value()}><div>
-                            <div>Type Archetype will be created as: <code>{`${this.settings.setsRoot}/${this.settings.typesFolder}/${this._vaultDB.getArchetypeName(props.value())}`}</code></div>
-                            <div>The Type will have the property: <code>{this.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
-                            <div>Set Folder will be created as: <code>{this._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
-                        </div></Show>
-                    }
-                )
+                new NewTypeModal(this.app,this)
                     .open()
                     ;
             }
@@ -172,18 +160,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-collection",
             name: "Create New Collection",
             callback: () => {
-                new NameInputModal(this.app, "Enter Collection Name", "Collection Name", async (name) => {
-                    try {
-                        const newFile = await this._vaultDB.createNewCollection(name);
-                        await this.app.workspace.openLinkText(newFile.path, "/", "tab");
-                    } catch (e) {
-                        new Notice(e.message);
-                    }
-                },
-                    (props) => <Show when={props.value()}> <div>
-                        <div>Collection will be created as: <code>{`${this.settings.setsRoot}/${this.settings.collectionsRoot}/${props.value()}/${props.value()}.md`}</code></div>
-                    </div></Show>
-                )
+                new NewCollectionModal(this.app, this )
                     .open()
                     ;
             }
@@ -194,7 +171,7 @@ export default class SetsPlugin extends Plugin {
 
     }
 
-    private registerNewInstancesCommands() {
+    public registerNewInstancesCommands() {
 
         // removes all comands for new instances
         // this._instanceCommands.forEach((cmd) => {
@@ -228,7 +205,7 @@ export default class SetsPlugin extends Plugin {
                             new Notice(e.message);
                         }
                     })
-                        .open();
+                    .open();
 
                 }
             });
@@ -324,7 +301,7 @@ export default class SetsPlugin extends Plugin {
         leaf?: WorkspaceLeaf
     ) {
         if (!(file instanceof TFile)) return;
-        const collections = this._vaultDB.getCollections();
+        const collections = this.vaultDB.getCollections();
         const meta = this.app.metadataCache.getFileCache(file);
         // get collections currently linked by object
         const currentColl =
@@ -334,7 +311,7 @@ export default class SetsPlugin extends Plugin {
         // map to wiki links
         let collectionLinks = collections.map((col) => ({
             col,
-            link: this._vaultDB.generateWikiLink(col.file, "/"),
+            link: this.vaultDB.generateWikiLink(col.file, "/"),
         }));
         // remove already linked collections
         collectionLinks = collectionLinks.filter(

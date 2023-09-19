@@ -1,6 +1,6 @@
 import { create } from "domain";
 import { App, ButtonComponent, Modal, Setting } from "obsidian";
-import { Accessor, Component, createSignal } from "solid-js";
+import { Accessor, Component, Setter, createSignal } from "solid-js";
 import { render } from "solid-js/web";
 
 
@@ -9,8 +9,11 @@ export class NameInputModal extends Modal {
     message: string;
     placeholder: string;
     onSubmit: (result: string) => void;
-    result: any;
-    private _moreInfo: Component<{ value: Accessor<string>; }> | undefined;
+    
+    value: Accessor<string>;
+    setValue: Setter<string>;
+    
+    protected _moreInfo: Component<{ value: Accessor<string>; }> | undefined;
     
     constructor(app: App, message:string,placeholder:string, 
         onSubmit: (result: string) => void,
@@ -20,7 +23,7 @@ export class NameInputModal extends Modal {
         this.message = message;
         this.placeholder = placeholder;
         this.onSubmit = onSubmit;
-        this.result = createSignal("");
+        [this.value, this.setValue] = createSignal("");
         this._moreInfo = moreInfo;
     }
 
@@ -36,9 +39,9 @@ export class NameInputModal extends Modal {
         input.focus();
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-                this.result[1](input.value);
+                this.setValue(input.value);
                 if(input.value.length > 0 ){
-                    this.onSubmit && this.onSubmit(this.result[0]());
+                    this.onSubmit && this.onSubmit(this.value());
                     this.close();
                 }
                 e.preventDefault();
@@ -46,11 +49,11 @@ export class NameInputModal extends Modal {
         });
         input.addEventListener("change", (e) => {
             // this.result = input.value;
-            this.result[1](input.value);
+            this.setValue(input.value);
         });
         input.addEventListener("input", (e) => {
             // this.result = input.value;
-            this.result[1](input.value);
+            this.setValue(input.value);
             if(input.value.length > 0) {
                 setting.components[0].setDisabled(false);
                 (setting.components[0] as ButtonComponent).buttonEl.removeClass("hidden");
@@ -65,13 +68,8 @@ export class NameInputModal extends Modal {
 
         if(this._moreInfo) {
             const mi = contentEl.createDiv();
-            render(() => this._moreInfo!({value: this.result[0]}), mi);
+            render(() => this._moreInfo!({value: this.value}), mi);
         }
-        // new Setting(contentEl)
-        // .addText((text) =>
-        //   text.onChange((value) => {
-        //     this.result = value
-        //   }));
         
 
         const setting = new Setting(contentEl)
@@ -82,7 +80,7 @@ export class NameInputModal extends Modal {
                     .setDisabled(true)
                     .setClass("hidden")
                     .onClick(() => {
-                        this.onSubmit && this.onSubmit(this.result);
+                        this.onSubmit && this.onSubmit(this.value());
                         this.close();
                     }))
             .addButton((btn) =>
