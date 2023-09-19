@@ -121,17 +121,17 @@ const FileName: Component<FileNameProps> = (props) => {
 
     return <>
         <Show when={!isEdit()}>
-            <div class="sets-cell-filename">
-                {/* <div class="sets-cell-filename-link internal-link" 
+            <div class="sets-filename">
+                {/* <div class="sets-filename-link internal-link" 
                 data-path={props.data.file.path}
                 onClick={onClick} onauxclick={onClick}>{text()}</div> */}
                 <a data-href={linkText()}
                     href={linkText()}
-                    class="internal-link sets-cell-filename-link"
+                    class="internal-link sets-filename-link"
                     target="_blank"
                     rel="noopener">{text()}</a>
                 <Show when={editable()}>
-                    <div ref={pencil!} class="sets-cell-filename-edit clickable-icon" onClick={onEdit} ></div>
+                    <div ref={pencil!} class="sets-filename-edit clickable-icon" onClick={onEdit} ></div>
                 </Show>
             </div>
         </Show>

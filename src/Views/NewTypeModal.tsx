@@ -25,7 +25,7 @@ export class NewTypeModal extends NameInputModal {
         this.plugin = plugin;
 
         super._moreInfo = (props) => {
-            return <Show when={props.value()}><div>
+            return <Show when={props.value()}><div class="sets-modal-info">
                 <div>Type Archetype will be created as: <code>{`${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}/${this.plugin._vaultDB.getArchetypeName(props.value())}`}</code></div>
                 <div>The Type will have the property: <code>{this.plugin.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
                 <div>Set Folder will be created as: <code>{this.plugin._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>

@@ -31,7 +31,7 @@ const MiniLink: Component<MiniLinkProps> = (props) => {
         ref={link!}
         data-href={linkText()}
         href={linkText()}
-        class="internal-link sets-cell-filename-link"
+        class="internal-link sets-filename-link"
         target="_blank"
         title={props.data.file.basename}
         rel="noopener"></a>

@@ -35,41 +35,7 @@ export class NameInputModal extends Modal {
 
         contentEl.createEl("div", { text: this.message, cls: "sets-modal-title" });
 
-        /*
-        const input = contentEl.createEl("input", { attr: { type: "text" },
-            placeholder: this.placeholder,
-            cls: "sets-name-input"
-        });
-        input.focus();
-        input.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                this.setValue(input.value);
-                if(input.value.length > 0 ){
-                    this.onSubmit && this.onSubmit(this.value());
-                    this.close();
-                }
-                e.preventDefault();
-            }
-        });
-        input.addEventListener("change", (e) => {
-            // this.result = input.value;
-            this.setValue(input.value);
-        });
-        input.addEventListener("input", (e) => {
-            // this.result = input.value;
-            this.setValue(input.value);
-            if(input.value.length > 0) {
-                setting.components[0].setDisabled(false);
-                (setting.components[0] as ButtonComponent).buttonEl.removeClass("hidden");
-            }
-            else {
-                setting.components[0].setDisabled(true);
-                (setting.components[0] as ButtonComponent).setClass("hidden");
-
-            }
-
-        });
-        */
+        
 
         const validFileName = () => {
             if (this.value().length === 0) return false;
@@ -92,7 +58,7 @@ export class NameInputModal extends Modal {
         render(() => {
             return (
                 <AppProvider app={{ app: this.app, db: undefined as any as VaultDB }}>
-                    <div>
+                    <div class="metadata-input-longtext sets-input-editable">
                         <NameEditor 
                             value={this.value}  
                             setValue={this.setValue} 

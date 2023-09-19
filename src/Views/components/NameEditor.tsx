@@ -1,6 +1,6 @@
 import { Accessor, Component, Setter, createSignal, onMount } from "solid-js"
 import { useApp } from "./AppProvider";
-import { App, Platform, TFile } from "obsidian";
+import { App, Notice, Platform, TFile } from "obsidian";
 
 const regexChars = /[.?*+^$[\]\\(){}|-]/g
 function escape(exp) {
@@ -45,6 +45,7 @@ const NameEditor:Component<NameEditorProps> = (props) => {
     let editor: HTMLDivElement;
     const [msg, setMsg] = createSignal<string | undefined>(undefined);
     const { app } = useApp()!;
+    const initialVal = props.value();
 
     const onBlur = () => {
         props.setValue(editor.innerText.trim());
@@ -70,16 +71,33 @@ const NameEditor:Component<NameEditorProps> = (props) => {
 
     const onkeydown = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
-            props.setValue(editor.innerText.trim());
             e.preventDefault();
-            props.enter && props.enter();
+            props.setValue(editor.innerText.trim());
+            if (msg()) {
+                new Notice(msg()!);
+            } else {
+                !msg() && props.enter && props.enter();
+            }
         }
+    }
+
+    const onPaste = (e: ClipboardEvent) => {
+        // keep onlt the text, not the formatting
+        e.preventDefault();
+        const text = e.clipboardData!.getData("text/plain");
+        const doc = (e.target as HTMLDivElement).doc;
+        if(doc.queryCommandSupported("insertText")) {
+            document.execCommand("insertText", false, text);
+        } else {
+            console.error("insertText not supported");
+        }
+
     }
 
     return (
         <div ref={editor!} classList={
             {
-                "sets-cell-filename": true,
+                "sets-filename": true,
                 "invalid": !!msg(),
                 "editing": true
             }
@@ -90,7 +108,8 @@ const NameEditor:Component<NameEditorProps> = (props) => {
             onInput={onInput}
             onBlur={onBlur}
             onKeyDown={onkeydown}
-        >{props.value()}
+            onPaste={onPaste}
+        >{initialVal}
 
         </div>
     )

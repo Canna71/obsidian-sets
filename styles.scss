@@ -175,36 +175,8 @@
                                     input.metadata-input-text {
                                         border: none;
                                     }
-                                    .sets-cell-filename {
-                                        display: flex;
 
-                                        &.invalid {
-                                            background-color: var(
-                                                --background-modifier-error
-                                            );
-                                        }
 
-                                        a.internal-link {
-                                            flex: 1;
-                                        }
-
-                                        .sets-cell-filename-link {
-                                            cursor: pointer;
-                                            flex: 1;
-                                            // margin-right: 16px;
-                                            overflow: hidden;
-                                            text-overflow: ellipsis;
-                                        }
-
-                                        .sets-cell-filename-edit {
-                                            visibility: hidden;
-                                        }
-
-                                        &:hover .sets-cell-filename-edit {
-                                            cursor: pointer;
-                                            visibility: visible;
-                                        }
-                                    }
                                 }
 
                                 .sets-grid-mini-link {
@@ -223,6 +195,8 @@
             }
         }
     }
+
+
 
     .sets-listview {
         .sets-listview-body {
@@ -252,6 +226,37 @@
         border-radius: 4px;
         z-index: 1;
         text-align: center;
+    }
+}
+
+.sets-filename {
+    display: flex;
+
+    &.invalid {
+        background-color: var(
+            --background-modifier-error
+        );
+    }
+
+    a.internal-link {
+        flex: 1;
+    }
+
+    .sets-filename-link {
+        cursor: pointer;
+        flex: 1;
+        // margin-right: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sets-filename-edit {
+        visibility: hidden;
+    }
+
+    &:hover .sets-filename-edit {
+        cursor: pointer;
+        visibility: visible;
     }
 }
 
@@ -404,6 +409,7 @@
     justify-content: end;
     padding: var(--size-4-4);
     gap: 8px;
+    border-top: 1px solid var(--divider-color);
 }
 
 .sets-sorting-editor {
@@ -484,6 +490,10 @@
     .sets-modal-title {
         padding: var(--size-4-2);
     }
+}
+
+.sets-modal-info {
+    padding: var(--size-4-2);
 }
 
 .sets-markdown-renderer {
@@ -583,12 +593,12 @@
                         .sets-view-field {
                             // padding-left: var(--size-4-2);
 
-                            .sets-cell-filename {
+                            .sets-filename {
                                 padding-left: var(--size-4-2);
                             }
                         }
 
-                        .sets-cell-filename-edit {
+                        .sets-filename-edit {
                             display: inline;
                         }
                     }
@@ -621,12 +631,12 @@
 
             .sets-item-field {
                 .sets-view-field {
-                    .sets-cell-filename {
+                    .sets-filename {
                         padding-left: var(--size-4-2);
                     }
                 }
 
-                .sets-cell-filename-edit {
+                .sets-filename-edit {
                     display: inline;
                 }
             }
@@ -648,6 +658,14 @@
     }
 }
 
+.sets-input-editable {
+    box-shadow: 0 0 0 1px var(--background-modifier-border);
+    min-height: var(--input-height);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 .hidden {
     display: none;
+    height: 21px;
 }
