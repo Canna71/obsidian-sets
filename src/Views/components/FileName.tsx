@@ -5,49 +5,25 @@ import { ObjectData } from "src/Data/ObjectData";
 import { useApp } from "./AppProvider";
 import { Dialog } from "../Dialog";
 import { useSet } from "./SetProvider";
+import NameEditor, { isValidFileName } from "./NameEditor";
 
-const regexChars = /[.?*+^$[\]\\(){}|-]/g
-function escape(exp) {
-    return exp.replace(regexChars, "\\$&")
-}
-const disallowedCharsInFilename = Platform.isWin ? '*"\\/<>:|?' : "\\/:" + (Platform.isAndroidApp ? '*?<>"' : "")
 
-const charlist = disallowedCharsInFilename.split("").join(" ")
 
-const invalidFilenameRE = new RegExp("[" + escape(charlist) + "]")
 
-const unsafeChars = "#^[]|";
-const unsafeList = unsafeChars.split("").join(" ");
-const unsafeCharsRE = new RegExp("[" + escape(unsafeList) + "]")
-
-const messages = {
-    "msg-invalid-characters": "File name cannot contain any of the following characters: " + charlist,
-    "msg-unsafe-characters": "Links will not work with file names containing any of these characters: " + unsafeList,
-    "msg-file-already-exists": "There's already a file with the same name",
-    "msg-empty-file-name": "File name cannot be empty.",
-    "msg-bad-dotfile": "File name must not start with a dot."
-}
-
-function isValidFileName(app: App, file: TFile, filename: string) {
-    if ("" === filename) return messages["msg-empty-file-name"];
-    if (invalidFilenameRE.test(filename)) return messages["msg-invalid-characters"];
-    if (filename.startsWith(".")) return messages["msg-bad-dotfile"];
-    if (app.vault.checkForDuplicate(file, filename)) return messages["msg-file-already-exists"];
-    if (unsafeCharsRE.test(filename)) return messages["msg-unsafe-characters"]
-}
 
 // refactor the props of this component in a separate interface
 export interface FileNameProps {
     data: ObjectData;
     attribute: AttributeDefinition;
     editable?: boolean;
+    editMode?: boolean;
 }
 
 
 
 const FileName: Component<FileNameProps> = (props) => {
     const { app } = useApp()!;
-    const text = () => props.attribute.format(props.data);
+    // const text = () => props.attribute.format(props.data);
     const { getNewFile } = useSet()!;
 
     const editable = () => props.editable ?? true;
@@ -56,28 +32,28 @@ const FileName: Component<FileNameProps> = (props) => {
     // }
 
     const isEditFile = () => {
-        if(!editable()) return false;
+        if (!editable()) return false;
+        if (props.editMode) return true;
         const tmp = getNewFile() === props.data.file.path;
         // if (tmp) setNewFile(""); 
         return tmp;
     }
 
     const [isEdit, setEdit] = createSignal(isEditFile());
-    const [msg, setMsg] = createSignal<string | undefined>(undefined);
-    let editor: HTMLDivElement;
+    const [text, setText] = createSignal(props.attribute.format(props.data));
     let pencil: HTMLDivElement;
 
     // focus editor when it becomes visible
-    createEffect(() => {
-        if (isEdit()) {
-            const range = document.createRange();
-            editor.focus();
-            range.selectNodeContents(editor);
-            const selection = window.getSelection();
-            selection!.removeAllRanges();
-            selection!.addRange(range);
-        }
-    })
+    // createEffect(() => {
+    //     if (isEdit()) {
+    //         const range = document.createRange();
+    //         editor.focus();
+    //         range.selectNodeContents(editor);
+    //         const selection = window.getSelection();
+    //         selection!.removeAllRanges();
+    //         selection!.addRange(range);
+    //     }
+    // })
 
     const onEdit = (e: MouseEvent) => {
         if (!isEdit()) setEdit(true);
@@ -115,12 +91,11 @@ const FileName: Component<FileNameProps> = (props) => {
 
     const finishEdit = () => {
         setEdit(false);
-        renameFile(editor.innerText.trim())
+        // renameFile(editor.innerText.trim())
+        renameFile(text());
     }
 
-    const onBlur = () => {
-        finishEdit();
-    };
+ 
 
     // const onClick = async (e:MouseEvent) => {
 
@@ -131,22 +106,13 @@ const FileName: Component<FileNameProps> = (props) => {
     //     await leaf?.openFile(file);
     // }
 
-    const onInput = (e: InputEvent) => {
-        const msg = isValidFileName(app, props.data.file, editor.innerText.trim())
-
-        setMsg(msg);
-    }
+  
 
     const linkText = () => {
         return app.metadataCache.fileToLinktext(props.data.file, "/")
     }
 
-    const onkeydown = (e: KeyboardEvent) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            finishEdit();
-        }
-    }
+
 
     createEffect(() => {
         if (isEdit()) return;
@@ -170,22 +136,7 @@ const FileName: Component<FileNameProps> = (props) => {
             </div>
         </Show>
         <Show when={isEdit()}>
-            <div ref={editor!} classList={
-                {
-                    "sets-cell-filename": true,
-                    "invalid": !!msg(),
-                    "editing": true
-                }
-            } contentEditable={true}
-                autocapitalize="on"
-                title={msg()}
-                spellcheck={app.vault.getConfig("spellcheck")}
-                onInput={onInput}
-                onBlur={onBlur}
-                onKeyDown={onkeydown}
-            >{text()}
-
-            </div>
+            <NameEditor value={text} setValue={setText} blur={finishEdit} enter={finishEdit}  file={props.data.file} />
         </Show>
     </>
 
