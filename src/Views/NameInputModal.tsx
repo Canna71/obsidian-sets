@@ -1,7 +1,10 @@
 import { create } from "domain";
 import { App, ButtonComponent, Modal, Setting } from "obsidian";
-import { Accessor, Component, Setter, createSignal } from "solid-js";
+import { Accessor, Component, Setter, Show, createSignal } from "solid-js";
 import { render } from "solid-js/web";
+import NameEditor, { isValidFileName } from "./components/NameEditor";
+import { AppProvider } from "./components/AppProvider";
+import { VaultDB } from "src/Data/VaultDB";
 
 
 
@@ -9,16 +12,16 @@ export class NameInputModal extends Modal {
     message: string;
     placeholder: string;
     onSubmit: (result: string) => void;
-    
+
     value: Accessor<string>;
     setValue: Setter<string>;
-    
+
     protected _moreInfo: Component<{ value: Accessor<string>; }> | undefined;
-    
-    constructor(app: App, message:string,placeholder:string, 
+
+    constructor(app: App, message: string, placeholder: string,
         onSubmit: (result: string) => void,
-        moreInfo?: Component<{value:Accessor<string>}>
-        ) {
+        moreInfo?: Component<{ value: Accessor<string> }>
+    ) {
         super(app);
         this.message = message;
         this.placeholder = placeholder;
@@ -32,6 +35,7 @@ export class NameInputModal extends Modal {
 
         contentEl.createEl("div", { text: this.message, cls: "sets-modal-title" });
 
+        /*
         const input = contentEl.createEl("input", { attr: { type: "text" },
             placeholder: this.placeholder,
             cls: "sets-name-input"
@@ -65,13 +69,61 @@ export class NameInputModal extends Modal {
             }
 
         });
+        */
 
-        if(this._moreInfo) {
-            const mi = contentEl.createDiv();
-            render(() => this._moreInfo!({value: this.value}), mi);
+        const validFileName = () => {
+            if (this.value().length === 0) return false;
+            if(isValidFileName(this.app, this.value(), undefined)) return false;
+            return true;
         }
-        
 
+        const onFinished = () => {
+            if (this.value().length > 0) {
+                this.onSubmit && this.onSubmit(this.value());
+                this.close();
+            }
+        }
+
+        const onInput = (value: string) => {
+            this.setValue(value);
+        }
+
+        const mainEl = contentEl.createDiv({ cls: "sets-name-input" });
+        render(() => {
+            return (
+                <AppProvider app={{ app: this.app, db: undefined as any as VaultDB }}>
+                    <div>
+                        <NameEditor 
+                            value={this.value}  
+                            setValue={this.setValue} 
+                            enter={onFinished}
+                            input={onInput}
+                        />
+                    </div>
+                    { this._moreInfo && this._moreInfo!({ value: this.value })}
+                    <div class="sets-button-bar">
+                        <Show when={validFileName()}>
+                            <button class="mod-cta" 
+                                onClick={onFinished}
+                            >Save</button>
+                        </Show>
+                        <button class=""
+                            onClick={() => {
+                                this.close();
+                            }}
+                        >Cancel</button>
+                    </div>
+                </AppProvider>
+            )
+        }, mainEl)
+
+
+        // if (this._moreInfo) {
+        //     const mi = contentEl.createDiv();
+        //     render(() => this._moreInfo!({ value: this.value }), mi);
+        // }
+
+        /*
         const setting = new Setting(contentEl)
             .addButton((btn) =>
                 btn
@@ -88,10 +140,10 @@ export class NameInputModal extends Modal {
                     .setButtonText("Cancel")
                     .onClick(() => {
                         this.close();
-                    }))         
-                ;
+                    }))
+            ;
+        */
 
-            
     }
 
     onClose() {

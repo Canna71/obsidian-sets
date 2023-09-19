@@ -24,20 +24,21 @@ const messages = {
     "msg-bad-dotfile": "File name must not start with a dot."
 }
 
-export function isValidFileName(app: App, file: TFile, filename: string) {
+export function isValidFileName(app: App,  filename: string, file?: TFile,) {
     if ("" === filename) return messages["msg-empty-file-name"];
     if (invalidFilenameRE.test(filename)) return messages["msg-invalid-characters"];
     if (filename.startsWith(".")) return messages["msg-bad-dotfile"];
-    if (app.vault.checkForDuplicate(file, filename)) return messages["msg-file-already-exists"];
+    if (file && app.vault.checkForDuplicate(file, filename)) return messages["msg-file-already-exists"];
     if (unsafeCharsRE.test(filename)) return messages["msg-unsafe-characters"]
 }
 
 export interface NameEditorProps {
     value: Accessor<string>;
     setValue: Setter<string>;
-    blur: () => void;
-    enter: () => void;
-    file: TFile;
+    blur?: () => void;
+    enter?: () => void;
+    input?: (value: string) => void;
+    file?: TFile;
 }
 
 const NameEditor:Component<NameEditorProps> = (props) => {
@@ -47,14 +48,15 @@ const NameEditor:Component<NameEditorProps> = (props) => {
 
     const onBlur = () => {
         props.setValue(editor.innerText.trim());
-        props.blur();
+        props.blur && props.blur();
     };
 
     const onInput = (e: InputEvent) => {
         // props.setValue(editor.innerText.trim());
-        const msg = isValidFileName(app, props.file, editor.innerText.trim())
+        const msg = isValidFileName(app, editor.innerText.trim(), props.file)
 
         setMsg(msg);
+        props.input && props.input(editor.innerText.trim());
     }
 
     onMount(() => {
@@ -70,7 +72,7 @@ const NameEditor:Component<NameEditorProps> = (props) => {
         if (e.key === "Enter") {
             props.setValue(editor.innerText.trim());
             e.preventDefault();
-            props.enter();
+            props.enter && props.enter();
         }
     }
 

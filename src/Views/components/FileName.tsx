@@ -72,7 +72,7 @@ const FileName: Component<FileNameProps> = (props) => {
     const renameFile = (name: string) => {
         const file = props.data.file;
         name = name.trim();
-        const msg = isValidFileName(app, file, name);
+        const msg = isValidFileName(app,  name, file);
         if (msg) {
             new Dialog(app, msg).open();
             return;
