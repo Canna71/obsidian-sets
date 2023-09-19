@@ -337,6 +337,16 @@
         position: relative;
         line-height: 1.2;
     }
+
+    .sets-fields-columns {
+        display: grid;
+        // two columns, same size
+        grid-template-columns: 1fr 1fr;
+
+        .sets-fields-column {
+            padding: var(--size-4-2);
+        }
+    }
 }
 
 .sets-fields-list {

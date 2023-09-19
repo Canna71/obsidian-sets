@@ -54,7 +54,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
         const pd = getPropertyData(app);
         const idxPd = indexBy<PropertyData>("key", pd);
         return (definition().fields || []).map(key => idxPd[key])
-        .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
+            .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
         ;
         // return pd.filter(pd => (definition().fields || []).includes(pd.key))
         //     .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
@@ -96,25 +96,33 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
             onInput={(e) => {
                 setKeyword(e.target.value)
             }}></input>
-        <div class="sets-fields-label">Visible:</div>
-        <div class="sets-fields-list selected-props">
-            <DragDropProvider
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                collisionDetector={closestCenter}
-            >
-                <DragDropSensors />
-                <SortableProvider ids={ids()}>
-                    <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onUnselect} />}</For>
-                </SortableProvider>
-               
-            </DragDropProvider>
-        </div>
-        <div class="sets-fields-label">Available:</div>
+        <div class="sets-fields-columns">
+            <div class="sets-fields-column">
+                <div class="sets-fields-label">Available:</div>
 
-        <div class="sets-fields-list available-props">
-            <For each={available()}>{(pd) => <Property {...pd} icon="toggle-left" onIconClick={onSelect} />}</For>
+                <div class="sets-fields-list available-props">
+                    <For each={available()}>{(pd) => <Property {...pd} icon="toggle-left" onIconClick={onSelect} />}</For>
+                </div>
+            </div>
+            <div class="sets-fields-column">
+                <div class="sets-fields-label">Visible:</div>
+                <div class="sets-fields-list selected-props">
+                    <DragDropProvider
+                        onDragStart={onDragStart}
+                        onDragEnd={onDragEnd}
+                        collisionDetector={closestCenter}
+                    >
+                        <DragDropSensors />
+                        <SortableProvider ids={ids()}>
+                            <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onUnselect} />}</For>
+                        </SortableProvider>
+
+                    </DragDropProvider>
+                </div>
+            </div>
         </div>
+
+
         <div class="sets-button-bar">
             <button class="mod-cta" onClick={onSave}>Save</button>
             <button class="" onClick={props.exit}>Cancel</button>
