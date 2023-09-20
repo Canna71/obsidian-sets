@@ -15,6 +15,7 @@ export interface SetsSettings {
     inferQueryFieldsByDefault: boolean;
     createObjectsInSetsFolder: boolean;
     topResults: number;
+    registerCustomTypes: boolean;
 } 
 
 export const DEFAULT_SETTINGS: SetsSettings = {
@@ -32,7 +33,8 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     inferSetFieldsByDefault: false,
     inferQueryFieldsByDefault: false,
     createObjectsInSetsFolder: false,
-    topResults: 200
+    topResults: 200, 
+    registerCustomTypes: true
 }
 
 export const CODEBLOCK_NAME = "set";

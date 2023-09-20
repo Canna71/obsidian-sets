@@ -3,6 +3,7 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import { render } from "solid-js/web";
 import FolderSelect from "./Views/components/FolderSelect";
 import { Setter, createEffect, createSignal } from "solid-js";
+import { SetsSettings } from "./Settings";
 
 
 export class SetsSettingsTab extends PluginSettingTab {
@@ -91,10 +92,15 @@ export class SetsSettingsTab extends PluginSettingTab {
                 }
             ));
 
+            // add toggle for registerCustomTypes
+            this.createToggle(containerEl, 
+                "Register Custom Types", 
+                "Register custom types in the settings.", 
+                "registerCustomTypes");
        
 	}
 
-    private createToggle(containerEl: HTMLElement, name: string, desc: string, prop: string) {
+    private createToggle(containerEl: HTMLElement, name: string, desc: string, prop: keyof SetsSettings) {
 		new Setting(containerEl)
 			.setName(name)
 			.setDesc(desc)

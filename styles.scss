@@ -353,6 +353,8 @@
     overflow-y: auto;
     padding: var(--size-4-2);
     border: 1px solid var(--divider-color);
+    margin-top: var(--size-4-2);
+    margin-bottom: var(--size-4-2);
 
     &.available-props {
         max-height: 120px;
