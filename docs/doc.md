@@ -79,10 +79,9 @@ After you click save, it will create the following:
 - This note will contain a view that will display all items of this collection.
 
 You will then need to add items to the collection. 
-To do so, you can right click on the explorer or in the menu and select `Add to collection` or use the command `Sets: Add to collection` [TODO].
+To do so, you can right click on the explorer or in the file menu and select `Add to collection` or use the command `Sets: Add to collection` [TODO]
 
-
-
+In order to display items of this collection in a different note, you can create a view, by adding a code block as descibed above, and then specifying the scope as `Collection` and the collection as the one you just created.
 
 ## Structured data
 
