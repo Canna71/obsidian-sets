@@ -94,8 +94,8 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // add toggle for registerCustomTypes
             this.createToggle(containerEl, 
-                "Register Custom Types", 
-                "Register custom types in the settings.", 
+                "Register custom properties", 
+                "Register custom metadata property types.", 
                 "registerCustomTypes");
        
 	}

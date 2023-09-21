@@ -6,6 +6,7 @@ This plugins is inspired by Notion and AnyType and implements a way to strucure 
 
 %% Explain the different kind of queries that could be done %%
 
+
 ## Structured data
 
 Sets uses metadata properties to store data. 
