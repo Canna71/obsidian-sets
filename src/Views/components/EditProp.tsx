@@ -35,7 +35,7 @@ export const EditProBase: Component<EditPropBaseProps> = (props) => {
 
     onMount(() => {
         widget && widget.render(div!, {
-            key, type, value
+            key, type, value: value || null
         },
             {
                 app: app,
