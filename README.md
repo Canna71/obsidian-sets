@@ -14,3 +14,27 @@ It provides the following features:
 - easy creation of new items from the GUI
 
 Please see full documentation [here](docs/doc.md)
+
+## Installation
+
+<!-- ### From within Obsidian
+
+
+- Open Settings > Community plugins
+- Make sure Safe mode is **off**
+- Click Browse community plugins
+- Search for "Sets"
+- Click Install
+- Once installed, close the community plugins window and activate the newly installed plugin -->
+
+### Manual installation
+
+- Download the latest release from the [releases page](https://github.com/Canna71/obsidian-sets/issues)
+- Extract the plugin folder from the zip to your vault's plugins folder: `<vault>/.obsidian/plugins/obisidian-sets/`
+- Reload Obsidian
+
+
+## Reporting Issues
+
+If you have any issues or suggestions please report them [here](https://github.com/Canna71/obsidian-sets/issues)
+
