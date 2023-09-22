@@ -173,10 +173,13 @@ export class VaultDB {
         } else {
             //@ts-ignore
             files = this.app.metadataCache.getCachedFiles();
+            // gets only the actual markdown files
+            files = files.filter((f) => f.endsWith(".md"));
         }
         // const files: string[] = this.app.metadataCache.getCachedFiles();
 
         for (const filePath of files) {
+            
             const fileCache = this.app.metadataCache.getCache(filePath);
             if (fileCache) {
                 const ob = this.getObjectData(filePath, fileCache);

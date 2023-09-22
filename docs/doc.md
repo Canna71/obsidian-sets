@@ -196,7 +196,10 @@ This also means that filters will be used to apply default values to the propert
 
 For example, if you have a view that displays all tasks that are `relative-to` `This` (that is, all subtasks of the current note), then you can create a new task from that view, and the new task will have the `relative-to` property set to the current note.
 
-In case the current query is not restricted to a type, then the attributes that the new item will have will be determined b
+In case the current query is not restricted to a type, then the attributes that the new item will have will be determined by the type itself, otherwise they will be the properties selected to be displayed in the view.
+
+You can also create new items from the command palette, by using the command `Sets: Create a new <Type Name>`. A different command is available for each type you create.
+
 
 ## From a type / templating
 
@@ -213,8 +216,9 @@ Writing templates, you have acces to a context object (`it`) with the following 
 - `it.context`: the file from which the item was created
 - `it.name`: the name of the item
 
-
 ## Where are new items created
 
-## Default property values for new items
+When you create a new item from a Set Block, it will be created in the same folder as the note hosting the Set Block itself.
+When you create a new item of a given type using the command palette, it will be created in the folder of the type.
+
 
