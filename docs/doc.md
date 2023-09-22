@@ -154,7 +154,7 @@ Some views might have additional settings.
 
 ## Grid
 
-[TODO: picture]
+![Alt text](image-4.png)
 
 A Grid displays data in a tabular form and allows the editing of the data directly in the view. 
 Displayed attributes can be ordered also by ordering the respective columns.
@@ -166,13 +166,13 @@ If a Grid contais also the FileName property, it will allow for the editing of t
 
 ## List
 
-[TODO: picture]
+![Alt text](image-6.png)
 
 A List displays data in a list form and does not allow the editing of the data directly in the view, except for properties of type `Checkbox`, `Date` and `Date & Time`.
 
-## Board
+## Board    
 
-[TODO: picture]
+![Alt text](image-7.png)
 
 A board displays items in *lanes* and allows to drag and drop items from one lane to another. 
 Each *lane* correspong to a value of a given property. The property can be selected in the settings of the view, using the [Select] button that appears when you select the `Board` view.
@@ -189,11 +189,30 @@ By dragging an item from one lane to another, the value of the grouping property
 
 # Creating new items
 
+From some views you can create new items. This is done by clicking on the `Add` button that is on the right of the toolbar.
+The availability of the `Add` button depends on the view and on the filters that are applied to the view.
+In short, you can create new items from a view if it is possible to determine which properties the new item should have in order to satisfy the filters of the view.
+This also means that filters will be used to apply default values to the properties of the new item.
+
+For example, if you have a view that displays all tasks that are `relative-to` `This` (that is, all subtasks of the current note), then you can create a new task from that view, and the new task will have the `relative-to` property set to the current note.
+
+In case the current query is not restricted to a type, then the attributes that the new item will have will be determined b
+
 ## From a type / templating
 
 When you create a new item from a type, the note will be created from the archetype of the type. This means that the note will be created from the template that you defined for the type. The archetype will be treated as a template, and the templating engine used is [Squirrelly](https://squirrelly.js.org/).
 
-[TODO: provide context variablers]
+Writing templates, you have acces to a context object (`it`) with the following properties:
+
+- `it.type`: the type of the item
+- `it.properties`: the properties names of the item
+- `it.time`: the time in `HH:mm:ss` format
+- `it.date`: the date in `YYYY-MM-DD` format
+- `it.archetype`: the template file itself
+- `it.folder`: the folder where the item is created
+- `it.context`: the file from which the item was created
+- `it.name`: the name of the item
+
 
 ## Where are new items created
 

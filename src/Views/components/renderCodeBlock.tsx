@@ -1,7 +1,7 @@
 
 import { render } from "solid-js/web";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { VaultDB } from "src/Data/VaultDB";
+import { VaultDB, limitResults } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { App, MarkdownPostProcessorContext } from "obsidian";
@@ -41,7 +41,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     
 
 
-
+    // limit to topResults
     const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);

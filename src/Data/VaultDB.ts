@@ -27,6 +27,18 @@ export type QueryResult = {
     total: number;
 };
 
+export function limitResults(queryResult: QueryResult, top?: number, forceTotop?: string)  {
+    top = top || Number.MAX_SAFE_INTEGER;
+    let data = queryResult.data;
+    if(forceTotop){
+        const toTop = data.find(d => d.file.path === forceTotop);
+        if(toTop){
+            data = [toTop, ...data.filter(d => d.file.path !== forceTotop)]
+        }
+    }
+    return {...queryResult, data: data.slice(0, top), total: data.length};
+}
+
 // define a scope type that could be "type", "collection", "folder" or "all"
 // each scope type can have a further specifier, for example type has the type key
 // collection has the collection file link, folder has the folder path
@@ -139,8 +151,8 @@ export class VaultDB {
     //     return Query.__fromClauses(this, [ [this.plugin.settings.collectionAttributeKey,"hasall",[link]], ...clauses], sort, context);
     // }
 
-    execute(query: Query, top?: number): QueryResult {
-        if (!top) top = this.plugin.settings.topResults;
+    execute(query: Query): QueryResult {
+        // if (!top) top = this.plugin.settings.topResults;
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }
@@ -193,10 +205,11 @@ export class VaultDB {
         // console.trace();
 
         return {
-            data: ret.slice(0, top),
+            data: ret,
             db: this,
             query,
             total: ret.length,
+            
         };
     }
 
@@ -389,9 +402,10 @@ export class VaultDB {
                 archetype: template,
                 folder: folder,
                 context: query.context?.file,
-                query: query,
+                // query: query,
                 properties: properties,
-                name: filename
+                name: filename,
+                type: query.inferSetType(),
             },{
                 autoTrim: false
             });

@@ -2,12 +2,13 @@ import { Accessor, Component, Show } from "solid-js";
 import GridView from "./GridView";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import BlockToolbar from "./BlockToolbar";
-import { QueryResult } from "src/Data/VaultDB";
+import { QueryResult, limitResults } from "src/Data/VaultDB";
 import { GridProvider } from "./GridProvider";
 import { useSet } from "./SetProvider";
 import ListView from "../ListView";
 import BoardView from "./BoardView";
 import GalleryView from "../GalleryView";
+import { getSetsSettings } from "src/main";
 // import { useBlock } from "./BlockProvider";
 
 
@@ -24,27 +25,30 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
     const viewMode = definition().viewMode || "grid";
     // if newFile is set, put the new file in the first row
 
-    const reorderedResults = () => {
-        if (getNewFile()) {
-            // props.queryResult.data.unshift(getNewFile());
-            const newFileRowIndex = props.queryResult.data.findIndex(row => row.file.path === getNewFile());
+    const limitedResults = () => {
+        // if (getNewFile()) {
+        //     // props.queryResult.data.unshift(getNewFile());
+        //     const newFileRowIndex = props.queryResult.data.findIndex(row => row.file.path === getNewFile());
 
-            // reorder props.queryResult.data so that the new file is at the top
-            if (newFileRowIndex > 0) {
-                const row = props.queryResult.data[newFileRowIndex];
-                const newData = [row, ...props.queryResult.data.filter((c, i) => i !== newFileRowIndex)];
+        //     // reorder props.queryResult.data so that the new file is at the top
+        //     if (newFileRowIndex > 0) {
+        //         const row = props.queryResult.data[newFileRowIndex];
+        //         const newData = [row, ...props.queryResult.data.filter((c, i) => i !== newFileRowIndex)];
 
-                return newData;
-            }
+        //         return newData;
+        //     }
 
-        }
-        return props.queryResult.data;
+        // }
+        const limitedResults = limitResults(props.queryResult, getSetsSettings().topResults, getNewFile() );
+        return limitedResults;
 
     }
 
+    const data = () => limitedResults().data;
+
     // function that returns if more items were available
     const moreItemsAvailable = () => {
-        return props.queryResult.total > props.queryResult.data.length;
+        return limitedResults().total > limitedResults().data.length;
     }
 
     return <div class="sets-codeblock">
@@ -55,19 +59,19 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                     hovering: undefined,
                     // fields: definition().fields
                 }}>
-                    <GridView data={reorderedResults()} attributes={props.attributes} />
+                    <GridView data={data()} attributes={props.attributes} />
                 </GridProvider>
             </Show>
             <Show when={definition().viewMode === "list"}>
-                <ListView data={reorderedResults()} attributes={props.attributes} />
+                <ListView data={data()} attributes={props.attributes} />
             </Show>
             <Show when={definition().viewMode === "board"}>
-                <BoardView data={reorderedResults()} attributes={props.attributes} />
+                <BoardView data={data()} attributes={props.attributes} />
             </Show>
             <Show when={definition().viewMode === "gallery"}>
-                <GalleryView data={reorderedResults()} attributes={props.attributes} />
+                <GalleryView data={data()} attributes={props.attributes} />
             </Show>
-            <Show when={moreItemsAvailable()}>
+            <Show when={data().length}>
                 <div class="sets-codeblock-more">
                     {/* <button class="sets-codeblock-more-button" onClick={() => {
                         props.queryResult.more();
@@ -75,7 +79,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
                     }> More
                     </button>
                     */}
-                    Showing first {props.queryResult.data.length} items of {props.queryResult.total}
+                    Showing {data().length} items of {limitedResults().total}
                 </div>
             </Show>
             <Show when={props.queryResult.data.length === 0}>
