@@ -65,7 +65,8 @@ function headerResize(el: Element, onResize: Accessor<(ev:ResizeEvent) => void>)
             // $0.parentElement.indexOf($0)
             // state.resizing = resizer!.closest(".sets-header-cell")!;
             // const gridRow = state.resizing.closest(".sets-headers-row");
-            state.index = state.resizing.parentElement!.indexOf(state.resizing);
+            // state.index = state.resizing.parentElement!.indexOf(state.resizing);
+            state.index = Array.prototype.indexOf.call(resizing.parentElement!.children, resizing)
             state.originalSize = state.resizing.clientWidth;
             state.mousex = e.clientX;
 
