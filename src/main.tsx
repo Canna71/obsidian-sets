@@ -27,6 +27,7 @@ import { slugify, unslugify } from './Utils/slugify';
 import { Show } from 'solid-js';
 import { NewTypeModal } from './Views/NewTypeModal';
 import { NewCollectionModal } from './Views/NewCollectionModal';
+import { NameValueSuggestModal } from './Views/NameValueSuggestModal';
 
 // const sigma = `<path stroke="currentColor" fill="none" d="M78.6067 22.8905L78.6067 7.71171L17.8914 7.71171L48.2491 48.1886L17.8914 88.6654L78.6067 88.6654L78.6067 73.4866" opacity="1"  stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
 // `;
@@ -166,6 +167,39 @@ export default class SetsPlugin extends Plugin {
             }
         });
 
+        // register command to add note to a collection
+        this.addCommand({
+            id: "sets-add-to-collection",
+            name: "Add To Collection",
+            checkCallback: (checking: boolean) => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if(checking) {
+                    return !!view;
+                    
+                } else {
+                    if(view) {
+                        const file = view.file;
+                        if(file instanceof TFile) {
+                            const { collectionLinks, currentColl } = this.getAvailableCollections(file);
+                            
+                            const nameValues = collectionLinks.map(cl => ({name: cl.col.file.basename, value: cl.link}));
+                            new NameValueSuggestModal(this.app, nameValues, (item) => {
+                                currentColl.push(item.value);
+                                this.app.fileManager.processFrontMatter(
+                                    file,
+                                    (fm) => {
+                                        fm[this.settings.collectionAttributeKey] =
+                                            currentColl;
+                                    }
+                                );
+                            }).open();
+                        }
+                    }
+                    return false;
+                }
+                    
+            }
+        });
         // register a command for each type to create a new item
         this.registerNewInstancesCommands();
 
@@ -301,22 +335,7 @@ export default class SetsPlugin extends Plugin {
         leaf?: WorkspaceLeaf
     ) {
         if (!(file instanceof TFile)) return;
-        const collections = this.vaultDB.getCollections();
-        const meta = this.app.metadataCache.getFileCache(file);
-        // get collections currently linked by object
-        const currentColl =
-            (meta?.frontmatter?.[
-                this.settings.collectionAttributeKey
-            ] as string[]) || [];
-        // map to wiki links
-        let collectionLinks = collections.map((col) => ({
-            col,
-            link: this.vaultDB.generateWikiLink(col.file, "/"),
-        }));
-        // remove already linked collections
-        collectionLinks = collectionLinks.filter(
-            (cl) => !currentColl.includes(cl.link)
-        );
+        const { collectionLinks, currentColl } = this.getAvailableCollections(file);
         if (collectionLinks.length > 0) {
             menu.addItem((menuItem: MenuItem) => {
                 menuItem.setTitle("Add To Collection...");
@@ -337,6 +356,23 @@ export default class SetsPlugin extends Plugin {
                 });
             });
         }
+    }
+
+    private getAvailableCollections(file: TFile) {
+        const collections = this.vaultDB.getCollections();
+        const meta = this.app.metadataCache.getFileCache(file);
+        // get collections currently linked by object
+        const currentColl = (meta?.frontmatter?.[this.settings.collectionAttributeKey] as string[]) || [];
+        // map to wiki links
+        let collectionLinks = collections.map((col) => ({
+            col,
+            link: this.vaultDB.generateWikiLink(col.file, "/"),
+        }));
+        // remove already linked collections
+        collectionLinks = collectionLinks.filter(
+            (cl) => !currentColl.includes(cl.link)
+        );
+        return { collectionLinks, currentColl };
     }
 
     private onEditorMenu(
