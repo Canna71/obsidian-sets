@@ -12,11 +12,6 @@ import { getSetsSettings } from "src/main";
 import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
 import CodeBlock from "./CodeBlock";
 
-// export interface FieldDefinition {
-//     key: string;
-    
-// }
-
 
 
 const stateMap = new Map<string, any>();
@@ -71,7 +66,6 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     onMount(() => {
         setTimeout(() => {
-            console.info(`mounting ${ctx.docId} ${ctx.sourcePath}`)
             db.on("metadata-changed", onDataChanged);
         },110);
     })

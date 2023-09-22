@@ -51,32 +51,8 @@ export default class SetsPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
-        // this.registerView(SETS_VIEW, (leaf) => new SetsView(leaf, this));
-
-        // addIcon("sigma", sigma);
+        
         addIcon("board", board);
-
-
-        // const ribbonIconEl = this.addRibbonIcon(
-        //     "database",
-        //     "Open Sets",
-        //     (evt: MouseEvent) => {
-        //         this.activateView();
-        //     }
-        // );
-
-        // Perform additional things with the ribbon
-        // ribbonIconEl.addClass("Sets-ribbon-class");
-        // }
-
-        // this.addCommand({
-        //     id: "show-Sets-view",
-        //     name: "Show Sets Sidebar",
-        //     callback: () => this.activateView(),
-        // });
-
-
-
 
         this.app.workspace.onLayoutReady(() => {
             if (this.settings.showAtStartup) {
@@ -86,7 +62,6 @@ export default class SetsPlugin extends Plugin {
 
         this.registerCodeBlock();
         this.registerPostProcessor();
-        // this.registerEditorExtensions();
 
         this.app.workspace.on(
             "active-leaf-change",
@@ -106,22 +81,14 @@ export default class SetsPlugin extends Plugin {
 
         this._vaultDB = new VaultDB(this);
         this.onVaultDBInitialized();
-        // this.onVaultDBInitialized = this.onVaultDBInitialized.bind(this);
-
-        // this._vaultDB.on("initialized", this.onVaultDBInitialized);
-
 
         this.onFileMenu = this.onFileMenu.bind(this);
 
         this.app.workspace.on("file-menu", this.onFileMenu);
         this.app.workspace.on("editor-menu", this.onEditorMenu);
 
-        // this.patchView(tmp);
     }
 
-    // get vaultDB: VaultDB {
-    //     return this._vaultDB;
-    // }
 
     private patchView() {
         const tmp = MarkdownView.prototype.getDisplayText;
@@ -207,12 +174,6 @@ export default class SetsPlugin extends Plugin {
 
     public registerNewInstancesCommands() {
 
-        // removes all comands for new instances
-        // this._instanceCommands.forEach((cmd) => {
-        //     this.app.commands.removeCommand(cmd.id);
-        // });
-        // this._instanceCommands = [];
-        // this.app.commands.removeCommand((cmd) => cmd.id.startsWith("sets-new-instance-"));
 
         const actualTypes = this._vaultDB.getTypeNames();
 
@@ -319,13 +280,9 @@ export default class SetsPlugin extends Plugin {
     }
 
     async registerPostProcessor() {
-        // await loadMathJax();
-        // await finishRenderMath();
-        // this.registerMarkdownPostProcessor(getPostPrcessor(this.settings));
     }
 
     async registerEditorExtensions() {
-        // this.registerEditorExtension([resultField, SetsConfigField]);
     }
 
     private onFileMenu(
