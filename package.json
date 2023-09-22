@@ -1,7 +1,7 @@
 {
   "name": "obsidian-sets",
-  "version": "0.0.9",
-  "description": "A plugin for Obsidian.md that allows you to create and manage sets of notes like Notion or Anytype DBs",
+  "version": "1.0.0",
+  "description": "A plugin for Obsidian.md that allows you to create, edit and search sets of notes like Notion or AnyType DBs",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
