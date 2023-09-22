@@ -45,7 +45,7 @@ A type is a set of items that share the same properties. In other words, a type 
 You create a type by using the command `Sets: Create a new type`. 
 It will ask you a name:
 
-![Alt text](image-2.png)
+<img src="image-2.png" width="500" >
 
 After you click save, it will create the following:
 - a note with the name you provided plus a suffix (By default `Type`). This will be the archetype for items of this type. Think of it as a template.
@@ -60,7 +60,7 @@ If you go to the Set folder that was created, you will see a note with the same 
 
 In order to display items of this type in a different note, you can create a view, by adding a code block as descibed above, and then specifying the scope as `Type` and the type as the one you just created.
 
-![Alt text](image.png)
+<img src="image.png" alt="Enter Type Name" width="500" />
 
 More on queries and views later.
 
@@ -71,7 +71,7 @@ A collection is a set of items that are explicitely added to it. In other words,
 You create a collection by using the command `Sets: Create a new collection`.
 It will ask you a name:
 
-![Alt text](image-1.png)
+<img src="image-1.png" alt="Collection Name" width="500" >
 
 After you click save, it will create the following:
 - a note with the name you provided. 
@@ -138,8 +138,12 @@ Dynamic values are:
 - `Next Month`: the beginning of next month
 - `This`: the link to the current note (the one hosting the set block itself)
 
-![Alt text](image-3.png)
 
+<img src="image-3.png" width="500" />
+
+**Note**: to filter for an item whose `date` is last week, you need to apply both the following filters clauses:
+- `date` `Greater Than or Equal` `Last Week`
+- `date` `Less Than` `This Week`
 
 
 # Views
@@ -154,7 +158,7 @@ Some views might have additional settings.
 
 ## Grid
 
-![Alt text](image-4.png)
+<img src="image-4.png" width="700" />
 
 A Grid displays data in a tabular form and allows the editing of the data directly in the view. 
 Displayed attributes can be ordered also by ordering the respective columns.
@@ -166,7 +170,7 @@ If a Grid contais also the FileName property, it will allow for the editing of t
 
 ## List
 
-![Alt text](image-6.png)
+<img src="image-6.png" width="300" />
 
 A List displays data in a list form and does not allow the editing of the data directly in the view, except for properties of type `Checkbox`, `Date` and `Date & Time`.
 
@@ -216,7 +220,26 @@ Writing templates, you have acces to a context object (`it`) with the following 
 - `it.context`: the file from which the item was created
 - `it.name`: the name of the item
 
-## Where are new items created
+### Special properties
+Properties starting with double underscore (`__`) are special properties that are not copied to the new item, but are used to provide additional information to the plugin.
+At the moment the following special properties are available:
+- `__name_prefix`: the value will be added at the beginning of the name of the new item
+- `__name_suffix`: the value will be added at the end of the name of the new item
+
+As an example: this is a possible archetype for a Meeting Type:
+
+~~~yaml
+---
+type: meeting
+tags: []
+date: "{{it.date}}"
+__name_prefix: "{{it.date}}-"
+__name_suffix: -meeting
+participants:
+---
+~~~
+
+## Where are new items created?
 
 When you create a new item from a Set Block, it will be created in the same folder as the note hosting the Set Block itself.
 When you create a new item of a given type using the command palette, it will be created in the folder of the type.
