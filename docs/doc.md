@@ -17,7 +17,7 @@ This plugin leverages the newly introduced properties in Obsidian `1.4.5`
 ### Property types
 This plugin is using the same property types as Obsidian, plus might add its own, if enabled in the settings. At the moment the only additional type is `password`, which allows the storage of data that is not shown in the UI.
 
-## Code Block
+## Set Block
 
 In order to instantiate a view to query your vault, you enter a code block like the following:
 
@@ -97,7 +97,105 @@ A query is a way to select items based on their properties. After you specified 
 - in which order to display the fields
 - in which order to display the items
 
+## Filters
+
+A filter is composed of:
+- An attribute
+- An operator
+- A value
+
+### Attributes
+An attribute can either be a metadata property, or an intrinsic attribute of the file. Intrinsic properties are:
+- `FileName`: the name of the file
+- `Path`: the path of the file
+- `Creation Date`: the creation date of the file
+- `Modification Date`: the modification date of the file
+
+### Operators
+Operators depends on the type of the attribute on which you are filtering. For example, for data attributes, operators are:
+- `Equal`
+- `Not Equal`
+- `Is Not Empty`
+- `Is Empty`
+- `Greater Than`
+- `Greater Than or Equal`
+- `Less Than`
+- `Less Than or Equal`
+
+### Values
+
+A value can either be a static value that you enter in the filter itself, or a dynamic value that is evaluated when the query is run.
+
+Dynamic values are:
+- `Today`: the current date
+- `Yesterday`: yesterday's date
+- `Tomorrow`: tomorrow's date
+- `Last Week`: the beginning of last week
+- `This Week`: the beginning of this week
+- `Next Week`: the beginning of next week
+- `Last Month`: the beginning of last month
+- `This Month`: the beginning of this month
+- `Next Month`: the beginning of next month
+- `This`: the link to the current note (the one hosting the set block itself)
+
+![Alt text](image-3.png)
+
 
 
 # Views
+
+All queries are displayed in a view. A view is a way to display items. There are currently 4 types of views:
+- `Grid`: displays items as a data grid
+- `List`: displays items as a list
+- `Board`: displays items as a kanban board
+- `Gallery`: displays items as a card gallery
+    
+Some views might have additional settings.
+
+## Grid
+
+[TODO: picture]
+
+A Grid displays data in a tabular form and allows the editing of the data directly in the view. 
+Displayed attributes can be ordered also by ordering the respective columns.
+Columns can be resized by dragging the column separator.
+
+If a Grid contais also the FileName property, it will allow for the editing of the name of the file directly in the view. Otherwise will display a link to the file in order to navigate to the note corresponding to the item.
+
+
+
+## List
+
+[TODO: picture]
+
+A List displays data in a list form and does not allow the editing of the data directly in the view, except for properties of type `Checkbox`, `Date` and `Date & Time`.
+
+## Board
+
+[TODO: picture]
+
+A board displays items in *lanes* and allows to drag and drop items from one lane to another. 
+Each *lane* correspong to a value of a given property. The property can be selected in the settings of the view, using the [Select] button that appears when you select the `Board` view.
+
+The first lane is there by default, and will display items that do not have a value for the selected property.
+Other lanes must be created by clicking on the `+` button that is on the right of the rightmost lane.
+By clicking on the header you can set or change the value of the property for that lane.
+
+All fields of the item (that are selected to be displayed) will be displayed (in the order specified) and will be editable.
+
+By dragging an item from one lane to another, the value of the grouping property will be changed accordingly.
+
+
+
+# Creating new items
+
+## From a type / templating
+
+When you create a new item from a type, the note will be created from the archetype of the type. This means that the note will be created from the template that you defined for the type. The archetype will be treated as a template, and the templating engine used is [Squirrelly](https://squirrelly.js.org/).
+
+[TODO: provide context variablers]
+
+## Where are new items created
+
+## Default property values for new items
 
