@@ -84,23 +84,9 @@ export class VaultDB {
     }
 
     private onMetadataChanged() {
-        // this.hashes.clear();
-        //@ts-ignore
-        // for (const entry in this.app.metadataCache.fileCache) {
-        //     //@ts-ignore
-        //     const file = this.app.metadataCache.fileCache[entry];
-        //     const hash = file.hash;
-        //     const list = this.hashes.get(hash) || [];
-        //     list.push(entry);
-
-        //     this.hashes.set(hash, list);
-        // }
-        console.log("metadata changed, clearing cache");
+        
         this.accessors.clear();
-        // if(!this.dbInitialized) {
-        //     this.dbInitialized = true;
-        //     this.observer.notify("initialized");
-        // }
+        
         this.dbInitialized = true;
         this._collectionCache = undefined;
         this._typesCache = undefined;
@@ -108,7 +94,6 @@ export class VaultDB {
     }
 
     dispose() {
-        console.log("disposing vaultdb");
         this.app.metadataCache.off("resolved", this.onMetadataChanged);
         this.app.vault.off("delete", this.onMetadataChanged);
         this.app.vault.off("rename", this.onMetadataChanged);

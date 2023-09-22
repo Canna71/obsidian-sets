@@ -8,7 +8,6 @@ export type ToggleProps = {
 export const Toggle: Component<ToggleProps> = (props) => {
     let el: HTMLDivElement;
     const onClick = (e) => {
-        console.log("toggle", props.value());
         props.onChange(!props.value());
     };
 

@@ -47,12 +47,10 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const [data, setData] = createStore(initialdata);
 
     // const [viewMode, setViewMode] = createSignal<ViewMode>("grid" as ViewMode);
-    console.log("rendering code block", ctx.docId, ctx.sourcePath);
     // we measur when the component was last rendered
     const lastRendered = Date.now();
 
     const refresh = () => {
-        console.log(`refreshing ${ctx.docId} ${ctx.sourcePath}`);
         const newData = db.execute(query);
         setData(newData);
     }
@@ -60,14 +58,12 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     const onDataChanged =() => {
         // cech id this codeblock is still mounted
         if (!el.isConnected) {
-            console.log(`codeblock ${ctx.docId} ${ctx.sourcePath} is not connected skipping update`);
             // db.off("metadata-changed", onDataChanged);
             return;
         }
 
         // we refresh the data only if component was last rendered more than 100ms ago
         if (Date.now() - lastRendered < 100) return;
-        console.log(`data changed ${ctx.docId} ${ctx.sourcePath}`, JSON.stringify(query.clauses));
         refresh();
     };
 
@@ -84,7 +80,6 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 
     onCleanup(() => {
         db.off("metadata-changed", onDataChanged);
-        console.log(`cleaning up ${ctx.docId} ${ctx.sourcePath}`);
     })
 
    // Infer fields

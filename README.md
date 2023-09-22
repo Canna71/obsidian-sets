@@ -38,3 +38,12 @@ Please see full documentation [here](docs/doc.md)
 
 If you have any issues or suggestions please report them [here](https://github.com/Canna71/obsidian-sets/issues)
 
+## Roadmap
+
+- Calculated Fields
+- Aggregations
+- Other Layouts
+- Search for text in items
+- Integration with other plugins (Templater, etc)
+- More properties types (Enums, etc)
+- Joins
