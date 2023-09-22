@@ -79,50 +79,25 @@ After you click save, it will create the following:
 - This note will contain a view that will display all items of this collection.
 
 You will then need to add items to the collection. 
-To do so, you can right click on the explorer or in the file menu and select `Add to collection` or use the command `Sets: Add to collection` [TODO]
+To do so, you can right click on the explorer or in the file menu and select `Add to collection` or use the command `Sets: Add to collection`.
 
 In order to display items of this collection in a different note, you can create a view, by adding a code block as descibed above, and then specifying the scope as `Collection` and the collection as the one you just created.
 
-## Structured data
+## Folder
+Queries can be scoped to a Folder. This means that only items in that folder will be considered. Further filters can be applied to the query, to further restrict the items that are considered.
 
-Sets uses metadata properties to store data. 
+## Vault
+A query with the scope set to Vault will consider all items in the vault. Further filters can be applied to the query, to further restrict the items that are considered.
 
-## Set
-A set is caracterized by objects of the same `type`
+# Queries
 
-## Collection
-A collection is cracterized by objects explicitely added to it.
+A query is a way to select items based on their properties. After you specified the scope, you could further customize the query by specifying:
+- further filters to apply using various operators
+- which fields to display (for types, the default will be the fields in the Archetype)
+- in which order to display the fields
+- in which order to display the items
+
+
 
 # Views
 
-In order to access and manage items a view can be added to any page.
-
-A view consists of the following:
-
-## Scope
-
-`type`: items are restricted to a given typw.
-`collection`: items are restricted to a given collection.
-`folder`: items are restricted to a given folder.
-`value`: items can be anywhere
-
-## Filter
-
-A filter can be applied to the view. Filter are boolean expression that can be combined using logical operators.
-
-## Sort
-
-Sort is used to order items in the view. It is a list of properties and directions.
-
-## Fields
-
-Fields are used to select which properties are shown in the view. It is a list of properties.
-
-# Creating a new Type
-
-From the side bar, from a command, or from a view.
-The new type consists of a note, that will act as the "template" for items of the same type.
-
-# Adding an item to a collection
-
-Right clicking on the explorer or in the menu.

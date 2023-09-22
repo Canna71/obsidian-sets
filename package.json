@@ -1,6 +1,6 @@
 {
   "name": "obsidian-sets",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A plugin for Obsidian.md that allows you to create and manage sets of notes like Notion or Anytype DBs",
   "main": "main.js",
   "scripts": {
