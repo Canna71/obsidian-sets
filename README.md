@@ -30,7 +30,7 @@ Please see full documentation [here](docs/doc.md)
 ### Manual installation
 
 - Download the latest release from the [releases page](https://github.com/Canna71/obsidian-sets/issues)
-- Extract the plugin folder from the zip to your vault's plugins folder: `<vault>/.obsidian/plugins/obisidian-sets/`
+- Extract the plugin folder from the zip to your vault's plugins folder: `<vault>/.obsidian/plugins/obsidian-sets/`
 - Reload Obsidian
 
 
