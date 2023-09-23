@@ -15,17 +15,16 @@ By default, the following folders structure is used:
 
 ```
 /Sets                   # "Sets Folder" can be configured
-  |- Types
-  |    |- Name1Type.md  
+  |- Types              # "Types Folder" can be configured
+  |    |- Name1Type.md  # "Type Suffix" can be configured
   |    └─ Name1Type.md
-  |- Sets
-  |    |- Name1Set      # "Type Set Suffix" can be configured
-  |    |    |─ item1.md
-  |    |    └─ item2.md
-  |    └─ Name2Set
-  |         |─ item3.md
-  |         └─ item4.md
-  |- Collections
+  |- Name1Set           # "Type Set Suffix" can be configured
+  |    |─ item1.md
+  |    └─ item2.md
+  |─ Name2Set
+  |    |─ item3.md
+  |    └─ item4.md
+  |- Collections        # "Collections Folder" can be configured
   |    |- Collection1
   |    |    └─ Collection1.md  
   |    └─ Collection2  

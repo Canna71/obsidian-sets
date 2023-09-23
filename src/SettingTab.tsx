@@ -55,6 +55,42 @@ export class SetsSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }
             ));
+
+            // setting for typesFolder
+            new Setting(containerEl)
+            .setName("Types Folder")
+            .setDesc("The subfolder where Sets will store its types.")
+            .addText(text => text
+                .setValue(this.plugin.settings.typesFolder)
+                .onChange(async (value) => {
+                    this.plugin.settings.typesFolder = value;
+                    await this.plugin.saveSettings();
+                }
+            ));
+
+            // setting for typesSuffix
+            new Setting(containerEl)
+            .setName("Types Suffix")
+            .setDesc("The suffix that will be added to the name of the type.")
+            .addText(text => text
+                .setValue(this.plugin.settings.typesSuffix)
+                .onChange(async (value) => {
+                    this.plugin.settings.typesSuffix = value;
+                    await this.plugin.saveSettings();
+                }
+            ));
+
+            // setting for collectionsRoot
+            new Setting(containerEl)
+            .setName("Collections Folder")
+            .setDesc("The subfolder where Sets will store its collections.")
+            .addText(text => text
+                .setValue(this.plugin.settings.collectionsRoot)
+                .onChange(async (value) => {
+                    this.plugin.settings.collectionsRoot = value;
+                    await this.plugin.saveSettings();
+                }
+            ));
 		
             // add a settings for typeAttributeKey
             new Setting(containerEl)
@@ -68,6 +104,8 @@ export class SetsSettingsTab extends PluginSettingTab {
                 }   
             ));
 
+
+
             // add a settings for collectionAttributeKey
             new Setting(containerEl)
             .setName("Collection Attribute Key")
@@ -79,6 +117,8 @@ export class SetsSettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }
             ));
+
+
 
             // add a setting for topResults
             new Setting(containerEl)
