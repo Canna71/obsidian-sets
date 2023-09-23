@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-sets",
+  "name": "sets",
   "version": "1.0.1",
   "description": "A plugin for Obsidian.md that allows you to create, edit and search sets of notes like Notion or AnyType DBs",
   "main": "main.js",
