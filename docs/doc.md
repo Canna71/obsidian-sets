@@ -8,6 +8,39 @@ In short, this plugin consists of:
 - visualizations of items using different layouts
 - some "pre configured" usage like Sets and Collections
 
+## Settings
+
+This plugins saves some notes in the vault in special places that can be configured in the settings.
+By default, the following folders structure is used:
+
+```
+/Sets                   # "Sets Folder" can be configured
+  |- Types
+  |    |- Name1Type.md  
+  |    └─ Name1Type.md
+  |- Sets
+  |    |- Name1Set      # "Type Set Suffix" can be configured
+  |    |    |─ item1.md
+  |    |    └─ item2.md
+  |    └─ Name2Set
+  |         |─ item3.md
+  |         └─ item4.md
+  |- Collections
+  |    |- Collection1
+  |    |    └─ Collection1.md  
+  |    └─ Collection2  
+  |         └─ Collection2.md
+```
+
+Also by default, the following property names are used, but can be changed in the settings:
+- `type`: the type of the item
+- `collection`: the collections to which the item belongs
+
+### Top Results
+
+By default the plugin will display the first 200 results of a query. This can be changed in the settings.
+
+
 ## Properties
 Like other systems out there, we use notes as they were "objects" and use metadata properties to store attributes of those objects.
 This plugin leverages the newly introduced properties in Obsidian `1.4.5`

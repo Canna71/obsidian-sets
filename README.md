@@ -40,6 +40,7 @@ If you have any issues or suggestions please report them [here](https://github.c
 
 ## Roadmap
 
+- Sidebar
 - Calculated Fields
 - Aggregations
 - Other Layouts
