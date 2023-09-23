@@ -614,6 +614,10 @@ export class VaultDB {
         return `${this.plugin.settings.setsRoot}/${this.getTypeDisplayName(type)}${this.plugin.settings.typeSetSuffix}`;
     }
 
+    public getSetFileName(type: string) {
+        return `${this.plugin.settings.setsRoot}/${this.getTypeDisplayName(type)}${this.plugin.settings.typeSetSuffix}/${this.getTypeDisplayName(type)}${this.plugin.settings.typeSetSuffix}.md`;
+    }
+
     private async getSetFolder(type: string) {
         // const setsRoot = this.plugin.settings.setsRoot;
         // const typeDisplayName = this.getTypeDisplayName(type);
