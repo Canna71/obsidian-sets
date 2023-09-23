@@ -681,3 +681,22 @@
     display: none;
     height: 21px;
 }
+
+.sets-sidebar {
+    .sets-sidebar-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: var(--size-4-2);
+        // padding: var(--size-4-1);
+
+        button {
+            padding: var(--size-4-1) ;
+            height: var(--line-height);;
+            color: var(--text-muted);
+
+            div {
+                display: flex;
+            }
+        }
+    }
+}

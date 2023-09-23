@@ -137,6 +137,12 @@ export class SetsSettingsTab extends PluginSettingTab {
                 "Register custom properties", 
                 "Register custom metadata property types.", 
                 "registerCustomTypes");
+
+            // add toggle for showAtStartup
+            this.createToggle(containerEl, 
+                "Show sidebar at startup", 
+                "Show the Sets sidebar at startup.", 
+                "showAtStartup");
        
 	}
 

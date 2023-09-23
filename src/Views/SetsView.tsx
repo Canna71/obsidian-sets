@@ -4,7 +4,8 @@ import { render } from "solid-js/web";
 
 import { SetsSettings } from "src/Settings";
 import SetsPlugin, { getSetsSettings } from "src/main";
-import { MyComponent } from "./components/MyComponent";
+import Sidebar from "./components/Sidebar";
+import { AppProvider } from "./components/AppProvider";
 export const SETS_VIEW = "Sets-view";
 
 export class SetsView extends ItemView {
@@ -25,7 +26,7 @@ export class SetsView extends ItemView {
         this.state = {
 
         };
-        this.icon = "sigma";
+        this.icon = "database";
     }
 
     getViewType() {
@@ -51,7 +52,11 @@ export class SetsView extends ItemView {
     render() {
         const { contentEl } = this;
         contentEl.empty();
-        render(() => <MyComponent name="Solid!" />, contentEl)
+        render(() => <AppProvider 
+            app={{app: this.plugin.app, db: this.plugin.vaultDB}}
+        ><Sidebar plugin={this.plugin}  /></AppProvider>, contentEl)
+        
+        
     }
 
 

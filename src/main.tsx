@@ -54,6 +54,11 @@ export default class SetsPlugin extends Plugin {
         
         addIcon("board", board);
 
+        this.registerView(
+            SETS_VIEW,
+            (leaf) => new SetsView(leaf, this)
+        );
+
         this.app.workspace.onLayoutReady(() => {
             if (this.settings.showAtStartup) {
                 this.activateView();
@@ -113,6 +118,15 @@ export default class SetsPlugin extends Plugin {
     }
 
     registerCommands() {
+        // register a command to open the view
+        this.addCommand({
+            id: "sets-open-sidebar",
+            name: "Open Sets Sidebar",
+            callback: () => {
+                this.activateView();
+            },
+        });
+
         this.addCommand({
             id: "sets-new-type",
             name: "Create New Type",
