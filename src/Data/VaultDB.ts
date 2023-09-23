@@ -58,6 +58,7 @@ function escapeURI(e: string) {
 export class VaultDB {
 
 
+
     private dbInitialized = false;
     // private hashes: Map<string, string[]> = new Map();
     private plugin: SetsPlugin;
@@ -531,6 +532,10 @@ export class VaultDB {
                 return f.file.basename;
             })
             .filter((t) => t !== undefined) as string[];
+    }
+
+    getCollectionFileName(coll: string) {
+        return `${this.plugin.settings.setsRoot}/${this.plugin.settings.collectionsRoot}/${coll}/${coll}.md`;
     }
 
     getAttributeDefinition(key: string): AttributeDefinition {

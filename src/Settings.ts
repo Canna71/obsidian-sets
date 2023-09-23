@@ -16,6 +16,10 @@ export interface SetsSettings {
     createObjectsInSetsFolder: boolean;
     topResults: number;
     registerCustomTypes: boolean;
+    sidebarState: {
+        typesCollapsed: boolean;
+        collectionsCollapsed: boolean;
+    }
 } 
 
 export const DEFAULT_SETTINGS: SetsSettings = {
@@ -34,7 +38,11 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     inferQueryFieldsByDefault: false,
     createObjectsInSetsFolder: false,
     topResults: 200, 
-    registerCustomTypes: true
+    registerCustomTypes: true,
+    sidebarState: {
+        typesCollapsed: false,
+        collectionsCollapsed: false,
+    }
 }
 
 export const CODEBLOCK_NAME = "set";
