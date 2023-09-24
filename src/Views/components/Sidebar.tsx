@@ -1,4 +1,4 @@
-import { Component, Show, createSignal, onMount } from "solid-js";
+import { Component, For, Show, createSignal, onMount } from "solid-js";
 import { useApp } from "./AppProvider";
 import { Counter } from "./Counter";
 import { Menu, TFile, setIcon } from "obsidian";
@@ -7,6 +7,7 @@ import { unslugify } from "src/Utils/slugify";
 import { createSign } from "crypto";
 import Collapsible from "./Collapsible";
 import { type } from "os";
+import SidebarWidget from "./SidebarWidget";
 
 type SidebarProps = {
     plugin: SetsPlugin
@@ -29,6 +30,11 @@ const ListTypeItem: Component<{
     const onAddItemOfType = (e: MouseEvent, type: string) => {
         // execute the command to add an item
         app.commands.executeCommandById(`${props.plugin.manifest.id}:sets-new-instance-${type}`);
+    }
+
+    const widgets = () => {
+        const widgets = props.plugin.settings.sidebarState.widgets;
+        return widgets;
     }
 
     return (
@@ -59,11 +65,13 @@ const Sidebar: Component<SidebarProps> = (props) => {
     let addType: HTMLDivElement;
     let addColl: HTMLDivElement;
     let addItem: HTMLDivElement;
+    let addWidgetBtn: HTMLDivElement;
 
     onMount(() => {
         setIcon(addType, "plus");
         setIcon(addColl, "plus");
         setIcon(addItem, "plus");
+        setIcon(addWidgetBtn, "plus-square");
 
         db.on("metadata-changed", () => {
             setTypes(db.getTypeNames());
@@ -120,6 +128,24 @@ const Sidebar: Component<SidebarProps> = (props) => {
         props.plugin.saveSettings();
     }
 
+    const addWidget = () => {
+        const settings = {...props.plugin.settings,
+            sidebarState: {
+                ...props.plugin.settings.sidebarState,
+                widgets: [
+                    ...props.plugin.settings.sidebarState.widgets || [],
+                    {
+                        title: "New Widget",
+                        definition: {
+                        }
+                    }
+                ]
+            }
+        };
+        props.plugin.settings = settings;
+        props.plugin.saveSettings();
+    }
+
     return (
         <div class="sets-sidebar">
             <div class="sets-sidebar-buttons">
@@ -129,17 +155,17 @@ const Sidebar: Component<SidebarProps> = (props) => {
             </div>
             <Show when={types().length > 0}>
 
-                <Collapsible 
-                    title="Sets" 
+                <Collapsible
+                    title="Sets"
                     isCollapsed={props.plugin.settings.sidebarState.typesCollapsed}
-                    onToggle={(status) => onCollapsibleToggle("typesCollapsed",status)}>
+                    onToggle={(status) => onCollapsibleToggle("typesCollapsed", status)}>
                     <ul class="sets-sidebar-links">
                         {types().map(type => (
                             <ListTypeItem
                                 link={getTypeSetPage(type)}
                                 type={type}
                                 plugin={props.plugin}
-                                onNavigate={onNavigate} 
+                                onNavigate={onNavigate}
                             />
                         ))}
                     </ul>
@@ -149,10 +175,10 @@ const Sidebar: Component<SidebarProps> = (props) => {
             </Show>
 
             <Show when={collections().length > 0}>
-                <Collapsible 
-                    title="Collections" 
+                <Collapsible
+                    title="Collections"
                     isCollapsed={props.plugin.settings.sidebarState.collectionsCollapsed}
-                    onToggle={(status) => onCollapsibleToggle("collectionsCollapsed",status)}>
+                    onToggle={(status) => onCollapsibleToggle("collectionsCollapsed", status)}>
                     <ul class="sets-sidebar-links">
                         {collections().map(coll => (
                             <li><a
@@ -166,6 +192,20 @@ const Sidebar: Component<SidebarProps> = (props) => {
                         ))}
                     </ul>
                 </Collapsible>
+                <div class="sets-sidebar-widgets">
+                    <For each={props.plugin.settings.sidebarState.widgets}>
+                        {(widget, index) => (
+                            <SidebarWidget
+                                widget={widget}
+                                index={index()}
+                                plugin={props.plugin}
+                            />
+                        )}
+                    </For>
+                    <div ref={addWidgetBtn!}
+                        onClick={addWidget}
+                        class="sets-sidebar-add-widget clickable-icon"></div>
+                </div>
             </Show>
         </div>
     );

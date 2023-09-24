@@ -1,3 +1,9 @@
+import { SetDefinition } from "./Views/components/SetDefinition";
+
+export interface WidgetDefinition {
+    title: string;
+    definition: SetDefinition;
+}
 
 export interface SetsSettings {
     addRibbonIcon: boolean;
@@ -19,6 +25,7 @@ export interface SetsSettings {
     sidebarState: {
         typesCollapsed: boolean;
         collectionsCollapsed: boolean;
+        widgets: WidgetDefinition[]
     }
 } 
 
@@ -42,6 +49,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     sidebarState: {
         typesCollapsed: false,
         collectionsCollapsed: false,
+        widgets: []
     }
 }
 

@@ -33,10 +33,6 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     // let query;
     const query = db.fromClauses(scope, clauses, sortby, context);
     
-    
-
-
-    // limit to topResults
     const initialdata = db.execute(query);
 
     const [data, setData] = createStore(initialdata);

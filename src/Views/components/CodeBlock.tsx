@@ -39,9 +39,9 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
         //     }
 
         // }
-        const limitedResults = limitResults(props.queryResult, getSetsSettings().topResults, getNewFile() );
+        const topResults = definition().topResults || getSetsSettings().topResults || 100;
+        const limitedResults = limitResults(props.queryResult, topResults, getNewFile() );
         return limitedResults;
-
     }
 
     const data = () => limitedResults().data;
