@@ -85,9 +85,9 @@ const Sidebar: Component<SidebarProps> = (props) => {
     let addWidgetBtn: HTMLDivElement;
 
     onMount(() => {
-        setIcon(addType, "plus");
-        setIcon(addColl, "plus");
-        setIcon(addItem, "plus");
+        setIcon(addType, "file-type");
+        setIcon(addColl, "collection");
+        setIcon(addItem, "plus-square");
         // setIcon(addWidgetBtn, "plus-square");
 
         db.on("metadata-changed", () => {
@@ -112,7 +112,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
         const availableTypes = db.getTypeNames();
         availableTypes.forEach(type => {
             menu.addItem((item) => {
-                item.setTitle(unslugify(type));
+                item.setTitle(`Create New ${unslugify(type)}`);
                 item.onClick(() => {
                     // execute the command to add an item
                     app.commands.executeCommandById(`${props.plugin.manifest.id}:sets-new-instance-${type}`);
@@ -197,9 +197,10 @@ const Sidebar: Component<SidebarProps> = (props) => {
     return (
         <div class="sets-sidebar">
             <div class="sets-sidebar-buttons">
-                <button title="Add new type" onClick={onAddType}><div ref={addType!}></div>Type</button>
-                <button title="Add new collection" onClick={onAddCollection} ><div ref={addColl!}></div>Collection</button>
-                <button title="Add new item" onClick={onAddItem}><div ref={addItem!}></div>Item...</button>
+                <div  onClick={onAddType} ref={addType!} class="clickable-icon" title="Add new type"></div>
+                {/* <button title="Add new type" onClick={onAddType}><div ref={addType!}></div>Type</button> */}
+                <div title="Add new collection" class="clickable-icon"  onClick={onAddCollection}  ref={addColl!}></div>
+                <div title="Add new item" class="clickable-icon" onClick={onAddItem} ref={addItem!}></div>
             </div>
             <div class="sets-sidebar-wrapper">
                 <div class="sets-sidebar-scroller">

@@ -688,6 +688,10 @@
     padding-bottom: var(--size-4-2);
     gap: var(--size-4-2);
 
+    a {
+        color: var(--text-normal);
+    }
+
     .sets-sidebar-buttons {
         display: flex;
         flex-direction: row;
@@ -819,8 +823,8 @@
                     .sets-sidebar-widget-content {
                         width: 100%;
                         overflow-x: auto;
-                        padding: var(--size-4-1);
-                    }
+                        padding: var(--size-4-2);
+                    } 
                 }
             }
         }

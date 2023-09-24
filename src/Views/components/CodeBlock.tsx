@@ -73,12 +73,6 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
             </Show>
             <Show when={data().length}>
                 <div class="sets-codeblock-more">
-                    {/* <button class="sets-codeblock-more-button" onClick={() => {
-                        props.queryResult.more();
-                    }
-                    }> More
-                    </button>
-                    */}
                     Showing {data().length} items of {limitedResults().total}
                 </div>
             </Show>

@@ -13,7 +13,7 @@ export const EditProBase: Component<EditPropBaseProps> = (props) => {
     const widget = props.attribute.getPropertyWidget?.();
 
     // const value = getAttribute(props.data, props.attribute);
-    let value = props.data && props.attribute.getValue(props.data) || props.value;
+    let value = (props.data && props.attribute.getValue(props.data)) ?? props.value;
     if (Array.isArray(value)) value = value.slice();
     if (!props.attribute.getPropertyInfo) return <div>Uh oh...</div>
     const { key, type } = props.attribute.getPropertyInfo();
@@ -35,7 +35,7 @@ export const EditProBase: Component<EditPropBaseProps> = (props) => {
 
     onMount(() => {
         widget && widget.render(div!, {
-            key, type, value: value || null
+            key, type, value: value ?? null
         },
             {
                 app: app,
