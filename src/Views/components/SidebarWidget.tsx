@@ -19,9 +19,11 @@ import { NameInputModal } from "../NameInputModal";
 export interface SidebarWidgetProps {
     widget: WidgetDefinition
     plugin: SetsPlugin
-    index: number
+    index: number,
+    total: number,
     onNavigate: (e: MouseEvent) => void
     onDelete: () => void
+    move: (delta: number) => void;
 }
 
 // generic function to update the widget definition 
@@ -49,8 +51,11 @@ type WidgetMenuProps = {
     widget: Accessor<WidgetDefinition>,
     db: VaultDB,
     app: App,
+    index: number, 
+    total: number,
     update: (def: WidgetDefinition) => void,
     delete: () => void
+    move: (delta: number) => void
 }
 
 const WidgetMenu: Component<WidgetMenuProps> = (props) => {
@@ -86,7 +91,10 @@ const WidgetMenu: Component<WidgetMenuProps> = (props) => {
                 }, undefined, false)
                     .open();
             }
+            item.setIcon("pencil");
         });
+
+        menu.addSeparator();
 
 
         menu.addItem((item) => {
@@ -128,12 +136,35 @@ const WidgetMenu: Component<WidgetMenuProps> = (props) => {
             }
         });
 
+        menu.addSeparator();
+        
         // add menu for deleting the widget
         menu.addItem((item) => {
             const del = "Delete";
             item.setTitle(del);
             item.callback = props.delete
+            item.setIcon("trash");
         });
+
+        if(props.index >= props.total - 2) {
+            menu.addItem((item) => {
+                item.setTitle("Move up");
+                item.setIcon("arrow-up");
+                item.callback = () => {
+                    props.move(-1);
+                }
+            })
+        }
+
+        if(props.index < props.total - 1) {
+            menu.addItem((item) => {
+                item.setTitle("Move down");
+                item.setIcon("arrow-down");
+                item.callback = () => {
+                    props.move(1);
+                }
+            })
+        }
 
         menu.showAtMouseEvent(e);
     }
@@ -203,6 +234,11 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         });        
     }
 
+    const computePosition = (index: number) => {
+        const num = props.plugin.settings.sidebarState.widgets.length;
+        
+    }
+
     return (
         <div class="sets-sidebar-widget">
             <Collapsible
@@ -211,8 +247,11 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
                         widget={widget}
                         db={db}
                         app={app}
+                        index={props.index}
+                        total={props.total}
                         update={update}
                         delete={props.onDelete}
+                        move={props.move}
                     />
                 </div>}
                 isCollapsed={props.plugin.settings.sidebarState.widgets[props.index].collapsed}

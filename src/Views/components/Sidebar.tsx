@@ -177,6 +177,22 @@ const Sidebar: Component<SidebarProps> = (props) => {
         setWidgets(props.plugin.settings.sidebarState.widgets);
     }
 
+    const onMove = (index: number, delta: number) => {
+        const newIndex = index + delta;
+        if (newIndex < 0 || newIndex >= widgets().length) return;
+        const newwidgets = props.plugin.settings.sidebarState.widgets.slice();
+        const widget = newwidgets[index];
+        newwidgets.splice(index, 1);
+        newwidgets.splice(newIndex, 0, widget);
+        updateSidebarState(props.plugin, (sidebarState) => {
+            return {
+                ...sidebarState,
+                widgets: newwidgets
+            }
+        }); 
+
+        setWidgets(newwidgets);
+    }
 
     return (
         <div class="sets-sidebar">
@@ -235,9 +251,11 @@ const Sidebar: Component<SidebarProps> = (props) => {
                                 <SidebarWidget
                                     widget={widget}
                                     index={index()}
+                                    total={widgets().length}
                                     onNavigate={onNavigate}
                                     plugin={props.plugin}
                                     onDelete={() => {deleteWidget(index())}}
+                                    move={(delta: number) => {onMove(index(),delta) }}
                                 />
                             )}
                         </For>
