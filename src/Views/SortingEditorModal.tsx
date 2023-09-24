@@ -17,7 +17,7 @@ export default class SortingEditorModal extends Modal {
         this.definition = definition;
         this._db = db;
         this._update = update;
-    }
+    }   
 
     onOpen() {
         const { contentEl } = this;

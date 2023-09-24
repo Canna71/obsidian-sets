@@ -93,7 +93,7 @@ const SortingEditor: Component<SortingEditorProps> = (props) => {
     const available = () => {
         const pd = getPropertyData(app);
         return pd
-            .filter(pd => (definition().fields || []).includes(pd.key)) // selected in this view
+            // .filter(pd => definition().fields?.length ? definition().fields!.includes(pd.key) : true) // selected in this view
             .filter(pd => !sortFields().map(([field]) => field).includes(pd.key)) // not already in sorting fields
             .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase())); // that matches query
     };
@@ -153,7 +153,7 @@ const SortingEditor: Component<SortingEditorProps> = (props) => {
                 onInput={(e) => {
                     setKeyword(e.target.value)
                 }}></input>
-            <div class="sets-fields-label">Visible:</div>
+            <div class="sets-fields-label">Available:</div>
             <div class="sets-fields-list selected-props">
                 <For each={available()}>{(pd) => <Property {...pd} icon="arrow-up-down" onItemClick={addToSort} />}</For>
             </div>

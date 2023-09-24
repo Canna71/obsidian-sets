@@ -538,6 +538,7 @@ export class VaultDB {
         return `${this.plugin.settings.setsRoot}/${this.plugin.settings.collectionsRoot}/${coll}/${coll}.md`;
     }
 
+
     getAttributeDefinition(key: string): AttributeDefinition {
         if (this.accessors.has(key)) {
             return this.accessors.get(key)!;

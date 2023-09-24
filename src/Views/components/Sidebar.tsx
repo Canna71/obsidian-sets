@@ -198,6 +198,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
                             <SidebarWidget
                                 widget={widget}
                                 index={index()}
+                                onNavigate={onNavigate}
                                 plugin={props.plugin}
                             />
                         )}

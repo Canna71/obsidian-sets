@@ -1,4 +1,4 @@
-import { Menu, setIcon } from "obsidian";
+import { Menu, TFile, setIcon } from "obsidian";
 import { Component, For, Show, createSignal, onMount } from "solid-js";
 import { WidgetDefinition } from "src/Settings";
 import SetsPlugin from "src/main";
@@ -7,11 +7,13 @@ import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinitio
 import { limitResults } from "src/Data/VaultDB";
 import { IntrinsicAttributeDefinition } from "src/Data/IntrinsicAttributeDefinition";
 import { FilterEditorModal } from "../FilterEditorModal";
+import SortingEditorModal from "../SortingEditorModal";
 
 export interface SidebarWidgetProps {
     widget: WidgetDefinition
     plugin: SetsPlugin
     index: number
+    onNavigate: (e: MouseEvent) => void
 }
 
 const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
@@ -79,6 +81,15 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
             }
         });
 
+        // ad menu for setting a sort order
+        menu.addItem((item) => {
+            const sort = "Sort";
+            item.setTitle(sort);
+            item.callback = () => {
+                const sortModal = new SortingEditorModal(app, db, widget().definition, update);
+                sortModal.open();
+            }
+        });
 
         menu.showAtMouseEvent(e);
     }
@@ -88,6 +99,10 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     }
 
     const fileNameAttribute = db.getAttributeDefinition(IntrinsicAttributeKey.FileName);
+
+    const linkText = (file: TFile) => {
+        return app.metadataCache.fileToLinktext(file, "/")
+    }
 
     return (
         <div class="sets-sidebar-widget">
@@ -99,9 +114,16 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
                 <div>
                     <For each={data().data}>
                         {(item) => {
-                            return <div>{
-                                fileNameAttribute.format(item)
-                                }</div>
+                            return <div>
+                                <a
+                                data-href={linkText(item.file)}
+                                href={linkText(item.file)}
+                                class="internal-link sets-filename-link"
+                                target="_blank"
+                                rel="noopener"
+                                onClick={props.onNavigate}
+                            >{fileNameAttribute.format(item)}</a>
+                                </div>
                         }}
                     </For>
                 </div>
