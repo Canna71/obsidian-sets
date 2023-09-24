@@ -122,7 +122,7 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
             <Show when={widget().definition.scope}>
                 <SetProvider setDefinition={widget().definition}
                     updateDefinition={() => {}}>
-                <div>
+                <div class="sets-sidebar-widget-content">
                     {/* <For each={data().data}>
                         {(item) => {
                             return <div>

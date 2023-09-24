@@ -115,12 +115,11 @@ const Sidebar: Component<SidebarProps> = (props) => {
     }
 
     const onNavigate = (e: MouseEvent) => {
-        e.preventDefault();
-        const link = e.currentTarget as HTMLAnchorElement;
+        const link = e.target as HTMLAnchorElement;
         const href = link.getAttribute("data-href");
-        if (href) {
-            app.workspace.openLinkText(href, "", false);
-        }
+        if(!href) return;
+        e.preventDefault();
+        app.workspace.openLinkText(href, "", false);
     }
 
     const onCollapsibleToggle = (key: string, status: boolean) => {
@@ -192,7 +191,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
                         ))}
                     </ul>
                 </Collapsible>
-                <div class="sets-sidebar-widgets">
+                <div class="sets-sidebar-widgets" onClick={onNavigate}>
                     <For each={props.plugin.settings.sidebarState.widgets}>
                         {(widget, index) => (
                             <SidebarWidget

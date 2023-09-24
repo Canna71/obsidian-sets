@@ -193,21 +193,7 @@
         }
     }
 
-    .sets-listview {
-        .sets-listview-body {
-            .sets-listview-item {
-                display: flex;
-                gap: var(--size-4-2);
 
-                .sets-view-field,
-                .sets-view-field-prop {
-                    display: flex;
-                    white-space: nowrap;
-                    align-items: center;
-                }
-            }
-        }
-    }
 
     .sets-codeblock-more,
     .sets-codeblock-empty {
@@ -221,6 +207,22 @@
         border-radius: 4px;
         z-index: 1;
         text-align: center;
+    }
+}
+
+.sets-listview {
+    .sets-listview-body {
+        .sets-listview-item {
+            display: flex;
+            gap: var(--size-4-2);
+
+            .sets-view-field,
+            .sets-view-field-prop {
+                display: flex;
+                white-space: nowrap;
+                align-items: center;
+            }
+        }
     }
 }
 
@@ -757,6 +759,17 @@
                 padding: 0;
                 flex-grow: 0;
             }
+        }
+    }
+
+    .sets-sidebar-widgets {
+        .sets-sidebar-widget {
+
+            .sets-sidebar-widget-content {
+                width: 100%;
+                overflow-x: auto;
+            }
+
         }
     }
 }
