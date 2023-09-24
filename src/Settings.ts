@@ -6,6 +6,13 @@ export interface WidgetDefinition {
     definition: SetDefinition;
 }
 
+// this represents the sidebarState in the settings
+export interface SidebarState {
+    typesCollapsed: boolean;
+    collectionsCollapsed: boolean;
+    widgets: WidgetDefinition[];
+}
+
 export interface SetsSettings {
     addRibbonIcon: boolean;
     showAtStartup: boolean;
@@ -23,11 +30,7 @@ export interface SetsSettings {
     createObjectsInSetsFolder: boolean;
     topResults: number;
     registerCustomTypes: boolean;
-    sidebarState: {
-        typesCollapsed: boolean;
-        collectionsCollapsed: boolean;
-        widgets: WidgetDefinition[]
-    }
+    sidebarState: SidebarState
 } 
 
 export const DEFAULT_SETTINGS: SetsSettings = {

@@ -24,15 +24,36 @@ export interface SidebarWidgetProps {
     onDelete: () => void
 }
 
-const WidgetMenu: Component<
-    {
-        widget: Accessor<WidgetDefinition>,
-        db: VaultDB,
-        app: App,
-        update: (def: WidgetDefinition) => void,
-        delete: () => void
-    }
-> = (props) => {
+// generic function to update the widget definition 
+// inside the plugin settings
+// the function should receive a function that takes the current definition
+// and returns the new definition
+export function updateWidgetDefinition(plugin: SetsPlugin, index: number, update: (def: WidgetDefinition) => WidgetDefinition) {
+    const settings = {
+        ...plugin.settings,
+        sidebarState: {
+            ...plugin.settings.sidebarState,
+            widgets: plugin.settings.sidebarState.widgets.map((w, i) => {
+                if (i === index) {
+                    return update(w);
+                }
+                return w;
+            })
+        }
+    };
+    plugin.settings = settings;
+    plugin.saveSettings();
+}
+
+type WidgetMenuProps = {
+    widget: Accessor<WidgetDefinition>,
+    db: VaultDB,
+    app: App,
+    update: (def: WidgetDefinition) => void,
+    delete: () => void
+}
+
+const WidgetMenu: Component<WidgetMenuProps> = (props) => {
     let widgetMenu: HTMLDivElement;
     const { widget, db, update, app } = props;
     // const { app } = props.db;
@@ -174,23 +195,12 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     }
 
     const onWidgetToggle = (status: boolean) => {
-        const settings = {
-            ...props.plugin.settings,
-            sidebarState: {
-                ...props.plugin.settings.sidebarState,
-                widgets: props.plugin.settings.sidebarState.widgets.map((w, i) => {
-                    if (i === props.index) {
-                        return {
-                            ...w,
-                            collapsed: status
-                        }
-                    }
-                    return w;
-                })
+        updateWidgetDefinition(props.plugin, props.index, (def) => {
+            return {
+                ...def,
+                collapsed: status
             }
-        };
-        props.plugin.settings = settings;
-        props.plugin.saveSettings();
+        });        
     }
 
     return (

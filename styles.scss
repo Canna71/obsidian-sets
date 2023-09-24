@@ -789,6 +789,9 @@
             }
 
             .sets-sidebar-widgets {
+                display: flex;
+                flex-direction: column;
+                gap: var(--size-4-2);
 
                 .sets-sidebar-widget {
                     .sets-sidebar-widget-title {
@@ -824,7 +827,7 @@
     }
 
     .sets-sidebar-empty {
-        border: 1px solid var(--divider-color);
+        // border: 1px solid var(--divider-color);
         color: var(--text-muted);
         padding: 4px;
         border-radius: 4px;

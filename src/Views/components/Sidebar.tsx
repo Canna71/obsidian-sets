@@ -8,17 +8,20 @@ import { createSign } from "crypto";
 import Collapsible from "./Collapsible";
 import { type } from "os";
 import SidebarWidget from "./SidebarWidget";
+import { SidebarState } from "src/Settings";
 
 type SidebarProps = {
     plugin: SetsPlugin
 }
 
-const ListTypeItem: Component<{
-    link: string, type: string, plugin: SetsPlugin,
+type ListTypeItemProps = {
+    link: string,
+    type: string,
+    plugin: SetsPlugin,
     onNavigate: (e: MouseEvent) => void
 }
 
-> = (props) => {
+const ListTypeItem: Component<ListTypeItemProps> = (props) => {
 
     let addItemOfType: HTMLDivElement;
     onMount(() => {
@@ -53,6 +56,19 @@ const ListTypeItem: Component<{
                 onClick={(e) => onAddItemOfType(e, props.type)}></div>
         </li>
     )
+}
+
+// generic function to update the sidebarState
+// inside the plugin settings
+// the function should receive a function that takes the current sidebarState
+// and returns the new sidebarState
+export function updateSidebarState(plugin: SetsPlugin, update: (sidebarState: SidebarState) => SidebarState) {
+    const settings = {
+        ...plugin.settings,
+        sidebarState: update(plugin.settings.sidebarState)
+    };
+    plugin.settings = settings;
+    plugin.saveSettings();
 }
 
 const Sidebar: Component<SidebarProps> = (props) => {
@@ -131,12 +147,11 @@ const Sidebar: Component<SidebarProps> = (props) => {
     
 
     const addWidget = () => {
-        const settings = {
-            ...props.plugin.settings,
-            sidebarState: {
-                ...props.plugin.settings.sidebarState,
+        updateSidebarState(props.plugin, (sidebarState) => {
+            return {
+                ...sidebarState,
                 widgets: [
-                    ...props.plugin.settings.sidebarState.widgets || [],
+                    ...sidebarState.widgets || [],
                     {
                         title: "New Widget",
                         collapsed: false,
@@ -145,23 +160,21 @@ const Sidebar: Component<SidebarProps> = (props) => {
                     }
                 ]
             }
-        };
-        props.plugin.settings = settings;
-        props.plugin.saveSettings();
-        setWidgets(settings.sidebarState.widgets);
+        });
+
+        setWidgets(props.plugin.settings.sidebarState.widgets);
     }
 
     const deleteWidget = (index: number) => {
-        const settings = {
-            ...props.plugin.settings,
-            sidebarState: {
-                ...props.plugin.settings.sidebarState,
-                widgets: props.plugin.settings.sidebarState.widgets.filter((w, i) => i !== index)
+        
+        updateSidebarState(props.plugin, (sidebarState) => {
+            return {
+                ...sidebarState,
+                widgets: [...sidebarState.widgets.filter((w, i) => i !== index)]
             }
-        };
-        props.plugin.settings = settings;
-        props.plugin.saveSettings();
-        setWidgets(settings.sidebarState.widgets);
+        }); 
+
+        setWidgets(props.plugin.settings.sidebarState.widgets);
     }
 
 
