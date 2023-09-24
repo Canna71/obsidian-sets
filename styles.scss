@@ -68,7 +68,7 @@
                 /* temporarily */
 
                 padding-right: 90px;
-                margin-bottom: var(--size-4-4);
+                // margin-bottom: var(--size-4-1);
 
                 .sets-gridview-table {
                     display: grid;
@@ -205,6 +205,14 @@
         border-radius: 4px;
         z-index: 1;
         text-align: center;
+    }
+
+    .sets-codeblock-more {
+        visibility: hidden;
+    }
+
+    &:hover .sets-codeblock-more {
+        visibility: visible;
     }
 }
 
