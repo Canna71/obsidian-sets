@@ -1,10 +1,10 @@
-import { Menu, TFile, setIcon } from "obsidian";
-import { Component, For, Show, createSignal, onMount } from "solid-js";
+import { App, Menu, TFile, setIcon } from "obsidian";
+import { Accessor, Component, For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { WidgetDefinition } from "src/Settings";
 import SetsPlugin from "src/main";
 import { ScopeEditorModal } from "../ScopeEditorModal";
 import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
-import { limitResults } from "src/Data/VaultDB";
+import { VaultDB, limitResults } from "src/Data/VaultDB";
 import { IntrinsicAttributeDefinition } from "src/Data/IntrinsicAttributeDefinition";
 import { FilterEditorModal } from "../FilterEditorModal";
 import SortingEditorModal from "../SortingEditorModal";
@@ -12,6 +12,9 @@ import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { inferAttributes } from "./renderCodeBlock";
 import ListView from "../ListView";
 import { SetProvider } from "./SetProvider";
+import { FieldSelectModal } from "../FieldSelectModal";
+import Collapsible from "./Collapsible";
+import { NameInputModal } from "../NameInputModal";
 
 export interface SidebarWidgetProps {
     widget: WidgetDefinition
@@ -20,10 +23,102 @@ export interface SidebarWidgetProps {
     onNavigate: (e: MouseEvent) => void
 }
 
+const WidgetMenu: Component<
+    {
+        widget: Accessor<WidgetDefinition>,
+        db: VaultDB,
+        app: App,
+        update: (def: WidgetDefinition) => void
+    }
+> = (props) => {
+    let widgetMenu: HTMLDivElement;
+    const  {widget,db, update, app} = props;
+    // const { app } = props.db;
+
+    createEffect(() => {
+        setIcon(widgetMenu, "menu");
+    });
+
+    const updateSet = (set: SetDefinition) => {
+        update({
+            ...widget(),
+            definition: set
+        });
+    }
+
+    const onMenuClick = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const menu = new Menu();
+        // add a menu item to rename the widget
+        menu.addItem((item) => {
+            const rename = "Rename";
+            item.setTitle(rename);
+            item.callback = () => {
+                new NameInputModal(app, "Rename widget","Enter name", widget().title, (result) => {
+                    update({
+                        ...widget(),
+                        title: result
+                    });
+                },undefined,false)
+                .open();
+            }
+        });
+
+
+        menu.addItem((item) => {
+            const scope = widget().definition.scope ? "Scope: " + widget().definition.scope : "Select scope";
+            item.setTitle(scope);
+            item.callback = () => {
+                const scopeModal = new ScopeEditorModal(app, db, widget().definition, updateSet);
+                scopeModal.open();
+            }
+        });
+
+        // add menu item for selecting fields
+        menu.addItem((item) => {
+            const fields = "Attributes";
+            item.setTitle(fields);
+            item.callback = () => {
+                const fieldsModal = new FieldSelectModal(app, db, widget().definition, updateSet);
+                fieldsModal.open();
+            }
+        });
+
+        // add menu item for setting a filter
+        menu.addItem((item) => {
+            const filter = "Filter";
+            item.setTitle(filter);
+            item.callback = () => {
+                const filterModal = new FilterEditorModal(app, db, widget().definition, updateSet);
+                filterModal.open();
+            }
+        });
+
+        // ad menu for setting a sort order
+        menu.addItem((item) => {
+            const sort = "Sort";
+            item.setTitle(sort);
+            item.callback = () => {
+                const sortModal = new SortingEditorModal(app, db, widget().definition, updateSet);
+                sortModal.open();
+            }
+        });
+
+        menu.showAtMouseEvent(e);
+    }
+
+    return (
+        <div class="sets-sidebar-widget-menu-btn"
+            ref={widgetMenu!}
+            onClick={onMenuClick}
+        ></div>
+    )
+}
+
 const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     const { app, vaultDB: db } = props.plugin;
     const [widget, setWidget] = createSignal(props.widget);
-    let widgetMenu: HTMLDivElement;
     const sortby = () => widget().definition.sortby || [];
     const scope = () => widget().definition.scope || VaultScope;
     const clauses = () => widget().definition.filter || [];
@@ -35,21 +130,16 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         return limitResults(allData, topResults());
     }
 
-    onMount(() => {
-        setIcon(widgetMenu, "menu");
-    });
 
-    const update = (def: SetDefinition) => {
+
+    const update = (def: WidgetDefinition) => {
         const settings = {
             ...props.plugin.settings,
             sidebarState: {
                 ...props.plugin.settings.sidebarState,
                 widgets: props.plugin.settings.sidebarState.widgets.map((w, i) => {
                     if (i === props.index) {
-                        return {
-                            ...w,
-                            definition: def
-                        }
+                        return def
                     }
                     return w;
                 })
@@ -57,46 +147,11 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         };
         props.plugin.settings = settings;
         props.plugin.saveSettings();
-        setWidget({
-            ...widget(),
-            definition: def
-        });
+        setWidget(def);
     }
 
 
-    const onMenuClick = (e: MouseEvent) => {
-        const menu = new Menu();
-        menu.addItem((item) => {
-            const scope = widget().definition.scope ? "Scope: " + widget().definition.scope : "Select scope";
-            item.setTitle(scope);
-            item.callback = () => {
-                const scopeModal = new ScopeEditorModal(app, db, widget().definition, update);
-                scopeModal.open();
-            }
-        });
 
-        // add menu item for setting a filter
-        menu.addItem((item) => {
-            const filter = "Filter";
-            item.setTitle(filter);
-            item.callback = () => {
-                const filterModal = new FilterEditorModal(app, db, widget().definition, update);
-                filterModal.open();
-            }
-        });
-
-        // ad menu for setting a sort order
-        menu.addItem((item) => {
-            const sort = "Sort";
-            item.setTitle(sort);
-            item.callback = () => {
-                const sortModal = new SortingEditorModal(app, db, widget().definition, update);
-                sortModal.open();
-            }
-        });
-
-        menu.showAtMouseEvent(e);
-    }
 
     const topResults = () => {
         return widget().definition.topResults || 10;
@@ -109,43 +164,66 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     }
 
     // Infer fields
+    const attributes = () => {
+        const { attributes, definition } = inferAttributes(widget().definition, db, data());
+        return attributes;
+    }
 
-    const { attributes, definition } = inferAttributes(widget().definition, db, data());
+    const onWidgetToggle = (status: boolean) => {
+        const settings = {
+            ...props.plugin.settings,
+            sidebarState: {
+                ...props.plugin.settings.sidebarState,
+                widgets: props.plugin.settings.sidebarState.widgets.map((w, i) => {
+                    if (i === props.index) {
+                        return {
+                            ...w,
+                            collapsed: status
+                        }
+                    }
+                    return w;
+                })
+            }
+        };
+        props.plugin.settings = settings;
+        props.plugin.saveSettings();
+    }
 
 
     return (
         <div class="sets-sidebar-widget">
-            <div class="sets-sidebar-widget-title">TODO: {props.widget.title}</div>
-            <div class="sets-sidebar-widget-menu-btn" ref={widgetMenu!}
-                onClick={onMenuClick}
-            ></div>
-            <Show when={widget().definition.scope}>
-                <SetProvider setDefinition={widget().definition}
-                    updateDefinition={() => {}}>
-                <div class="sets-sidebar-widget-content">
-                    {/* <For each={data().data}>
-                        {(item) => {
-                            return <div>
-                                <a
-                                data-href={linkText(item.file)}
-                                href={linkText(item.file)}
-                                class="internal-link sets-filename-link"
-                                target="_blank"
-                                rel="noopener"
-                                onClick={props.onNavigate}
-                            >{fileNameAttribute.format(item)}</a>
-                                </div>
-                        }}
-                    </For> */}
-                    <ListView
-                        attributes={attributes}
-                        data={data().data}
-                    // definition={definition}
-                    // onNavigate={props.onNavigate}
+            <Collapsible
+                title={<div class="sets-sidebar-widget-title">{widget().title}
+                    <WidgetMenu 
+                        widget={widget}
+                        db={db}
+                        app={app}
+                        update={update}
                     />
-                </div>
-            </SetProvider>
-        </Show>
+                </div>}
+                isCollapsed={props.plugin.settings.sidebarState.widgets[props.index].collapsed}
+                onToggle={onWidgetToggle}
+            >
+                
+                <Show when={widget().definition.scope}>
+                    <SetProvider setDefinition={widget().definition}
+                        updateDefinition={() => { }}>
+                        <div class="sets-sidebar-widget-content">
+
+                            <ListView
+                                attributes={attributes()}
+                                data={data().data}
+
+                            />
+                        </div>
+                    </SetProvider>
+                </Show>
+            </Collapsible>
+
+
+
+
+
         </div >
     )
 }

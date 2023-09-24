@@ -12,7 +12,7 @@ export class NewCollectionModal extends NameInputModal {
     plugin: SetsPlugin;
 
     constructor(app: App, plugin: SetsPlugin) {
-        super(app, "Enter Collection Name", "Collection name", async (name) => {
+        super(app, "Enter Collection Name", "Collection name","", async (name) => {
             try {
                 const newFile = await this.plugin.vaultDB.createNewCollection(name);
                 await this.app.workspace.openLinkText(newFile.path, "/", "tab");

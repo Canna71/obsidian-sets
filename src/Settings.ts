@@ -1,6 +1,7 @@
 import { SetDefinition } from "./Views/components/SetDefinition";
 
 export interface WidgetDefinition {
+    collapsed: boolean;
     title: string;
     definition: SetDefinition;
 }

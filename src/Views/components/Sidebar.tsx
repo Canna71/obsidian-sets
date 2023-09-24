@@ -117,7 +117,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
     const onNavigate = (e: MouseEvent) => {
         const link = e.target as HTMLAnchorElement;
         const href = link.getAttribute("data-href");
-        if(!href) return;
+        if (!href) return;
         e.preventDefault();
         app.workspace.openLinkText(href, "", false);
     }
@@ -128,13 +128,15 @@ const Sidebar: Component<SidebarProps> = (props) => {
     }
 
     const addWidget = () => {
-        const settings = {...props.plugin.settings,
+        const settings = {
+            ...props.plugin.settings,
             sidebarState: {
                 ...props.plugin.settings.sidebarState,
                 widgets: [
                     ...props.plugin.settings.sidebarState.widgets || [],
                     {
                         title: "New Widget",
+                        collapsed: false,
                         definition: {
                         }
                     }
@@ -152,61 +154,68 @@ const Sidebar: Component<SidebarProps> = (props) => {
                 <button title="Add new collection" onClick={onAddCollection} ><div ref={addColl!}></div>Collection</button>
                 <button title="Add new item" onClick={onAddItem}><div ref={addItem!}></div>Item...</button>
             </div>
-            <Show when={types().length > 0}>
+            <div class="sets-sidebar-wrapper">
+                <div class="sets-sidebar-scroller">
 
-                <Collapsible
-                    title="Sets"
-                    isCollapsed={props.plugin.settings.sidebarState.typesCollapsed}
-                    onToggle={(status) => onCollapsibleToggle("typesCollapsed", status)}>
-                    <ul class="sets-sidebar-links">
-                        {types().map(type => (
-                            <ListTypeItem
-                                link={getTypeSetPage(type)}
-                                type={type}
-                                plugin={props.plugin}
-                                onNavigate={onNavigate}
-                            />
-                        ))}
-                    </ul>
-                </Collapsible>
+                    <Show when={types().length > 0}>
+
+                        <Collapsible
+                            title="Sets"
+                            isCollapsed={props.plugin.settings.sidebarState.typesCollapsed}
+                            onToggle={(status) => onCollapsibleToggle("typesCollapsed", status)}>
+                            <ul class="sets-sidebar-links">
+                                {types().map(type => (
+                                    <ListTypeItem
+                                        link={getTypeSetPage(type)}
+                                        type={type}
+                                        plugin={props.plugin}
+                                        onNavigate={onNavigate}
+                                    />
+                                ))}
+                            </ul>
+                        </Collapsible>
 
 
-            </Show>
+                    </Show>
 
-            <Show when={collections().length > 0}>
-                <Collapsible
-                    title="Collections"
-                    isCollapsed={props.plugin.settings.sidebarState.collectionsCollapsed}
-                    onToggle={(status) => onCollapsibleToggle("collectionsCollapsed", status)}>
-                    <ul class="sets-sidebar-links">
-                        {collections().map(coll => (
-                            <li><a
-                                data-href={db.getCollectionFileName(coll)}
-                                href={db.getCollectionFileName(coll)}
-                                class="internal-link sets-filename-link"
-                                target="_blank"
-                                rel="noopener"
-                                onClick={onNavigate}
-                            >{unslugify(coll)}</a></li>
-                        ))}
-                    </ul>
-                </Collapsible>
-                <div class="sets-sidebar-widgets" onClick={onNavigate}>
-                    <For each={props.plugin.settings.sidebarState.widgets}>
-                        {(widget, index) => (
-                            <SidebarWidget
-                                widget={widget}
-                                index={index()}
-                                onNavigate={onNavigate}
-                                plugin={props.plugin}
-                            />
-                        )}
-                    </For>
+                    <Show when={collections().length > 0}>
+                        <Collapsible
+                            title="Collections"
+                            isCollapsed={props.plugin.settings.sidebarState.collectionsCollapsed}
+                            onToggle={(status) => onCollapsibleToggle("collectionsCollapsed", status)}>
+                            <ul class="sets-sidebar-links">
+                                {collections().map(coll => (
+                                    <li><a
+                                        data-href={db.getCollectionFileName(coll)}
+                                        href={db.getCollectionFileName(coll)}
+                                        class="internal-link sets-filename-link"
+                                        target="_blank"
+                                        rel="noopener"
+                                        onClick={onNavigate}
+                                    >{unslugify(coll)}</a></li>
+                                ))}
+                            </ul>
+                        </Collapsible>
+
+                    </Show>
+                    <div class="sets-sidebar-widgets" onClick={onNavigate}>
+                        <For each={props.plugin.settings.sidebarState.widgets}>
+                            {(widget, index) => (
+                                <SidebarWidget
+                                    widget={widget}
+                                    index={index()}
+                                    onNavigate={onNavigate}
+                                    plugin={props.plugin}
+                                />
+                            )}
+                        </For>
+                        
+                    </div>
                     <div ref={addWidgetBtn!}
-                        onClick={addWidget}
-                        class="sets-sidebar-add-widget clickable-icon"></div>
+                            onClick={addWidget}
+                            class="sets-sidebar-add-widget clickable-icon"></div>
                 </div>
-            </Show>
+            </div>
         </div>
     );
 }

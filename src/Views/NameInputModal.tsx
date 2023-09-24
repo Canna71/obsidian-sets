@@ -17,17 +17,20 @@ export class NameInputModal extends Modal {
     setValue: Setter<string>;
 
     protected _moreInfo: Component<{ value: Accessor<string>; }> | undefined;
+    private _validateFileName: boolean;
 
-    constructor(app: App, message: string, placeholder: string,
+    constructor(app: App, message: string, placeholder: string,initialValue: string,
         onSubmit: (result: string) => void,
-        moreInfo?: Component<{ value: Accessor<string> }>
+        moreInfo?: Component<{ value: Accessor<string> }>,
+        validateFileName?: boolean
     ) {
         super(app);
         this.message = message;
         this.placeholder = placeholder;
         this.onSubmit = onSubmit;
-        [this.value, this.setValue] = createSignal("");
+        [this.value, this.setValue] = createSignal(initialValue);
         this._moreInfo = moreInfo;
+        this._validateFileName = validateFileName ?? true;
     }
 
     onOpen() {
@@ -38,6 +41,7 @@ export class NameInputModal extends Modal {
         
 
         const validFileName = () => {
+            if (!this._validateFileName) return true;
             if (this.value().length === 0) return false;
             if(isValidFileName(this.app, this.value(), undefined)) return false;
             return true;

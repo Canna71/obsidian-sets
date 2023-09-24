@@ -2,7 +2,7 @@ import { setIcon } from "obsidian";
 import { Component, JSX, Show, createSignal, onMount } from "solid-js";
 
 export type CollapsibleProps = {
-    title: string,
+    title: string | JSX.Element,
     isCollapsed?: boolean,
     children?: JSX.Element,
     onToggle?: (status:boolean) => void

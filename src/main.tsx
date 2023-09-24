@@ -51,7 +51,7 @@ export default class SetsPlugin extends Plugin {
     async onload() {
         await this.loadSettings();
 
-        
+
         addIcon("board", board);
 
         this.registerView(
@@ -131,7 +131,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-type",
             name: "Create New Type",
             callback: () => {
-                new NewTypeModal(this.app,this)
+                new NewTypeModal(this.app, this)
                     .open()
                     ;
             }
@@ -142,7 +142,7 @@ export default class SetsPlugin extends Plugin {
             id: "sets-new-collection",
             name: "Create New Collection",
             callback: () => {
-                new NewCollectionModal(this.app, this )
+                new NewCollectionModal(this.app, this)
                     .open()
                     ;
             }
@@ -154,16 +154,16 @@ export default class SetsPlugin extends Plugin {
             name: "Add To Collection",
             checkCallback: (checking: boolean) => {
                 const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-                if(checking) {
+                if (checking) {
                     return !!view;
-                    
+
                 } else {
-                    if(view) {
+                    if (view) {
                         const file = view.file;
-                        if(file instanceof TFile) {
+                        if (file instanceof TFile) {
                             const { collectionLinks, currentColl } = this.getAvailableCollections(file);
-                            
-                            const nameValues = collectionLinks.map(cl => ({name: cl.col.file.basename, value: cl.link}));
+
+                            const nameValues = collectionLinks.map(cl => ({ name: cl.col.file.basename, value: cl.link }));
                             new NameValueSuggestModal(this.app, nameValues, (item) => {
                                 currentColl.push(item.value);
                                 this.app.fileManager.processFrontMatter(
@@ -178,7 +178,7 @@ export default class SetsPlugin extends Plugin {
                     }
                     return false;
                 }
-                    
+
             }
         });
         // register a command for each type to create a new item
@@ -201,20 +201,21 @@ export default class SetsPlugin extends Plugin {
                 name: `Create New ${unslugify(type)}`,
                 callback: async () => {
                     // asks the user the name of the new item
-                    new NameInputModal(this.app, `Enter ${unslugify(type)} Name`, `${unslugify(type)} Name`, async (name) => {
-                        try {
-                            const file: TFile = await this._vaultDB.createNewInstance(type, name);
-                            // open file
-                            if (file) {
-                                await this.app.workspace.openLinkText(file.path, file.path, true);
-                            } else {
-                                new Notice("Could not create file");
+                    new NameInputModal(this.app, `Enter ${unslugify(type)} Name`, `${unslugify(type)} Name`, "",
+                        async (name) => {
+                            try {
+                                const file: TFile = await this._vaultDB.createNewInstance(type, name);
+                                // open file
+                                if (file) {
+                                    await this.app.workspace.openLinkText(file.path, file.path, true);
+                                } else {
+                                    new Notice("Could not create file");
+                                }
+                            } catch (e) {
+                                new Notice(e.message);
                             }
-                        } catch (e) {
-                            new Notice(e.message);
-                        }
-                    })
-                    .open();
+                        })
+                        .open();
 
                 }
             });
