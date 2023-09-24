@@ -45,8 +45,8 @@ export function getSetsSettings() {
 export default class SetsPlugin extends Plugin {
     settings: SetsSettings;
 
-    _vaultDB: VaultDB;
-    _instanceCommands: Command[] = [];
+    private _vaultDB: VaultDB;
+    private _instanceCommands: Command[] = [];
 
     async onload() {
         await this.loadSettings();

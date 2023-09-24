@@ -14,7 +14,7 @@ export class NewTypeModal extends NameInputModal {
     constructor(app: App, plugin: SetsPlugin) {
         super(app, "Enter Type Name", "Type name", async (name) => {
             try {
-                const newFile = await this.plugin._vaultDB.createNewType(name);
+                const newFile = await this.plugin.vaultDB.createNewType(name);
                 await this.app.workspace.openLinkText(newFile.path, "/", "tab");
                 plugin.registerNewInstancesCommands();
             }
@@ -26,9 +26,9 @@ export class NewTypeModal extends NameInputModal {
 
         super._moreInfo = (props) => {
             return <Show when={props.value()}><div class="sets-modal-info">
-                <div>Type Archetype will be created as: <code>{`${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}/${this.plugin._vaultDB.getArchetypeName(props.value())}`}</code></div>
+                <div>Type Archetype will be created as: <code>{`${this.plugin.settings.setsRoot}/${this.plugin.settings.typesFolder}/${this.plugin.vaultDB.getArchetypeName(props.value())}`}</code></div>
                 <div>The Type will have the property: <code>{this.plugin.settings.typeAttributeKey}: {slugify(props.value())}</code></div>
-                <div>Set Folder will be created as: <code>{this.plugin._vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
+                <div>Set Folder will be created as: <code>{this.plugin.vaultDB.getSetFolderName(slugify(props.value()))}</code></div>
             </div></Show>
         }
 
