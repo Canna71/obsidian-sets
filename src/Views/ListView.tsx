@@ -14,11 +14,6 @@ import AttributeView from "./components/AttributeView";
 
 const ListView: Component<SetViewProps> = (props) => {
 
-    
-
-    
-
-
     const reorderedAttributes = createMemo(() => {
         // reorder attributes tu put chackboxes first
         const ret = [...props.attributes];

@@ -8,6 +8,10 @@ import { limitResults } from "src/Data/VaultDB";
 import { IntrinsicAttributeDefinition } from "src/Data/IntrinsicAttributeDefinition";
 import { FilterEditorModal } from "../FilterEditorModal";
 import SortingEditorModal from "../SortingEditorModal";
+import { AttributeDefinition } from "src/Data/AttributeDefinition";
+import { inferAttributes } from "./renderCodeBlock";
+import ListView from "../ListView";
+import { SetProvider } from "./SetProvider";
 
 export interface SidebarWidgetProps {
     widget: WidgetDefinition
@@ -25,11 +29,11 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     const clauses = () => widget().definition.filter || [];
 
     const query = () => db.fromClauses(scope(), clauses(), sortby());
-    
+
     const data = () => {
         const allData = db.execute(query());
         return limitResults(allData, topResults());
-    } 
+    }
 
     onMount(() => {
         setIcon(widgetMenu, "menu");
@@ -98,11 +102,16 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         return widget().definition.topResults || 10;
     }
 
-    const fileNameAttribute = db.getAttributeDefinition(IntrinsicAttributeKey.FileName);
+    // const fileNameAttribute = db.getAttributeDefinition(IntrinsicAttributeKey.FileName);
 
     const linkText = (file: TFile) => {
         return app.metadataCache.fileToLinktext(file, "/")
     }
+
+    // Infer fields
+
+    const { attributes, definition } = inferAttributes(widget().definition, db, data());
+
 
     return (
         <div class="sets-sidebar-widget">
@@ -111,8 +120,10 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
                 onClick={onMenuClick}
             ></div>
             <Show when={widget().definition.scope}>
+                <SetProvider setDefinition={widget().definition}
+                    updateDefinition={() => {}}>
                 <div>
-                    <For each={data().data}>
+                    {/* <For each={data().data}>
                         {(item) => {
                             return <div>
                                 <a
@@ -125,10 +136,17 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
                             >{fileNameAttribute.format(item)}</a>
                                 </div>
                         }}
-                    </For>
+                    </For> */}
+                    <ListView
+                        attributes={attributes}
+                        data={data().data}
+                    // definition={definition}
+                    // onNavigate={props.onNavigate}
+                    />
                 </div>
-            </Show>
-        </div>
+            </SetProvider>
+        </Show>
+        </div >
     )
 }
 

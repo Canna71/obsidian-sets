@@ -584,7 +584,11 @@ export class VaultDB {
         if (file) {
             const cache = this.app.metadataCache.getFileCache(file);
             if (cache?.frontmatter) {
-                return Object.keys(cache.frontmatter);
+                const mdata = Object.keys(cache.frontmatter);
+                // remove the type attribute
+                mdata.remove(this.plugin.settings.typeAttributeKey);
+                // remove internal attributes, that is attributes starting with double underscore
+                return mdata.filter((key) => !key.startsWith("__"));
             }
         }
     } 

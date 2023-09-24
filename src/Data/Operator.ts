@@ -230,7 +230,7 @@ const operators : Record<OperatorName,Operator> = {
     "contains": {
         op: "contains",
         compatibleTypes: ["text","password"],
-        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data).toString().toLowerCase().includes((val as any || "").toString().toLowerCase()),
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => (a.getValue(data)||"").toString().toLowerCase().includes((val as any || "").toString().toLowerCase()),
         // enforce: (current:unknown, b:unknown) => b,
         selectiveness: 2,
         displayName: () => "Contains",
@@ -240,7 +240,7 @@ const operators : Record<OperatorName,Operator> = {
     "nocontains": {
         op: "nocontains",
         compatibleTypes: ["text","password"],
-        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => !a.getValue(data).toString().toLowerCase().includes((val as any || "").toString().toLowerCase()),
+        matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => ! (a.getValue(data)||"").toString().toLowerCase().includes((val as any || "").toString().toLowerCase()),
         // enforce: (current:unknown, b:unknown) => b,
         selectiveness: 12,
         displayName: () => "Does Not Contain",

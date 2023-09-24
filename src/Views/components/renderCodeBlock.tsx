@@ -1,7 +1,7 @@
 
 import { render } from "solid-js/web";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
-import { VaultDB, limitResults } from "src/Data/VaultDB";
+import { QueryResult, VaultDB, limitResults } from "src/Data/VaultDB";
 import { createStore } from "solid-js/store";
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { App, MarkdownPostProcessorContext } from "obsidian";
@@ -9,7 +9,7 @@ import { AppProvider } from "./AppProvider";
 import { SetProvider } from "./SetProvider";
 import { saveDataIntoBlock } from "src/Utils/saveDataIntoBlock";
 import { getSetsSettings } from "src/main";
-import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
+import { IntrinsicAttributeKey, Scope, SetDefinition, VaultScope } from "./SetDefinition";
 import CodeBlock from "./CodeBlock";
 
 
@@ -73,29 +73,8 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
     })
 
    // Infer fields
-    let fieldDefinitions = definition.fields;
-    if (!fieldDefinitions || fieldDefinitions.length == 0) {
-        if (scopeType == "type") {
-            if (getSetsSettings().inferSetFieldsByDefault) {
-                fieldDefinitions = db.inferFields(initialdata)
-            } else {
-                fieldDefinitions = db.getTypeAttributes(what!)
-            }
-        } else if (scopeType == "collection") {
-            if (getSetsSettings().inferCollectionFieldsByDefault) {
-                fieldDefinitions = db.inferFields(initialdata)
-            } 
-        }
-
-        fieldDefinitions = [IntrinsicAttributeKey.FileName , ...(fieldDefinitions||[])]
-        if(scopeType==="type" && !getSetsSettings().inferSetFieldsByDefault) {
-            definition = {...definition, fields: fieldDefinitions}
-        }
-    }
-
-
-    const attributes: AttributeDefinition[] =
-        fieldDefinitions.map(key => db.getAttributeDefinition(key));
+    let attributes: AttributeDefinition[];
+    ({ attributes, definition } = inferAttributes(definition, db, initialdata));
 
 
     const stateKey = ctx.sourcePath;
@@ -125,3 +104,32 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
 }
 
 export default renderCodeBlock;
+
+export function inferAttributes(definition: SetDefinition, db: VaultDB, data: QueryResult) {
+    const [scopeType, what] = definition.scope || VaultScope;
+    
+    let fieldDefinitions = definition.fields;
+    if (!fieldDefinitions || fieldDefinitions.length == 0) {
+        if (scopeType == "type") {
+            if (getSetsSettings().inferSetFieldsByDefault) {
+                fieldDefinitions = db.inferFields(data);
+            } else {
+                fieldDefinitions = db.getTypeAttributes(what!);
+            }
+        } else if (scopeType == "collection") {
+            if (getSetsSettings().inferCollectionFieldsByDefault) {
+                fieldDefinitions = db.inferFields(data);
+            }
+        }
+
+        fieldDefinitions = [IntrinsicAttributeKey.FileName, ...(fieldDefinitions || [])];
+        if (scopeType === "type" && !getSetsSettings().inferSetFieldsByDefault) {
+            definition = { ...definition, fields: fieldDefinitions };
+        }
+    }
+
+
+    const attributes: AttributeDefinition[] = fieldDefinitions.map(key => db.getAttributeDefinition(key));
+    return { attributes, definition };
+}
+
