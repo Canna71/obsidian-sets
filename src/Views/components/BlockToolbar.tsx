@@ -23,6 +23,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     let refreshBtn: HTMLDivElement;
     let copyBtn: HTMLDivElement;
     let galleryProps: HTMLDivElement;
+    let addItemBtn: HTMLDivElement;
 
     const { app, db } = useApp()!;
     // const view = app.workspace.getActiveViewOfType(MarkdownView);
@@ -107,6 +108,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         fieldsBtn && setIcon(refreshBtn, "refresh-cw")
         fieldsBtn && setIcon(copyBtn, "copy")
         fieldsBtn && galleryProps && setIcon(galleryProps, "settings-2")
+        fieldsBtn && addItemBtn && setIcon(addItemBtn, "plus-square")
     })
 
     const viewMode = () => {
@@ -156,9 +158,6 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
         // open GalleryPropsModal
         const galleryPropsModal = new GalleryPropsModal(app, db, definition(),props.attributes, update);
         galleryPropsModal.open();
-
-    
-
 
     }
 
@@ -221,9 +220,9 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                 </Show>
 
                 <Show when={canAdd()}>
-                    <button class="sets-toolbar-addbutton mod-cta"
+                    <div ref={addItemBtn!} class="sets-toolbar-addbutton clickable-icon"
                         title="Add new item"
-                        onClick={onAdd}>Add</button>
+                        onClick={onAdd}></div>
 
                 </Show>
             </Show>
