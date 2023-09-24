@@ -686,6 +686,7 @@
     display: flex;
     flex-direction: column;
     padding-bottom: var(--size-4-2);
+    gap: var(--size-4-2);
 
     .sets-sidebar-buttons {
         display: flex;
@@ -721,6 +722,9 @@
             overflow-x: hidden;
 
             .sets-collapsible {
+                border: 1px solid var(--divider-color);
+
+
                 .sets-collapsible-header {
                     cursor: var(--cursor);
                     margin-bottom: var(--size-2-1);
@@ -785,7 +789,6 @@
             }
 
             .sets-sidebar-widgets {
-                height: 100%;
 
                 .sets-sidebar-widget {
                     .sets-sidebar-widget-title {
@@ -818,5 +821,14 @@
                 }
             }
         }
+    }
+
+    .sets-sidebar-empty {
+        border: 1px solid var(--divider-color);
+        color: var(--text-muted);
+        padding: 4px;
+        border-radius: 4px;
+        z-index: 1;
+        text-align: center;
     }
 }

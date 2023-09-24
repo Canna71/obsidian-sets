@@ -21,6 +21,7 @@ export interface SidebarWidgetProps {
     plugin: SetsPlugin
     index: number
     onNavigate: (e: MouseEvent) => void
+    onDelete: () => void
 }
 
 const WidgetMenu: Component<
@@ -28,11 +29,12 @@ const WidgetMenu: Component<
         widget: Accessor<WidgetDefinition>,
         db: VaultDB,
         app: App,
-        update: (def: WidgetDefinition) => void
+        update: (def: WidgetDefinition) => void,
+        delete: () => void
     }
 > = (props) => {
     let widgetMenu: HTMLDivElement;
-    const  {widget,db, update, app} = props;
+    const { widget, db, update, app } = props;
     // const { app } = props.db;
 
     createEffect(() => {
@@ -55,13 +57,13 @@ const WidgetMenu: Component<
             const rename = "Rename";
             item.setTitle(rename);
             item.callback = () => {
-                new NameInputModal(app, "Rename widget","Enter name", widget().title, (result) => {
+                new NameInputModal(app, "Rename widget", "Enter name", widget().title, (result) => {
                     update({
                         ...widget(),
                         title: result
                     });
-                },undefined,false)
-                .open();
+                }, undefined, false)
+                    .open();
             }
         });
 
@@ -105,6 +107,13 @@ const WidgetMenu: Component<
             }
         });
 
+        // add menu for deleting the widget
+        menu.addItem((item) => {
+            const del = "Delete";
+            item.setTitle(del);
+            item.callback = props.delete
+        });
+
         menu.showAtMouseEvent(e);
     }
 
@@ -130,8 +139,6 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         return limitResults(allData, topResults());
     }
 
-
-
     const update = (def: WidgetDefinition) => {
         const settings = {
             ...props.plugin.settings,
@@ -149,9 +156,6 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         props.plugin.saveSettings();
         setWidget(def);
     }
-
-
-
 
     const topResults = () => {
         return widget().definition.topResults || 10;
@@ -189,22 +193,22 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         props.plugin.saveSettings();
     }
 
-
     return (
         <div class="sets-sidebar-widget">
             <Collapsible
                 title={<div class="sets-sidebar-widget-title">{widget().title}
-                    <WidgetMenu 
+                    <WidgetMenu
                         widget={widget}
                         db={db}
                         app={app}
                         update={update}
+                        delete={props.onDelete}
                     />
                 </div>}
                 isCollapsed={props.plugin.settings.sidebarState.widgets[props.index].collapsed}
                 onToggle={onWidgetToggle}
             >
-                
+
                 <Show when={widget().definition.scope}>
                     <SetProvider setDefinition={widget().definition}
                         updateDefinition={() => { }}>
@@ -217,6 +221,12 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
                             />
                         </div>
                     </SetProvider>
+                </Show>
+                <Show when={!widget().definition.scope}>
+                    
+                        <div class="sets-sidebar-empty">
+                            No scope selected
+                        </div>
                 </Show>
             </Collapsible>
 

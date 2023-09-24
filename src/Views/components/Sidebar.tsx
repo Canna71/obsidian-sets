@@ -61,6 +61,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
 
     const [types, setTypes] = createSignal(db.getTypeNames());
     const [collections, setCollections] = createSignal(db.getCollectionNames());
+    const [widgets, setWidgets] = createSignal(props.plugin.settings.sidebarState.widgets);
 
     let addType: HTMLDivElement;
     let addColl: HTMLDivElement;
@@ -71,7 +72,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
         setIcon(addType, "plus");
         setIcon(addColl, "plus");
         setIcon(addItem, "plus");
-        setIcon(addWidgetBtn, "plus-square");
+        // setIcon(addWidgetBtn, "plus-square");
 
         db.on("metadata-changed", () => {
             setTypes(db.getTypeNames());
@@ -127,6 +128,8 @@ const Sidebar: Component<SidebarProps> = (props) => {
         props.plugin.saveSettings();
     }
 
+    
+
     const addWidget = () => {
         const settings = {
             ...props.plugin.settings,
@@ -145,7 +148,22 @@ const Sidebar: Component<SidebarProps> = (props) => {
         };
         props.plugin.settings = settings;
         props.plugin.saveSettings();
+        setWidgets(settings.sidebarState.widgets);
     }
+
+    const deleteWidget = (index: number) => {
+        const settings = {
+            ...props.plugin.settings,
+            sidebarState: {
+                ...props.plugin.settings.sidebarState,
+                widgets: props.plugin.settings.sidebarState.widgets.filter((w, i) => i !== index)
+            }
+        };
+        props.plugin.settings = settings;
+        props.plugin.saveSettings();
+        setWidgets(settings.sidebarState.widgets);
+    }
+
 
     return (
         <div class="sets-sidebar">
@@ -199,21 +217,23 @@ const Sidebar: Component<SidebarProps> = (props) => {
 
                     </Show>
                     <div class="sets-sidebar-widgets" onClick={onNavigate}>
-                        <For each={props.plugin.settings.sidebarState.widgets}>
+                        <For each={widgets()}>
                             {(widget, index) => (
                                 <SidebarWidget
                                     widget={widget}
                                     index={index()}
                                     onNavigate={onNavigate}
                                     plugin={props.plugin}
+                                    onDelete={() => {deleteWidget(index())}}
                                 />
                             )}
                         </For>
                         
                     </div>
                     <div ref={addWidgetBtn!}
+                        title="Add new widget"
                             onClick={addWidget}
-                            class="sets-sidebar-add-widget clickable-icon"></div>
+                            class="sets-sidebar-add-widget clickable-icon">Add New Widget</div>
                 </div>
             </div>
         </div>
