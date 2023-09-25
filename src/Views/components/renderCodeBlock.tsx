@@ -129,7 +129,7 @@ export function inferAttributes(definition: SetDefinition, db: VaultDB, data: Qu
     }
 
 
-    const attributes: AttributeDefinition[] = fieldDefinitions.map(key => db.getAttributeDefinition(key));
+    const attributes: AttributeDefinition[] = fieldDefinitions.map(key => db.getAttributeDefinition(key, definition));
     return { attributes, definition };
 }
 

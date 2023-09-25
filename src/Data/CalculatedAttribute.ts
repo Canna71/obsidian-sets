@@ -1,3 +1,4 @@
+import { unslugify } from 'src/Utils/slugify';
 // implements an AttributeDefinition that is calculated from other attributes
 // the calculation is done by a function that takes an ObjectData and returns a value
 
@@ -13,7 +14,7 @@ export class CalculatedAttribute implements AttributeDefinition {
         this._name = name;
     }
    
-    displayName() { return this._name; }
+    displayName() { return unslugify(this._name); }
     getValue(data: ObjectData) { return this._calculate(data); }
     format(data: ObjectData) { return this.getValue(data)?.toString() || ""; }
     getPropertyWidget() { return undefined; }
@@ -21,7 +22,7 @@ export class CalculatedAttribute implements AttributeDefinition {
     get readonly() {return true;}
     get isIntrinsic() { return false; }
     get key() { return this._name; }
-    
+
     
 }
 

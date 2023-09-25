@@ -54,6 +54,7 @@ export interface SetDefinition {
     sortby?: SortField[];
     topResults?: number;
     transientState?: any;
+    calculatedFields?: Record<string, string>;
     grid?: {
         columnWidths?: Record<string, string>;
     };

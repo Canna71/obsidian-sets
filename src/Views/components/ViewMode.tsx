@@ -2,7 +2,7 @@ import { create } from "domain";
 import { useSet } from "./SetProvider";
 import { Component, createEffect } from "solid-js";
 import { Menu, setIcon } from "obsidian";
-import { prettify } from "src/Utils/prettify";
+import { unslugify } from "src/Utils/slugify";
 
 const ViewMode: Component = () => {
     const { definition, setDefinition, save } = useSet()!;
@@ -25,7 +25,7 @@ const ViewMode: Component = () => {
 
     const tooltip = () => {
         const mode = viewMode();
-        return `${prettify(mode)} view: click to change`;
+        return `${unslugify(mode)} view: click to change`;
     }
 
 

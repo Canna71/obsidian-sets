@@ -1,7 +1,7 @@
 import { ObjectData } from "./ObjectData";
 import { AttributeDefinition } from "./AttributeDefinition";
 import { App } from "obsidian";
-import { prettify } from "src/Utils/prettify";
+import { unslugify } from "src/Utils/slugify";
 
 
 
@@ -12,7 +12,7 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
     constructor(app: App, key: string, displayName?: string) {
         this._key = key;
         this._displayName = this._displayName ||
-            prettify(this._key);
+            unslugify(this._key);
         this._app = app;
     }
     get key() { return this._key; }
