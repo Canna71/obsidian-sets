@@ -14,7 +14,7 @@ const MarkdownText :Component<MarkdownTextProps> = (props) => {
 
     createEffect(() => {
         //ts-ignore
-        MarkdownRenderer.render(app,props.markdown,div,"/", app.plugins.plugins["obsidian-sets"] as SetsPlugin)
+        MarkdownRenderer.render(app,props.markdown,div,"/", app.plugins.plugins["sets"] as SetsPlugin)
     });
 
     return <div ref={div!} class="sets-markdown-renderer"></div>
