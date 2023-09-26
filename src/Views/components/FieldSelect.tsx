@@ -53,9 +53,26 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     const selected = () => {
         const pd = getPropertyData(app);
         const idxPd = indexBy<PropertyData>("key", pd);
-        return (definition().fields || []).map(key => idxPd[key])
-            .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
-        ;
+        const ret =  (definition().fields || []).map(key => idxPd[key])
+            .filter(pd => pd?.name.toLowerCase().includes(keyword().toLowerCase()))
+            // .concat(Object.keys(definition().calculatedFields)?.map(key => {
+            //     return {
+            //         key: key,
+            //         name: name,
+            //         typeName: "text",
+            //         typeIcon: "function-square"
+            //     }   
+            // })
+            ;
+        const calculatedFields = Object.keys(definition().calculatedFields || {}).map(cf => {
+            return {
+                key: cf,
+                name: cf,
+                typeName: "text",
+                typeIcon: "function-square"
+            }
+        })
+        return [...ret, ...calculatedFields];
         // return pd.filter(pd => (definition().fields || []).includes(pd.key))
         //     .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
     };
