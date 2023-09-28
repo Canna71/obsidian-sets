@@ -6,6 +6,7 @@ import { Property, PropertyProps } from "./Property";
 import { DragDropProvider, DragDropSensors, DragOverlay, SortableProvider, closestCenter, createSortable } from "@thisbeyond/solid-dnd";
 import { setIcon } from "obsidian";
 import { indexBy } from "src/Utils/indexBy";
+import { CalculatedModal } from "../CalculatedModal";
 
 
 export interface FieldSelectProps {
@@ -28,7 +29,7 @@ const SortableProperty: Component<PropertyProps> = (props) => {
 
 
 export const FieldSelect: Component<FieldSelectProps> = (props) => {
-    const { definition, save, addField, removeField, reorder } = useSet()!;
+    const { definition, save, addField, removeField, reorder, setDefinition } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;
@@ -50,7 +51,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
             .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
     };
 
-    const selected = () => {
+    const selected = ():PropertyData[] => {
         const pd = getPropertyData(app);
         const idxPd = indexBy<PropertyData>("key", pd);
         const ret =  (definition().fields || []).map(key => idxPd[key])
@@ -68,9 +69,11 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
             return {
                 key: cf,
                 name: cf,
-                typeName: "text",
-                typeIcon: "function-square"
-            }
+                typeName: "Calculated",
+                typeIcon: "function-square",
+                typeKey: "func",
+                calculated: true,
+            } as PropertyData
         })
         return [...ret, ...calculatedFields];
         // return pd.filter(pd => (definition().fields || []).includes(pd.key))
@@ -81,7 +84,22 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
         addField(e.key);
     }
 
-    const onUnselect = (e: PropertyData) => {
+    const onPropertyAction = (e: PropertyData, action: string) => {
+        if (action === "edit") {
+            new CalculatedModal(app, [e.key,definition().calculatedFields![e.key]], (cf) => {
+                const cfs = definition().calculatedFields || {};
+                cfs[cf[0]] = cf[1];
+                setDefinition({...definition(), calculatedFields: cfs});
+            }).open();
+        }
+        if(action === "delete") {
+            // removes the calculated field
+            if(e.calculated) {
+                const cf = definition().calculatedFields || {};
+                delete cf[e.key];
+                setDefinition({...definition(), calculatedFields: cf});
+            }
+        }
         removeField(e.key);
     }
 
@@ -131,7 +149,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
                     >
                         <DragDropSensors />
                         <SortableProvider ids={ids()}>
-                            <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onUnselect} />}</For>
+                            <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onPropertyAction} />}</For>
                         </SortableProvider>
 
                     </DragDropProvider>
