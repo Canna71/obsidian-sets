@@ -86,21 +86,23 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
     const onPropertyAction = (e: PropertyData, action: string) => {
         
+
         switch (action) {
             case "edit":
                 new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], (cf) => {
                     const cfs = definition().calculatedFields || {};
-                    cfs[cf[0]] = cf[1];
-                    setDefinition({...definition(), calculatedFields: cfs});
+                    // cfs[cf[0]] = cf[1];
+                    setDefinition({...definition(), calculatedFields: {...cfs, [cf[0]]: cf[1]}});
                 }).open();
-                break;
+            break; 
             case "delete":
                 // removes the calculated field
                 if (e.calculated) {
-                    const cf = definition().calculatedFields || {};
+                    const cf = {...definition().calculatedFields || {}};
                     delete cf[e.key];
                     setDefinition({...definition(), calculatedFields: cf});
                 }
+                removeField(e.key);
                 break;
             default:
                 removeField(e.key);
