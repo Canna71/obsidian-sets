@@ -30,6 +30,8 @@ export const Property: Component<PropertyProps> = (props) => {
     }
 
     const onIconClick = (e:MouseEvent, action?:string) => {
+        e.stopPropagation();
+        
         if(props.onIconClick) props.onIconClick(props, action) 
         else {
             props.onItemClick && props.onItemClick(props, action)

@@ -15,7 +15,14 @@ export class CalculatedAttribute implements AttributeDefinition {
     }
    
     displayName() { return unslugify(this._name); }
-    getValue(data: ObjectData) { return this._calculate(data); }
+    getValue(data: ObjectData) { 
+        // return the "#error" string if the calculation fails
+        try {
+            return this._calculate(data);
+        } catch (e) {
+            return "#error";
+        }
+    }
     format(data: ObjectData) { return this.getValue(data)?.toString() || ""; }
     getPropertyWidget() { return undefined; }
     getPropertyInfo() { return { key: this._name, type: "?" }; }

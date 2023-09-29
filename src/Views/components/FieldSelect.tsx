@@ -85,22 +85,27 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     }
 
     const onPropertyAction = (e: PropertyData, action: string) => {
-        if (action === "edit") {
-            new CalculatedModal(app, [e.key,definition().calculatedFields![e.key]], (cf) => {
-                const cfs = definition().calculatedFields || {};
-                cfs[cf[0]] = cf[1];
-                setDefinition({...definition(), calculatedFields: cfs});
-            }).open();
+        
+        switch (action) {
+            case "edit":
+                new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], (cf) => {
+                    const cfs = definition().calculatedFields || {};
+                    cfs[cf[0]] = cf[1];
+                    setDefinition({...definition(), calculatedFields: cfs});
+                }).open();
+                break;
+            case "delete":
+                // removes the calculated field
+                if (e.calculated) {
+                    const cf = definition().calculatedFields || {};
+                    delete cf[e.key];
+                    setDefinition({...definition(), calculatedFields: cf});
+                }
+                break;
+            default:
+                removeField(e.key);
+                break;
         }
-        if(action === "delete") {
-            // removes the calculated field
-            if(e.calculated) {
-                const cf = definition().calculatedFields || {};
-                delete cf[e.key];
-                setDefinition({...definition(), calculatedFields: cf});
-            }
-        }
-        removeField(e.key);
     }
 
     const onDragStart = ({ draggable }) => {
