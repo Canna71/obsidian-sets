@@ -865,7 +865,17 @@
                     } 
                 }
             }
+
+            .sets-sidebar-add-widget {
+                visibility: hidden;
+            }
         }
+
+       
+    }
+
+    &:hover .sets-sidebar-scroller .sets-sidebar-add-widget {
+        visibility: visible;
     }
 
     .sets-sidebar-empty {
