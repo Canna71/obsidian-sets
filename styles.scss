@@ -248,12 +248,14 @@
     }
 }
 
+.sets-invalid, input[type='text'].sets-invalid {
+    background-color: var(--background-modifier-error);
+}
+
 .sets-filename {
     display: flex;
 
-    &.invalid {
-        background-color: var(--background-modifier-error);
-    }
+
 
     a.internal-link {
         flex: 1;
@@ -891,6 +893,11 @@
             font-family: var(--font-monospace);
 
         }
+    }
+    .sets-calculated-editor-error {
+        color: var(--text-error);
+        font-size: var(--font-adaptive-smallest);
+        height: var(--input-height);
     }
     .sets-calculated-editor-buttons {
         // align on the right with a gap

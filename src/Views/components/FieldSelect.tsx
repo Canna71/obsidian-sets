@@ -82,12 +82,37 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
     const isValidPropName = (key:string) => (name: string) => {
         name = name.trim();
-        if (name === "") return false;
+        if (name === "") return "cannot be empty";
         const otherProperties = definition().fields?.filter(k => k !== key) || [];
-        if (otherProperties.includes(name)) return false;
+        if (otherProperties.includes(name)) return "already exists";
         const otherCalculated = Object.keys(definition().calculatedFields || {}).filter(k => k !== key);
-        if (otherCalculated.includes(name)) return false;
-        return true;
+        if (otherCalculated.includes(name)) return "already exists";
+        return "";
+    }
+
+    const isValidPropDef = (key:string) => (def: string) => {
+        def = def.trim();
+        if (def === "") return "cannot be empty";
+        const otherProperties = definition().fields?.filter(k => k !== key) || [];
+        const otherCalculated = Object.keys(definition().calculatedFields || {}).filter(k => k !== key);
+
+        const propsAccessed: string[] = [];
+
+        function prop(name: string) {
+            propsAccessed.push(name);
+            return "";
+        }
+
+        try {
+            const fn = new Function("prop", def);
+            fn(prop);
+            if(propsAccessed.every(p => otherProperties.includes(p) || otherCalculated.includes(p))) return "";
+            return "references unknown properties or circular reference";
+        } catch (e) {
+            return e.message;
+        }
+        
+        return "Unkown error";
     }
 
     const onPropertyAction = (e: PropertyData, action?: string, key?: string) => {
@@ -96,6 +121,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
             case "edit":
                 new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], 
                 isValidPropName(e.key),
+                isValidPropDef(e.key),
                 (cf) => {
                     const cfs = {...definition().calculatedFields || {}};
                     key && delete cfs[key];
@@ -141,7 +167,9 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     };
 
     const addCalculatedField = () => {
-        new CalculatedModal(app, ["", ""], isValidPropName(""), (cf) => {
+        new CalculatedModal(app, ["", ""], isValidPropName(""), 
+        isValidPropDef(""),
+            (cf) => {
             const cfs = {...definition().calculatedFields || {}};
             cfs[cf[0]] = cf[1];
             // also add it to the fields
@@ -192,12 +220,13 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
                     </DragDropProvider>
                 </div>
-                <div class="clickable-icon" onClick={addCalculatedField}>Add Calc</div>
+                
             </div>
         </div>
 
 
         <div class="sets-button-bar">
+            <div class="clickable-icon" onClick={addCalculatedField}>Add Calculated Field</div>
             <button class="mod-cta" onClick={onSave}>Save</button>
             <button class="" onClick={props.exit}>Cancel</button>
         </div>

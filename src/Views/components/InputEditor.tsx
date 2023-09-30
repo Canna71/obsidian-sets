@@ -56,7 +56,7 @@ const InputEditor:Component<InputEditorProps> = (props) => {
     return (
         <div ref={editor!} classList={
             {
-                "invalid": isValid(),
+                "sets-invalid": isValid(),
                 "editing": true
             }
         } contentEditable={true}
