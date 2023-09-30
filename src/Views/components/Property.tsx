@@ -5,7 +5,7 @@ import { PropertyData } from "src/Data/PropertyData";
 export type PropertyProps = PropertyData & {
     icon?:string
     onItemClick?: (e:PropertyData, action?: string) => void
-    onIconClick?: (e:PropertyData, action?: string) => void
+    onIconClick?: (e:PropertyData, action?: string, key?: string) => void
     sortable?:  boolean;
 }
 

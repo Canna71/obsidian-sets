@@ -18,6 +18,7 @@ export class CalculatedAttribute implements AttributeDefinition {
     getValue(data: ObjectData) { 
         // return the "#error" string if the calculation fails
         try {
+            // TODO: check for circular references
             return this._calculate(data);
         } catch (e) {
             return "#error";

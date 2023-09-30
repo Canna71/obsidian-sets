@@ -54,45 +54,49 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     const selected = ():PropertyData[] => {
         const pd = getPropertyData(app);
         const idxPd = indexBy<PropertyData>("key", pd);
-        const ret =  (definition().fields || []).map(key => idxPd[key])
-            .filter(pd => pd?.name.toLowerCase().includes(keyword().toLowerCase()))
-            // .concat(Object.keys(definition().calculatedFields)?.map(key => {
-            //     return {
-            //         key: key,
-            //         name: name,
-            //         typeName: "text",
-            //         typeIcon: "function-square"
-            //     }   
-            // })
+        const ret : PropertyData[] =  (definition().fields || []).map(
+            key => {
+                const pd = idxPd[key]
+                if (pd) return pd;
+                const cf = definition().calculatedFields![key];
+                if(cf) return {
+                    key: key,
+                    name: key,
+                    typeName: "Calculated",
+                    typeIcon: "function-square",
+                    typeKey: "func",
+                    calculated: true,
+                } as PropertyData;
+            }
+            )
+            .filter(pd =>  pd?.name.toLowerCase().includes(keyword().toLowerCase())) as PropertyData[]
+            
             ;
-        const calculatedFields = Object.keys(definition().calculatedFields || {}).map(cf => {
-            return {
-                key: cf,
-                name: cf,
-                typeName: "Calculated",
-                typeIcon: "function-square",
-                typeKey: "func",
-                calculated: true,
-            } as PropertyData
-        })
-        return [...ret, ...calculatedFields];
-        // return pd.filter(pd => (definition().fields || []).includes(pd.key))
-        //     .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
+        
+        return [...ret];
     };
 
     const onSelect = (e: PropertyData) => {
         addField(e.key);
     }
 
-    const onPropertyAction = (e: PropertyData, action: string) => {
-        
+    const onPropertyAction = (e: PropertyData, action?: string, key?: string) => {
 
         switch (action) {
             case "edit":
                 new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], (cf) => {
-                    const cfs = definition().calculatedFields || {};
+                    const cfs = {...definition().calculatedFields || {}};
+                    key && delete cfs[key];
+                    const fields = [...definition().fields || []];
+                    const idx = fields.indexOf(e.key);
+                    if (idx > -1) fields.splice(idx, 1);
+                    // insert the new field at the same index
+                    fields.splice(idx, 0, cf[0]);
                     // cfs[cf[0]] = cf[1];
-                    setDefinition({...definition(), calculatedFields: {...cfs, [cf[0]]: cf[1]}});
+                    setDefinition({...definition(), 
+                        calculatedFields: {...cfs, [cf[0]]: cf[1]},
+                        fields: fields
+                    });
                 }).open();
             break; 
             case "delete":
@@ -156,7 +160,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
                     >
                         <DragDropSensors />
                         <SortableProvider ids={ids()}>
-                            <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onPropertyAction} />}</For>
+                            <For each={selected()}>{(pd,index) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={(e,action) => onPropertyAction(e, action,pd.key)} />}</For>
                         </SortableProvider>
 
                     </DragDropProvider>
