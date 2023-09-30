@@ -194,6 +194,24 @@ const Sidebar: Component<SidebarProps> = (props) => {
         setWidgets(newwidgets);
     }
 
+    const onHover = (e: MouseEvent) => {
+        // if the target element has data-href attribute
+        // then show the link preview
+        const target = e.target as HTMLElement;
+        const href = target.getAttribute("data-href");
+        if (!href) return;
+        // trigger the event to show the preview
+        // @ts-ignore
+        app.workspace.trigger("hover-link", {
+            event: e,
+            hoverParent: target,
+            source: "preview",
+            targetEl: target,
+            hoverElement: target,
+            linktext: href
+        });
+    }
+
     return (
         <div class="sets-sidebar">
             <div class="sets-sidebar-buttons">
@@ -203,7 +221,9 @@ const Sidebar: Component<SidebarProps> = (props) => {
                 <div title="Add new item" class="clickable-icon" onClick={onAddItem} ref={addItem!}></div>
             </div>
             <div class="sets-sidebar-wrapper">
-                <div class="sets-sidebar-scroller">
+                <div class="sets-sidebar-scroller"
+                onMouseOver={onHover}
+                >
 
                     <Show when={types().length > 0}>
 
