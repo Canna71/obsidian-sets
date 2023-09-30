@@ -559,7 +559,14 @@ export class VaultDB {
                     function prop(d: string) {
                         return this.getAttributeDefinition(d).getValue(data);
                     }
-                    const fn = new Function("prop", "return " + def.calculatedFields![key]!);
+
+                    const code = def.calculatedFields![key]!;
+                    // code could be either an expression or a series of statements
+                    // if it is an expression we add a return statement
+                    // determine if it is an expression or a series of statements
+                    const isExpression = code.indexOf("return") === -1;
+                    const calculate = isExpression ? "return " + code : code;   
+                    const fn = new Function("prop", calculate);
                     return fn(prop.bind(this));
                 } 
                 const calculated = new CalculatedAttribute(key, calculate);

@@ -15,7 +15,7 @@ export interface InputEditorProps {
 const InputEditor:Component<InputEditorProps> = (props) => {
     let editor: HTMLDivElement;
     // const [msg, setMsg] = createSignal<string | undefined>(undefined);
-    // const { app } = useApp()!;
+    // const { app } = useApp()!;   
     const initialVal = props.value();
     const [isValid, setValid] = createSignal<boolean>(true);
    
@@ -67,7 +67,7 @@ const InputEditor:Component<InputEditorProps> = (props) => {
             // onBlur={onBlur}
             // onKeyDown={onkeydown}
             onPaste={onPaste}
-        >{initialVal}
+        ><pre>{initialVal}</pre>
 
         </div>
     )
