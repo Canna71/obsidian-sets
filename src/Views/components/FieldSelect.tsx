@@ -80,11 +80,23 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
         addField(e.key);
     }
 
+    const isValidPropName = (key:string) => (name: string) => {
+        name = name.trim();
+        if (name === "") return false;
+        const otherProperties = definition().fields?.filter(k => k !== key) || [];
+        if (otherProperties.includes(name)) return false;
+        const otherCalculated = Object.keys(definition().calculatedFields || {}).filter(k => k !== key);
+        if (otherCalculated.includes(name)) return false;
+        return true;
+    }
+
     const onPropertyAction = (e: PropertyData, action?: string, key?: string) => {
 
         switch (action) {
             case "edit":
-                new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], (cf) => {
+                new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], 
+                isValidPropName(e.key),
+                (cf) => {
                     const cfs = {...definition().calculatedFields || {}};
                     key && delete cfs[key];
                     const fields = [...definition().fields || []];
