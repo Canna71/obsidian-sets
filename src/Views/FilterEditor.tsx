@@ -5,12 +5,12 @@ import { setIcon } from "obsidian";
 import { Clause, IntrinsicAttributeKey } from "./components/SetDefinition";
 
 export interface FilterEditorProps {
-
+    defaultTopResults: number
     exit: () => void
 }
 
 const FilterEditor: Component<FilterEditorProps> = (props) => {
-    const { definition, save, addFilter, updateFilter, removeFilter } = useSet()!;
+    const { definition, save, addFilter, updateFilter, removeFilter, setDefinition } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state, setState] = createStore(definition() || [])
     let addBtn: HTMLDivElement;
@@ -39,6 +39,20 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
         addFilter(defaultClause);
     }
 
+    const onTopResultsChange = (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const value = parseInt(target.value);
+        if(isNaN(value)){
+            // remove topResults from definition
+            setDefinition({...definition(), topResults: undefined});
+        } else {
+            setDefinition({...definition(), topResults: value});
+        }
+        
+        
+        // save();
+    }
+
     return (<div class="sets-filter-editor">
         <div class="sets-filter-header">
             <div class="sets-modal-title">Filters</div>
@@ -63,6 +77,16 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
                 class="sets-filter-add-btn clickable-icon"></div>
                 Add filter
         </div>
+        <div class="sets-filter-topresults">
+            <div class="sets-modal-title">Max Results</div>
+            <input type="number" 
+                value={definition().topResults} 
+                onInput={onTopResultsChange} 
+                placeholder={`Max Results `}
+            />
+            <div class="sets-modal-info">{`(default:${props.defaultTopResults})`}</div>
+        </div>
+        
         <div class="sets-button-bar">
             <button class="mod-cta" onClick={onSave}>Save</button>
             <button class="" onClick={props.exit}>Cancel</button>

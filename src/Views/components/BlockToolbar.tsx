@@ -14,6 +14,7 @@ import ViewMode from "./ViewMode";
 import { AttributeModal } from "./AttributeModal";
 import { PropertyData } from "src/Data/PropertyData";
 import { GalleryPropsModal } from "../GalleryPropsModal";
+import { getSetsSettings } from "src/main";
 
 const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeDefinition[] }> = (props) => {
 
@@ -49,7 +50,10 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     const onFilter = () => {
-        const filterModal = new FilterEditorModal(app, db, definition(), update);
+        const filterModal = new FilterEditorModal(app, db, 
+            definition(), 
+            getSetsSettings().topResults || 100,
+            update);
         filterModal.open();
     }
 

@@ -123,11 +123,23 @@ export class SetsSettingsTab extends PluginSettingTab {
             // add a setting for topResults
             new Setting(containerEl)
             .setName("Top Results")
-            .setDesc("The number of notes to show in the views")
+            .setDesc("The default number of notes to show in the views")
             .addText(text => text
                 .setValue(this.plugin.settings.topResults.toString())
                 .onChange(async (value) => {
                     this.plugin.settings.topResults = parseInt(value);
+                    await this.plugin.saveSettings();
+                }
+            ));
+
+            // add a setting for top results in widgets
+            new Setting(containerEl)
+            .setName("Top Results in Widgets")
+            .setDesc("The default number of notes to show in the widgets")
+            .addText(text => text
+                .setValue(this.plugin.settings.topResultsWidget.toString())
+                .onChange(async (value) => {
+                    this.plugin.settings.topResultsWidget = parseInt(value);
                     await this.plugin.saveSettings();
                 }
             ));

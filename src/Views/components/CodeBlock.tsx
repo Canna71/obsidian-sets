@@ -26,19 +26,7 @@ const CodeBlock: Component<CodeBlockProps> = (props) => {
     // if newFile is set, put the new file in the first row
 
     const limitedResults = () => {
-        // if (getNewFile()) {
-        //     // props.queryResult.data.unshift(getNewFile());
-        //     const newFileRowIndex = props.queryResult.data.findIndex(row => row.file.path === getNewFile());
-
-        //     // reorder props.queryResult.data so that the new file is at the top
-        //     if (newFileRowIndex > 0) {
-        //         const row = props.queryResult.data[newFileRowIndex];
-        //         const newData = [row, ...props.queryResult.data.filter((c, i) => i !== newFileRowIndex)];
-
-        //         return newData;
-        //     }
-
-        // }
+        
         const topResults = definition().topResults || getSetsSettings().topResults || 100;
         const limitedResults = limitResults(props.queryResult, topResults, getNewFile() );
         return limitedResults;

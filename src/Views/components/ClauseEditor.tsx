@@ -186,7 +186,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 </Show>
                 <Show when={operatorsSelectIsVisible()}>
                     {/* <div ref={ref => updateDDc(ref)}></div> */}
-                    <div ref={ddOps!}></div>
+                    <div class="sets-operator-ddl" ref={ddOps!}></div>
                 </Show>
                 <Show when={ddlDynamicValuesIsVisible()}>
                     {/* <div ref={ref => updateDDc(ref)}></div> */}

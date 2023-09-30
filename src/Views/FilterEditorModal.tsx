@@ -5,6 +5,7 @@ import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
 import FilterEditor from "./FilterEditor";
 import { SetProvider } from "./components/SetProvider";
+import { getSetsSettings } from "src/main";
 
 
 
@@ -13,11 +14,15 @@ export class FilterEditorModal extends Modal {
     definition: SetDefinition;
     private _db: VaultDB;
     private _update: (def: SetDefinition) => void;
-    constructor(app: App,db:VaultDB, definition: SetDefinition, update: (def: SetDefinition)=> void) {
+    private _defaultTopResults: number;
+    constructor(app: App,db:VaultDB, definition: SetDefinition, 
+        defaultTopResults: number,
+        update: (def: SetDefinition)=> void) {
         super(app);
         this.definition = definition;
         this._db = db;
         this._update = update;
+        this._defaultTopResults = defaultTopResults;
     }
 
     onOpen() {
@@ -33,7 +38,7 @@ export class FilterEditorModal extends Modal {
             <SetProvider setDefinition={this.definition} updateDefinition={this._update} 
             
             >
-                <FilterEditor exit={()=>{this.close()}} />
+                <FilterEditor exit={()=>{this.close()}} defaultTopResults={this._defaultTopResults}  />
             </SetProvider>
             
         </AppProvider>, contentEl);

@@ -1,7 +1,7 @@
 import { App, Menu, TFile, setIcon } from "obsidian";
 import { Accessor, Component, For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { WidgetDefinition } from "src/Settings";
-import SetsPlugin from "src/main";
+import SetsPlugin, { getSetsSettings } from "src/main";
 import { ScopeEditorModal } from "../ScopeEditorModal";
 import { IntrinsicAttributeKey, SetDefinition, VaultScope } from "./SetDefinition";
 import { VaultDB, limitResults } from "src/Data/VaultDB";
@@ -15,6 +15,7 @@ import { SetProvider } from "./SetProvider";
 import { FieldSelectModal } from "../FieldSelectModal";
 import Collapsible from "./Collapsible";
 import { NameInputModal } from "../NameInputModal";
+import { get } from "http";
 
 export interface SidebarWidgetProps {
     widget: WidgetDefinition
@@ -121,7 +122,9 @@ const WidgetMenu: Component<WidgetMenuProps> = (props) => {
             const filter = "Filter";
             item.setTitle(filter);
             item.callback = () => {
-                const filterModal = new FilterEditorModal(app, db, widget().definition, updateSet);
+                const filterModal = new FilterEditorModal(app, db, widget().definition, 
+                getSetsSettings().topResultsWidget || 10,
+                updateSet);
                 filterModal.open();
             }
         });
@@ -210,7 +213,7 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     }
 
     const topResults = () => {
-        return widget().definition.topResults || 10;
+        return widget().definition.topResults || getSetsSettings().topResultsWidget || 10;
     }
 
     // const fileNameAttribute = db.getAttributeDefinition(IntrinsicAttributeKey.FileName);

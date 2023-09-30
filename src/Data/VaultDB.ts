@@ -140,7 +140,6 @@ export class VaultDB {
     // }
 
     execute(query: Query): QueryResult {
-        // if (!top) top = this.plugin.settings.topResults;
         if (!this.dbInitialized) {
             throw Error("VaultDB not initialized yet");
         }

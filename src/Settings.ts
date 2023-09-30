@@ -29,6 +29,7 @@ export interface SetsSettings {
     inferQueryFieldsByDefault: boolean;
     createObjectsInSetsFolder: boolean;
     topResults: number;
+    topResultsWidget: number;
     registerCustomTypes: boolean;
     sidebarState: SidebarState
 } 
@@ -49,6 +50,7 @@ export const DEFAULT_SETTINGS: SetsSettings = {
     inferQueryFieldsByDefault: false,
     createObjectsInSetsFolder: false,
     topResults: 200, 
+    topResultsWidget: 10,
     registerCustomTypes: true,
     sidebarState: {
         typesCollapsed: false,

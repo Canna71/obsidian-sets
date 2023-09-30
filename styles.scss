@@ -329,8 +329,17 @@
                 .clickable-icon {
                     margin-left: auto;
                 }
+
+                .sets-operator-ddl {
+                    width: var(--metadata-label-width);
+                }
             }
         }
+    }
+
+    .sets-filter-topresults {
+        display: flex;
+        gap: var(--size-4-2);
     }
 
     .sets-filter-buttons {
@@ -522,6 +531,11 @@
 
     .sets-modal-title {
         padding: var(--size-4-2);
+    }
+
+    .sets-modal-info {
+        font-size: var(--font-adaptive-smaller);
+        color: var(--text-muted)
     }
 }
 
@@ -847,6 +861,7 @@
                         width: 100%;
                         overflow-x: auto;
                         padding: var(--size-4-2);
+                        max-height: 160px;
                     } 
                 }
             }
