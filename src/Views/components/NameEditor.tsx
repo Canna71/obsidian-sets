@@ -98,7 +98,7 @@ const NameEditor:Component<NameEditorProps> = (props) => {
         <div ref={editor!} classList={
             {
                 "sets-filename": true,
-                "invalid": !!msg(),
+                "sets-invalid": !!msg(),
                 "editing": true
             }
         } contentEditable={true}

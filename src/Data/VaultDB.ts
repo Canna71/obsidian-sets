@@ -14,9 +14,10 @@ import { getOperatorById } from "./Operator";
 import { LinkToThis, getDynamicValue, isDynamic } from "./DynamicValues";
 import { stableSort } from "src/Utils/stableSort";
 import { generateCodeblock } from "src/Utils/generateCodeblock";
-import { AttributeKey, Clause, FieldDefinition, IntrinsicAttributeKey, Scope, SortField, VaultScope, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
+import { AttributeKey, Clause, FieldDefinition, IntrinsicAttributeKey, Scope, SetDefinition, SortField, VaultScope, isIntrinsicAttribute } from "src/Views/components/SetDefinition";
 import * as Sqrl from "squirrelly";
 import { slugify, unslugify } from "src/Utils/slugify";
+import { CalculatedAttribute } from "./CalculatedAttribute";
 
 export type DBEvent = "metadata-changed" | "initialized";
 
@@ -27,16 +28,16 @@ export type QueryResult = {
     total: number;
 };
 
-export function limitResults(queryResult: QueryResult, top?: number, forceTotop?: string)  {
+export function limitResults(queryResult: QueryResult, top?: number, forceTotop?: string) {
     top = top || Number.MAX_SAFE_INTEGER;
     let data = queryResult.data;
-    if(forceTotop){
+    if (forceTotop) {
         const toTop = data.find(d => d.file.path === forceTotop);
-        if(toTop){
+        if (toTop) {
             data = [toTop, ...data.filter(d => d.file.path !== forceTotop)]
         }
     }
-    return {...queryResult, data: data.slice(0, top), total: data.length};
+    return { ...queryResult, data: data.slice(0, top), total: data.length };
 }
 
 // define a scope type that could be "type", "collection", "folder" or "all"
@@ -45,6 +46,7 @@ export function limitResults(queryResult: QueryResult, top?: number, forceTotop?
 // all has no specifier
 
 // TODO: support also "folder-recursive"
+
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,9 +87,9 @@ export class VaultDB {
     }
 
     private onMetadataChanged() {
-        
+
         this.accessors.clear();
-        
+
         this.dbInitialized = true;
         this._collectionCache = undefined;
         this._typesCache = undefined;
@@ -165,7 +167,7 @@ export class VaultDB {
         // const files: string[] = this.app.metadataCache.getCachedFiles();
 
         for (const filePath of files) {
-            
+
             const fileCache = this.app.metadataCache.getCache(filePath);
             if (fileCache) {
                 const ob = this.getObjectData(filePath, fileCache);
@@ -197,11 +199,11 @@ export class VaultDB {
             db: this,
             query,
             total: ret.length,
-            
+
         };
     }
 
-    
+
 
     async createNewType(name: string) {
         const typename = slugify(name);
@@ -359,11 +361,11 @@ export class VaultDB {
                 // remove attributes starting with double underscore
                 for (const key in frontMatter) {
                     if (key.startsWith("__")) {
-                        if(key === "__name_prefix"){
+                        if (key === "__name_prefix") {
                             // this.app.fileManager.renameFile(newFile, `${newFile.parent?.path || ""}/${frontMatter[key]}${newFile.basename}`)
                             name = `${frontMatter[key]}${name}`;
                         }
-                        if(key === "__name_suffix"){
+                        if (key === "__name_suffix") {
                             // this.app.fileManager.renameFile(newFile, `${newFile.parent?.path || ""}/${frontMatter[key]}${newFile.basename}`)
                             name = `${name}${frontMatter[key]}`;
                         }
@@ -373,7 +375,7 @@ export class VaultDB {
 
             });
 
-            if(name !== newFile.basename){
+            if (name !== newFile.basename) {
                 const newPath = `${newFile.parent?.path || ""}/${name}.${newFile.extension}`
                 await this.app.fileManager.renameFile(newFile, newPath);
                 return this.app.vault.getAbstractFileByPath(newPath) as TFile;
@@ -382,7 +384,7 @@ export class VaultDB {
         }
     }
 
-    private expandTemplate(content: string, template: TFile, folder: any, query: Query, properties?: FieldDefinition[], filename?: string ) {
+    private expandTemplate(content: string, template: TFile, folder: any, query: Query, properties?: FieldDefinition[], filename?: string) {
         try {
             content = Sqrl.render(content, {
                 time: moment().format("HH:mm:ss"),
@@ -394,7 +396,7 @@ export class VaultDB {
                 properties: properties,
                 name: filename,
                 type: query.inferSetType(),
-            },{
+            }, {
                 autoTrim: false
             });
         } catch (e) {
@@ -539,7 +541,7 @@ export class VaultDB {
     }
 
 
-    getAttributeDefinition(key: string): AttributeDefinition {
+    getAttributeDefinition(key: string, def?: SetDefinition): AttributeDefinition {
         if (this.accessors.has(key)) {
             return this.accessors.get(key)!;
         }
@@ -549,9 +551,30 @@ export class VaultDB {
                 this.app,
                 key as IntrinsicAttributeKey
             );
-        } else {
-            ret = new MetadataAttributeDefinition(this.app, key);
-        }
+        } else
+            // check if the attribute is a calculated field
+            if (def?.calculatedFields && key in def.calculatedFields) {
+
+                const calculate = (data: ObjectData) => {
+                    function prop(d: string) {
+                        return this.getAttributeDefinition(d).getValue(data);
+                    }
+
+                    const code = def.calculatedFields![key]!;
+                    // code could be either an expression or a series of statements
+                    // if it is an expression we add a return statement
+                    // determine if it is an expression or a series of statements
+                    const isExpression = code.indexOf("return") === -1;
+                    const calculate = isExpression ? "return " + code : code;   
+                    const fn = new Function("prop", calculate);
+                    return fn(prop.bind(this));
+                } 
+                const calculated = new CalculatedAttribute(key, calculate);
+                ret = calculated;
+            }
+            else {
+                ret = new MetadataAttributeDefinition(this.app, key);
+            }
         this.accessors.set(key, ret);
         return ret;
     }
@@ -591,7 +614,7 @@ export class VaultDB {
                 return mdata.filter((key) => !key.startsWith("__"));
             }
         }
-    } 
+    }
 
     getFolder(path: string) {
         return this.app.vault.getAbstractFileByPath(path) as TFolder;

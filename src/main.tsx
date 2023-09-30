@@ -1,4 +1,3 @@
-import { prettify } from 'src/Utils/prettify';
 import { CODEBLOCK_NAME, DEFAULT_SETTINGS, SetsSettings } from "src/Settings";
 import {
     addIcon,

@@ -12,6 +12,7 @@ export interface PropertyData {
     typeKey: string;
     typeName: string;
     typeIcon: string;
+    calculated?: boolean;
 }
 
 let _types;

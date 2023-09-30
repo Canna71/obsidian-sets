@@ -6,6 +6,7 @@ import { Property, PropertyProps } from "./Property";
 import { DragDropProvider, DragDropSensors, DragOverlay, SortableProvider, closestCenter, createSortable } from "@thisbeyond/solid-dnd";
 import { setIcon } from "obsidian";
 import { indexBy } from "src/Utils/indexBy";
+import { CalculatedModal } from "../CalculatedModal";
 
 
 export interface FieldSelectProps {
@@ -28,7 +29,7 @@ const SortableProperty: Component<PropertyProps> = (props) => {
 
 
 export const FieldSelect: Component<FieldSelectProps> = (props) => {
-    const { definition, save, addField, removeField, reorder } = useSet()!;
+    const { definition, save, addField, removeField, reorder, setDefinition } = useSet()!;
     // https://docs.solidjs.com/references/api-reference/stores/using-stores
     // const [state] = createStore(definition() || []);
     const { app } = useApp()!;
@@ -50,22 +51,105 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
             .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
     };
 
-    const selected = () => {
+    const selected = ():PropertyData[] => {
         const pd = getPropertyData(app);
         const idxPd = indexBy<PropertyData>("key", pd);
-        return (definition().fields || []).map(key => idxPd[key])
-            .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
-        ;
-        // return pd.filter(pd => (definition().fields || []).includes(pd.key))
-        //     .filter(pd => pd.name.toLowerCase().includes(keyword().toLowerCase()));
+        const ret : PropertyData[] =  (definition().fields || []).map(
+            key => {
+                const pd = idxPd[key]
+                if (pd) return pd;
+                const cf = definition().calculatedFields![key];
+                if(cf) return {
+                    key: key,
+                    name: key,
+                    typeName: "Calculated",
+                    typeIcon: "function-square",
+                    typeKey: "func",
+                    calculated: true,
+                } as PropertyData;
+            }
+            )
+            .filter(pd =>  pd?.name.toLowerCase().includes(keyword().toLowerCase())) as PropertyData[]
+            
+            ;
+        
+        return [...ret];
     };
 
     const onSelect = (e: PropertyData) => {
         addField(e.key);
     }
 
-    const onUnselect = (e: PropertyData) => {
-        removeField(e.key);
+    const isValidPropName = (key:string) => (name: string) => {
+        name = name.trim();
+        if (name === "") return "cannot be empty";
+        const otherProperties = definition().fields?.filter(k => k !== key) || [];
+        if (otherProperties.includes(name)) return "already exists";
+        const otherCalculated = Object.keys(definition().calculatedFields || {}).filter(k => k !== key);
+        if (otherCalculated.includes(name)) return "already exists";
+        return "";
+    }
+
+    const isValidPropDef = (key:string) => (def: string) => {
+        def = def.trim();
+        if (def === "") return "cannot be empty";
+        const otherProperties = definition().fields?.filter(k => k !== key) || [];
+        const otherCalculated = Object.keys(definition().calculatedFields || {}).filter(k => k !== key);
+
+        const propsAccessed: string[] = [];
+
+        function prop(name: string) {
+            propsAccessed.push(name);
+            return "";
+        }
+
+        try {
+            const fn = new Function("prop", def);
+            fn(prop);
+            if(propsAccessed.every(p => otherProperties.includes(p) || otherCalculated.includes(p))) return "";
+            return "references unknown properties or circular reference";
+        } catch (e) {
+            return e.message;
+        }
+        
+        return "Unkown error";
+    }
+
+    const onPropertyAction = (e: PropertyData, action?: string, key?: string) => {
+
+        switch (action) {
+            case "edit":
+                new CalculatedModal(app, [e.key, definition().calculatedFields![e.key]], 
+                isValidPropName(e.key),
+                isValidPropDef(e.key),
+                (cf) => {
+                    const cfs = {...definition().calculatedFields || {}};
+                    key && delete cfs[key];
+                    const fields = [...definition().fields || []];
+                    const idx = fields.indexOf(e.key);
+                    if (idx > -1) fields.splice(idx, 1);
+                    // insert the new field at the same index
+                    fields.splice(idx, 0, cf[0]);
+                    // cfs[cf[0]] = cf[1];
+                    setDefinition({...definition(), 
+                        calculatedFields: {...cfs, [cf[0]]: cf[1]},
+                        fields: fields
+                    });
+                }).open();
+            break; 
+            case "delete":
+                // removes the calculated field
+                if (e.calculated) {
+                    const cf = {...definition().calculatedFields || {}};
+                    delete cf[e.key];
+                    setDefinition({...definition(), calculatedFields: cf});
+                }
+                removeField(e.key);
+                break;
+            default:
+                removeField(e.key);
+                break;
+        }
     }
 
     const onDragStart = ({ draggable }) => {
@@ -81,6 +165,23 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
         // setActiveItem(null);
     };
+
+    const addCalculatedField = () => {
+        new CalculatedModal(app, ["", ""], isValidPropName(""), 
+        isValidPropDef(""),
+            (cf) => {
+            const cfs = {...definition().calculatedFields || {}};
+            cfs[cf[0]] = cf[1];
+            // also add it to the fields
+            const fields = [...definition().fields || []];
+            fields.push(cf[0]);
+
+
+            setDefinition({...definition(), calculatedFields: cfs,
+                fields: fields
+            });
+        }).open();
+    }
 
     const ids = () => {
 
@@ -114,16 +215,18 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
                     >
                         <DragDropSensors />
                         <SortableProvider ids={ids()}>
-                            <For each={selected()}>{(pd) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={onUnselect} />}</For>
+                            <For each={selected()}>{(pd,index) => <SortableProperty  {...pd} icon="toggle-right" onIconClick={(e,action) => onPropertyAction(e, action,pd.key)} />}</For>
                         </SortableProvider>
 
                     </DragDropProvider>
                 </div>
+                
             </div>
         </div>
 
 
         <div class="sets-button-bar">
+            <div class="clickable-icon" onClick={addCalculatedField}>Add Calculated Field</div>
             <button class="mod-cta" onClick={onSave}>Save</button>
             <button class="" onClick={props.exit}>Cancel</button>
         </div>

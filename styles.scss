@@ -181,6 +181,10 @@
                                     input.metadata-input-text {
                                         border: none;
                                     }
+
+                                    .sets-cell-read {
+                                        font-size: var(--font-ui-small);
+                                    }
                                 }
 
                                 .sets-grid-mini-link {
@@ -244,12 +248,14 @@
     }
 }
 
+.sets-invalid, input[type='text'].sets-invalid {
+    background-color: var(--background-modifier-error);
+}
+
 .sets-filename {
     display: flex;
 
-    &.invalid {
-        background-color: var(--background-modifier-error);
-    }
+
 
     a.internal-link {
         flex: 1;
@@ -280,6 +286,8 @@
 }
 
 .sets-filter-editor {
+    // min-width: 600px;
+
     .sets-filter-header {
         display: flex;
         align-items: center;
@@ -852,5 +860,50 @@
         border-radius: 4px;
         z-index: 1;
         text-align: center;
+    }
+}
+
+.sets-calculated-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-2);
+    // .sets-calculated-editor-name {
+
+    // }
+
+    .sets-calculated-textarea {
+        height: 150px;
+        width: 100%;
+        overflow: auto;
+        padding: var(--size-4-2);
+        // style it in preformatted text
+        font-family: var(--font-monospace);
+        border: 1px solid var(--divider-color);
+        resize: none;
+
+    }
+
+    .sets-calculated-editor-value {
+        .editing {
+            border: 1px solid var(--divider-color);
+            height: 200px;
+            overflow: auto;
+            padding: var(--size-4-2);
+            // style it in preformatted text
+            font-family: var(--font-monospace);
+
+        }
+    }
+    .sets-calculated-editor-error {
+        color: var(--text-error);
+        font-size: var(--font-adaptive-smallest);
+        height: var(--input-height);
+    }
+    .sets-calculated-editor-buttons {
+        // align on the right with a gap
+        display: flex;
+        justify-content: end;
+        gap: var(--size-4-2);
+
     }
 }
