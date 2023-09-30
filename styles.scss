@@ -869,6 +869,18 @@
 
     // }
 
+    .sets-calculated-textarea {
+        height: 150px;
+        width: 100%;
+        overflow: auto;
+        padding: var(--size-4-2);
+        // style it in preformatted text
+        font-family: var(--font-monospace);
+        border: 1px solid var(--divider-color);
+        resize: none;
+
+    }
+
     .sets-calculated-editor-value {
         .editing {
             border: 1px solid var(--divider-color);

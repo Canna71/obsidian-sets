@@ -32,7 +32,9 @@ const CalculatedEditor:Component<{
         <div class="sets-calculated-editor-value">
             <div class="sets-fields-label">Calculated Field Definition</div>
 
-            <InputEditor value={def} onInput={(e)=>{setDef(e)}} />
+            <textarea class="sets-calculated-textarea" value={def()} onInput={(e)=>{setDef(e.currentTarget.value)}} />
+
+            {/* <InputEditor value={def} onInput={(e)=>{setDef(e)}} /> */}
 
             {/* <input type="text" value={def()} onInput={(e)=>{setDef(e.currentTarget.value)}} /> */}
         </div>
