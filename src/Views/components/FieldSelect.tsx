@@ -140,6 +140,21 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
         // setActiveItem(null);
     };
 
+    const addCalculatedField = () => {
+        new CalculatedModal(app, ["", ""], isValidPropName(""), (cf) => {
+            const cfs = {...definition().calculatedFields || {}};
+            cfs[cf[0]] = cf[1];
+            // also add it to the fields
+            const fields = [...definition().fields || []];
+            fields.push(cf[0]);
+
+
+            setDefinition({...definition(), calculatedFields: cfs,
+                fields: fields
+            });
+        }).open();
+    }
+
     const ids = () => {
 
         return selected().map(pd => pd.key);
@@ -177,6 +192,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
                     </DragDropProvider>
                 </div>
+                <div class="clickable-icon" onClick={addCalculatedField}>Add Calc</div>
             </div>
         </div>
 
