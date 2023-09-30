@@ -5,6 +5,7 @@ import { AppProvider } from "./components/AppProvider";
 import { VaultDB } from "src/Data/VaultDB";
 import { SetProvider } from "./components/SetProvider";
 import { Component, Show, createSignal } from "solid-js";
+import InputEditor from "./components/InputEditor";
 
 
 const CalculatedEditor:Component<{
@@ -30,7 +31,10 @@ const CalculatedEditor:Component<{
         </div>
         <div class="sets-calculated-editor-value">
             <div class="sets-fields-label">Calculated Field Definition</div>
-            <input type="text" value={def()} onInput={(e)=>{setDef(e.currentTarget.value)}} />
+
+            <InputEditor value={def} onInput={(e)=>{setDef(e)}} />
+
+            {/* <input type="text" value={def()} onInput={(e)=>{setDef(e.currentTarget.value)}} /> */}
         </div>
         <div class="sets-calculated-editor-buttons">
             <Show when={isValid()}>

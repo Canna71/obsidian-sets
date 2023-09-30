@@ -865,12 +865,20 @@
     display: flex;
     flex-direction: column;
     gap: var(--size-4-2);
-    .sets-calculated-editor-name {
+    // .sets-calculated-editor-name {
 
-    }
+    // }
 
     .sets-calculated-editor-value {
+        .editing {
+            border: 1px solid var(--divider-color);
+            height: 60px;
+            overflow: auto;
+            padding: var(--size-4-2);
+            // style it in preformatted text
+            font-family: var(--font-monospace);
 
+        }
     }
     .sets-calculated-editor-buttons {
         // align on the right with a gap
