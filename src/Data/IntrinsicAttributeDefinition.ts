@@ -31,9 +31,9 @@ export class IntrinsicAttributeDefinition implements AttributeDefinition {
 
         switch(this._key){
             case IntrinsicAttributeKey.FileCreationDate:
-                return "Creation Date";
+                return "Creation date";
             case IntrinsicAttributeKey.FileModificationDate:
-                return "Modification Date";
+                return "Modification date";
             case IntrinsicAttributeKey.FileName:
                 return "Name";
             case IntrinsicAttributeKey.FilePath:

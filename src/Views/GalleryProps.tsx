@@ -20,7 +20,7 @@ export const GalleryProps: Component<GalleryProps> = (props) => {
 
     onMount(() => {
         new Setting(sliderEl)
-        .setName("Min Width")
+        .setName("Min width")
         .setDesc("Minimum width of each card in the gallery")
         .addSlider(s => {
             s.setLimits(100, 1000, 10)

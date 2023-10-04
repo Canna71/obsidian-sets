@@ -23,7 +23,7 @@ function  registerPasswordPropertyType(app: App)  {
         };
 
         passfield.className = "metadata-input-text mod-truncate";
-        passfield.setAttr("placeholder", "No Value");
+        passfield.setAttr("placeholder", "No value");
         // div.contentEditable = "true";
         passfield.tabIndex = 0;
         passfield.type = "password";

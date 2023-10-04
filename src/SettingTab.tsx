@@ -21,7 +21,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
         // setting for Sets folder, using FolderSelect
         const setsSelect = new Setting(containerEl)
-            .setName("Sets Folder")
+            .setName("Sets folder")
             .setDesc("The folder where Sets will store its data.")
             .controlEl
 
@@ -46,7 +46,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // setting for the typeSetSuffix
             new Setting(containerEl)
-            .setName("Type Set Suffix")
+            .setName("Type set suffix")
             .setDesc("The suffix that will be added to the name of the type set.")
             .addText(text => text
                 .setValue(this.plugin.settings.typeSetSuffix)
@@ -58,7 +58,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // setting for typesFolder
             new Setting(containerEl)
-            .setName("Types Folder")
+            .setName("Types folder")
             .setDesc("The subfolder where Sets will store its types.")
             .addText(text => text
                 .setValue(this.plugin.settings.typesFolder)
@@ -70,7 +70,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // setting for typesSuffix
             new Setting(containerEl)
-            .setName("Types Suffix")
+            .setName("Types suffix")
             .setDesc("The suffix that will be added to the name of the type.")
             .addText(text => text
                 .setValue(this.plugin.settings.typesSuffix)
@@ -82,7 +82,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // setting for collectionsRoot
             new Setting(containerEl)
-            .setName("Collections Folder")
+            .setName("Collections folder")
             .setDesc("The subfolder where Sets will store its collections.")
             .addText(text => text
                 .setValue(this.plugin.settings.collectionsRoot)
@@ -94,7 +94,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 		
             // add a settings for typeAttributeKey
             new Setting(containerEl)
-            .setName("Type Attribute Key")
+            .setName("Type attribute key")
             .setDesc("The name of the attribute that will be used to store the type of a note.")
             .addText(text => text
                 .setValue(this.plugin.settings.typeAttributeKey)
@@ -108,7 +108,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // add a settings for collectionAttributeKey
             new Setting(containerEl)
-            .setName("Collection Attribute Key")
+            .setName("Collection attribute key")
             .setDesc("The name of the attribute that will be used to store the collection of a note.")
             .addText(text => text
                 .setValue(this.plugin.settings.collectionAttributeKey)
@@ -122,7 +122,7 @@ export class SetsSettingsTab extends PluginSettingTab {
 
             // add a setting for topResults
             new Setting(containerEl)
-            .setName("Top Results")
+            .setName("Top results")
             .setDesc("The default number of notes to show in the views")
             .addText(text => text
                 .setValue(this.plugin.settings.topResults.toString())

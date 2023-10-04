@@ -22,11 +22,6 @@ export class FieldSelectModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        // contentEl.createEl("h3", { text: "Filter Editor" });
-        // contentEl.setText(this.message);
-        // const clauseContainer = contentEl.createDiv();
-
-
         render(() => <AppProvider app={{ app: this.app, db: this._db }}>
             {/* <ClauseEditor db={this._db} /> */}
             <SetProvider setDefinition={this.definition} 

@@ -76,7 +76,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     },
     "@this-week": {
         id: "@this-week",
-        displayName: () => "This Week",
+        displayName: () => "This week",
         generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().startOf('week').format("YYYY-MM-DD")
         },
@@ -84,7 +84,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     },
     "@last-week": {
         id: "@last-week",
-        displayName: () => "Last Week",
+        displayName: () => "Last week",
         generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().subtract(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
@@ -92,7 +92,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
     },
     "@next-week": {
         id: "@next-week",
-        displayName: () => "Next Week",
+        displayName: () => "Next week",
         generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().add(1, 'week').startOf("week").format("YYYY-MM-DD")
         },
@@ -101,7 +101,7 @@ export const dynamicValues:Record<DynamicValueName,DynamicValue> = {
 
     "@this-month": {
         id: "@this-month",
-        displayName: () => "This Month",
+        displayName: () => "This month",
         generate: (a: AttributeDefinition, db: VaultDB, context?: ObjectData) => {
             return moment().startOf('month').format("YYYY-MM-DD")
         },

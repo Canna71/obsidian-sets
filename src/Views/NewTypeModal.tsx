@@ -12,7 +12,7 @@ export class NewTypeModal extends NameInputModal {
     plugin: SetsPlugin;
 
     constructor(app: App, plugin: SetsPlugin) {
-        super(app, "Enter Type Name", "Type name","", async (name) => {
+        super(app, "Enter type name", "Type name","", async (name) => {
             try {
                 const newFile = await this.plugin.vaultDB.createNewType(name);
                 await this.app.workspace.openLinkText(newFile.path, "/", "tab");

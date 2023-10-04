@@ -153,7 +153,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
                 widgets: [
                     ...sidebarState.widgets || [],
                     {
-                        title: "New Widget",
+                        title: "New widget",
                         collapsed: false,
                         definition: {
                         }

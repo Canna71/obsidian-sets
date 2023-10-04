@@ -197,7 +197,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
 
                 <div ref={copyBtn!} class="clickable-icon editmode-only"
                     onClick={onCopy}
-                    title="Copy Block"
+                    title="Copy block"
                 ></div>
                 <ViewMode />
 
@@ -216,7 +216,7 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
                         ref={galleryProps!}
                         class="clickable-icon editmode-only"
                         onClick={onTransclude}
-                        title="Gallery Settings"
+                        title="Gallery settings"
                     >
 
                     </div>

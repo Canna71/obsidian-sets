@@ -82,11 +82,6 @@ export class CalculatedModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        // contentEl.createEl("h3", { text: "Filter Editor" });
-        // contentEl.setText(this.message);
-        // const clauseContainer = contentEl.createDiv();
-
-
         render(() =>
             <CalculatedEditor
                 value={this.cf}

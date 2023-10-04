@@ -63,7 +63,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) != val,
         // enforce: (a:unknown, b:unknown) => b
         selectiveness: Number.MAX_VALUE,
-        displayName: () => "Not Equal",
+        displayName: () => "Not equal",
         isUnary: false
 
     },
@@ -79,7 +79,7 @@ const operators : Record<OperatorName,Operator> = {
         } ,
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 10,
-        displayName: () => "Is Not Empty",
+        displayName: () => "Is not empty",
         isUnary: true
 
     },
@@ -95,7 +95,7 @@ const operators : Record<OperatorName,Operator> = {
         } ,
         enforce: (current: unknown, val: unknown) => null,
         selectiveness: 10,
-        displayName: () => "Is Empty",
+        displayName: () => "Is empty",
         isUnary: true
 
     },
@@ -119,7 +119,7 @@ const operators : Record<OperatorName,Operator> = {
             return ret;
         },
         selectiveness: 5,
-        displayName: () => "Has All",
+        displayName: () => "Has all",
         isUnary: false
 
     },
@@ -140,7 +140,7 @@ const operators : Record<OperatorName,Operator> = {
             return ret;
         },
         selectiveness: 5,
-        displayName: () => "Has Any",
+        displayName: () => "Has any",
         isUnary: false
 
     },
@@ -159,7 +159,7 @@ const operators : Record<OperatorName,Operator> = {
             return [];
         },
         selectiveness: 5,
-        displayName: () => "Has None",
+        displayName: () => "Has none",
         isUnary: false
 
     },
@@ -184,7 +184,7 @@ const operators : Record<OperatorName,Operator> = {
     //         return ret;
     //     },
     //     selectiveness: 5,
-    //     displayName: () => "Has This",
+    //     displayName: () => "Has this",
     //     isUnary: true
     // },
     "gt": {
@@ -193,7 +193,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) > (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5,
-        displayName: () => "Greater Than",
+        displayName: () => "Greater than",
         isUnary: false
 
     },
@@ -203,7 +203,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) >= (val as any),
         enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5,
-        displayName: () => "Greater Than Or Equal",
+        displayName: () => "Greater than or equal",
         isUnary: false
 
     },
@@ -213,7 +213,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) < (val as any),
         // enforce: (a:unknown, b:unknown) => b,
         selectiveness: 5,
-        displayName: () => "Less Than",
+        displayName: () => "Less than",
         isUnary: false
 
     },
@@ -223,7 +223,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => a.getValue(data) <= (val as any),
         enforce: (current:unknown, b:unknown) => b,
         selectiveness: 5,
-        displayName: () => "Less Than Or Equal",
+        displayName: () => "Less than or equal",
         isUnary: false
 
     },
@@ -243,7 +243,7 @@ const operators : Record<OperatorName,Operator> = {
         matches: (a:AttributeDefinition, data:ObjectData, val:unknown) => ! (a.getValue(data)||"").toString().toLowerCase().includes((val as any || "").toString().toLowerCase()),
         // enforce: (current:unknown, b:unknown) => b,
         selectiveness: 12,
-        displayName: () => "Does Not Contain",
+        displayName: () => "Does not contain",
         isUnary: false
 
     },

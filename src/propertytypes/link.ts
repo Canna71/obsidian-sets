@@ -10,7 +10,6 @@ function registerLinkPropertyType(app: App) {
     validate: (e:string) => {
         let match
         if ((match = linkpath_regex.exec(e)) === null) {
-            // this.displayErroe("Invalid Link");
             return false;
         }
         const {path} = parseLinktext(match[1])
