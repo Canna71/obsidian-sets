@@ -70,18 +70,7 @@ export default class SetsPlugin extends Plugin {
         this.registerCodeBlock();
         this.registerPostProcessor();
 
-        this.app.workspace.on(
-            "active-leaf-change",
-            (leaf: WorkspaceLeaf | null) => {
-                if (leaf?.view instanceof MarkdownView) {
-                    // @ts-expect-error, not typed
-                    const editorView = leaf.view.editor.cm as EditorView;
-                }
-            },
-            this
-        );
-
-
+       
         this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
@@ -91,8 +80,8 @@ export default class SetsPlugin extends Plugin {
 
         this.onFileMenu = this.onFileMenu.bind(this);
 
-        this.app.workspace.on("file-menu", this.onFileMenu);
-        this.app.workspace.on("editor-menu", this.onEditorMenu);
+        this.registerEvent(this.app.workspace.on("file-menu", this.onFileMenu));
+        this.registerEvent(this.app.workspace.on("editor-menu", this.onEditorMenu));
 
     }
 
