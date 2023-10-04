@@ -189,7 +189,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
     }
 
     return (<div class="sets-fields-select">
-        <h4>Select Fields</h4>
+        <h4>Select fields</h4>
         <input class="sets-field-search"
             value={keyword()}
             type="search"
@@ -226,7 +226,7 @@ export const FieldSelect: Component<FieldSelectProps> = (props) => {
 
 
         <div class="sets-button-bar">
-            <div class="clickable-icon" onClick={addCalculatedField}>Add Calculated Field</div>
+            <div class="clickable-icon" onClick={addCalculatedField}>Add calculated field</div>
             <button class="mod-cta" onClick={onSave}>Save</button>
             <button class="" onClick={props.exit}>Cancel</button>
         </div>

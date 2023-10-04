@@ -70,7 +70,7 @@ export default class SetsPlugin extends Plugin {
         this.registerCodeBlock();
         this.registerPostProcessor();
 
-       
+
         this.registerNewTypes();
 
         this.addSettingTab(new SetsSettingsTab(this.app, this));
@@ -233,7 +233,6 @@ export default class SetsPlugin extends Plugin {
     }
 
     onunload() {
-        this.app.workspace.detachLeavesOfType(SETS_VIEW);
         this.vaultDB.off("initialized", this.onVaultDBInitialized);
         this._vaultDB.off("metadata-changed", () => {
             this.registerNewInstancesCommands();
@@ -262,19 +261,20 @@ export default class SetsPlugin extends Plugin {
     }
 
     async activateView() {
-        this.app.workspace.detachLeavesOfType(SETS_VIEW);
 
-        await this.app.workspace.getRightLeaf(false).setViewState(
-            {
-                type: SETS_VIEW,
-                active: true,
-            },
-            { settings: this.settings }
-        );
+        let leaf = this.app.workspace.getLeavesOfType(SETS_VIEW)[0];
+        if (!leaf) {
+            await this.app.workspace.getRightLeaf(false).setViewState(
+                {
+                    type: SETS_VIEW,
+                    active: true,
+                }, 
+                { settings: this.settings }
+            );
+            leaf = this.app.workspace.getLeavesOfType(SETS_VIEW)[0];
+        }
 
-        this.app.workspace.revealLeaf(
-            this.app.workspace.getLeavesOfType(SETS_VIEW)[0]
-        );
+        leaf && this.app.workspace.revealLeaf(leaf);
     }
 
     async registerCodeBlock() {

@@ -74,7 +74,7 @@ export const GalleryProps: Component<GalleryProps> = (props) => {
 
     return <div class="sets-fields-select">
         <div class="modal-header">
-            <h4>Gallery Properties</h4>
+            <h4>Gallery properties</h4>
         </div>
         <div>Select which properties to transclude</div>
         <div class="sets-fields-list selected-props">

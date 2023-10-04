@@ -285,7 +285,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
                     <div ref={addWidgetBtn!}
                         title="Add new widget"
                             onClick={addWidget}
-                            class="sets-sidebar-add-widget clickable-icon">Add New Widget</div>
+                            class="sets-sidebar-add-widget clickable-icon">Add new widget</div>
                 </div>
             </div>
         </div>

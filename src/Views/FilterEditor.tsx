@@ -78,7 +78,7 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
                 Add filter
         </div>
         <div class="sets-filter-topresults">
-            <div class="sets-modal-title">Max Results</div>
+            <div class="sets-modal-title">Max results</div>
             <input type="number" 
                 value={definition().topResults} 
                 onInput={onTopResultsChange} 

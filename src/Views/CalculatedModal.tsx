@@ -31,7 +31,7 @@ const CalculatedEditor: Component<{
 
     return (<div class="sets-calculated-editor">
         <div class="sets-calculated-editor-name">
-            <div class="sets-fields-label">Calculated Field Name</div>
+            <div class="sets-fields-label">Calculated field name</div>
             <input type="text"
                 classList={{
                     "sets-invalid": isValidName().length > 0
@@ -40,7 +40,7 @@ const CalculatedEditor: Component<{
             <span class="sets-calculated-editor-error">{isValidName()}</span>
         </div>
         <div class="sets-calculated-editor-value">
-            <div class="sets-fields-label">Calculated Field Definition</div>
+            <div class="sets-fields-label">Calculated field definition</div>
 
             <textarea
                 classList={{
