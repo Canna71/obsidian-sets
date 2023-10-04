@@ -112,7 +112,7 @@ export default class SetsPlugin extends Plugin {
         // register a command to open the view
         this.addCommand({
             id: "open-sidebar",
-            name: "Open Sets Sidebar",
+            name: "Open Sets sidebar",
             callback: () => {
                 this.activateView();
             },
@@ -120,7 +120,7 @@ export default class SetsPlugin extends Plugin {
 
         this.addCommand({
             id: "new-type",
-            name: "Create New Type",
+            name: "Create new type",
             callback: () => {
                 new NewTypeModal(this.app, this)
                     .open()
@@ -131,7 +131,7 @@ export default class SetsPlugin extends Plugin {
         // register command to create new collection
         this.addCommand({
             id: "new-collection",
-            name: "Create New Collection",
+            name: "Create new collection",
             callback: () => {
                 new NewCollectionModal(this.app, this)
                     .open()
@@ -142,7 +142,7 @@ export default class SetsPlugin extends Plugin {
         // register command to add note to a collection
         this.addCommand({
             id: "add-to-collection",
-            name: "Add To Collection",
+            name: "Add to collection",
             checkCallback: (checking: boolean) => {
                 const view = this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (checking) {
@@ -189,10 +189,10 @@ export default class SetsPlugin extends Plugin {
 
             const cmd = this.addCommand({
                 id: `new-instance-${type}`,
-                name: `Create New ${unslugify(type)}`,
+                name: `Create new ${unslugify(type)}`,
                 callback: async () => {
                     // asks the user the name of the new item
-                    new NameInputModal(this.app, `Enter ${unslugify(type)} Name`, `${unslugify(type)} Name`, "",
+                    new NameInputModal(this.app, `Enter ${unslugify(type)} name`, `${unslugify(type)} name`, "",
                         async (name) => {
                             try {
                                 const file: TFile = await this._vaultDB.createNewInstance(type, name);
@@ -301,7 +301,7 @@ export default class SetsPlugin extends Plugin {
         const { collectionLinks, currentColl } = this.getAvailableCollections(file);
         if (collectionLinks.length > 0) {
             menu.addItem((menuItem: MenuItem) => {
-                menuItem.setTitle("Add To Collection...");
+                menuItem.setTitle("Add to collection...");
                 collectionLinks.forEach((cl) => {
                     menuItem.setSubmenu().addItem((menuItem: MenuItem) => {
                         menuItem.setTitle(cl.col.file.basename);
