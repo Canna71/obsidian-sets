@@ -1,6 +1,7 @@
-import { MarkdownPostProcessorContext, MarkdownView, stringifyYaml } from "obsidian";
+import { App, MarkdownPostProcessorContext, MarkdownView, stringifyYaml } from "obsidian";
 
 export function saveDataIntoBlock<T>(
+    app: App,
     data: T,
 
     ctx: MarkdownPostProcessorContext

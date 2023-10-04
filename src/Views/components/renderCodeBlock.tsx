@@ -85,7 +85,7 @@ const renderCodeBlock = (app: App, db: VaultDB, definition: SetDefinition, el: H
         stateMap.set(stateKey, { scroll: scrollLeft });
         delete def.transientState;
         db.off("metadata-changed", onDataChanged);
-        saveDataIntoBlock<SetDefinition>(def, ctx);
+        saveDataIntoBlock<SetDefinition>(app,def, ctx);
     }
 
     definition.transientState = stateMap.get(stateKey);
