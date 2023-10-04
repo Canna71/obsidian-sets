@@ -14,7 +14,6 @@ export interface SidebarState {
 }
 
 export interface SetsSettings {
-    addRibbonIcon: boolean;
     showAtStartup: boolean;
     setsRoot: string;
     typesFolder: string;
@@ -35,7 +34,6 @@ export interface SetsSettings {
 } 
 
 export const DEFAULT_SETTINGS: SetsSettings = {
-    addRibbonIcon: true,
     showAtStartup: false,
     setsRoot: "Sets",
     typeSetSuffix: "Set",
