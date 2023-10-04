@@ -111,7 +111,7 @@ export default class SetsPlugin extends Plugin {
     registerCommands() {
         // register a command to open the view
         this.addCommand({
-            id: "sets-open-sidebar",
+            id: "open-sidebar",
             name: "Open Sets Sidebar",
             callback: () => {
                 this.activateView();
@@ -119,7 +119,7 @@ export default class SetsPlugin extends Plugin {
         });
 
         this.addCommand({
-            id: "sets-new-type",
+            id: "new-type",
             name: "Create New Type",
             callback: () => {
                 new NewTypeModal(this.app, this)
@@ -130,7 +130,7 @@ export default class SetsPlugin extends Plugin {
 
         // register command to create new collection
         this.addCommand({
-            id: "sets-new-collection",
+            id: "new-collection",
             name: "Create New Collection",
             callback: () => {
                 new NewCollectionModal(this.app, this)
@@ -141,7 +141,7 @@ export default class SetsPlugin extends Plugin {
 
         // register command to add note to a collection
         this.addCommand({
-            id: "sets-add-to-collection",
+            id: "add-to-collection",
             name: "Add To Collection",
             checkCallback: (checking: boolean) => {
                 const view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -184,11 +184,11 @@ export default class SetsPlugin extends Plugin {
 
         actualTypes.forEach((type) => {
             // check if command already exists
-            if (this._instanceCommands.find((cmd) => cmd.id === `${this.manifest.id}:sets-new-instance-${type}`)) return;
+            if (this._instanceCommands.find((cmd) => cmd.id === `${this.manifest.id}:new-instance-${type}`)) return;
 
 
             const cmd = this.addCommand({
-                id: `sets-new-instance-${type}`,
+                id: `new-instance-${type}`,
                 name: `Create New ${unslugify(type)}`,
                 callback: async () => {
                     // asks the user the name of the new item
@@ -215,7 +215,7 @@ export default class SetsPlugin extends Plugin {
         let toRemove: Command[] = [];
         // removes commands that are not more corresponding to a type
         this._instanceCommands.forEach((cmd) => {
-            if (!actualTypes.includes(cmd.id.replace(`${this.manifest.id}:sets-new-instance-`, ""))) {
+            if (!actualTypes.includes(cmd.id.replace(`${this.manifest.id}:new-instance-`, ""))) {
                 this.app.commands.removeCommand(cmd.id);
                 toRemove.push(cmd);
             }
