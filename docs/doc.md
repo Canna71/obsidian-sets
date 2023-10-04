@@ -175,6 +175,34 @@ Dynamic values are:
 - `date` `Greater Than or Equal` `Last Week`
 - `date` `Less Than` `This Week`
 
+## Calculated Fields
+When adding fields to be displayed, you can also specify calculated fields, which are fields that use javascript code in order to display a calculated value.
+The code will have access to the `prop()` function which takes the name of a property and will return the value of that property for the current item.
+The code could be either an expression or a sequence of statements.
+
+### Examples
+
+#### Expression: product of two properties
+
+~~~
+```js
+prop("num")*prop("price")
+```
+~~~
+
+#### Statements: representation of a rating value using stars
+
+~~~
+```js
+const fullStars = Math.floor(prop("rating")); 
+let result = '';     
+for (let i = 0; i < 5; i++) {         
+	result += i < fullStars ? '★' : '☆';     
+}   
+return result;
+```
+~~~
+
 
 # Views
 
@@ -275,3 +303,6 @@ When you create a new item from a Set Block, it will be created in the same fold
 When you create a new item of a given type using the command palette, it will be created in the folder of the type.
 
 
+# Sidebar
+
+An optional sidebar gives access to the different collections and types. It also enables the creation of new widgets, which can be configured to display any set of items, by specifying the query to be used.

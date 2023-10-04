@@ -15,9 +15,10 @@ It provides the following features:
 
 Please see full documentation [here](docs/doc.md)
 
+
 ## Installation
 
-<!-- ### From within Obsidian
+### From within Obsidian
 
 
 - Open Settings > Community plugins
@@ -25,7 +26,9 @@ Please see full documentation [here](docs/doc.md)
 - Click Browse community plugins
 - Search for "Sets"
 - Click Install
-- Once installed, close the community plugins window and activate the newly installed plugin -->
+- Once installed, close the community plugins window and activate the newly installed plugin
+
+
 
 ### Manual installation
 
@@ -40,11 +43,14 @@ If you have any issues or suggestions please report them [here](https://github.c
 
 ## Roadmap
 
-- Sidebar
-- Calculated Fields
+
 - Aggregations
 - Other Layouts
 - Search for text in items
 - Integration with other plugins (Templater, etc)
 - More properties types (Enums, etc)
 - Joins
+
+## Acknowledgements
+Thanks to [Obsidian Typings](https://github.com/Fevol/obsidian-typings) for the extended typings
+
