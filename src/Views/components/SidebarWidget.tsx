@@ -1,5 +1,5 @@
 import { App, Menu, TFile, setIcon } from "obsidian";
-import { Accessor, Component, For, Show, createEffect, createSignal, onMount } from "solid-js";
+import { Accessor, Component, For, Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { WidgetDefinition } from "src/Settings";
 import SetsPlugin, { getSetsSettings } from "src/main";
 import { ScopeEditorModal } from "../ScopeEditorModal";
@@ -186,13 +186,28 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     const sortby = () => widget().definition.sortby || [];
     const scope = () => widget().definition.scope || VaultScope;
     const clauses = () => widget().definition.filter || [];
-
     const query = () => db.fromClauses(scope(), clauses(), sortby());
+    const [allData, setAllData] = createSignal(db.execute(query()));
 
     const data = () => {
-        const allData = db.execute(query());
-        return limitResults(allData, topResults());
+        
+        return limitResults(allData(), topResults());
     }
+
+    const onDataChanged =() => {
+        
+        setAllData(db.execute(query()));
+    };
+
+    onMount(() => {
+        setTimeout(() => {
+            db.on("metadata-changed", onDataChanged);
+        },110);
+    })
+
+    onCleanup(() => {
+        db.off("metadata-changed", onDataChanged);
+    })
 
     const update = (def: WidgetDefinition) => {
         const settings = {
