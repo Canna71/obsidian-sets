@@ -187,7 +187,9 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     const scope = () => widget().definition.scope || VaultScope;
     const clauses = () => widget().definition.filter || [];
     const query = () => db.fromClauses(scope(), clauses(), sortby());
-    const [allData, setAllData] = createSignal(db.execute(query()));
+    // const [allData, setAllData] = createSignal(db.execute(query()));
+
+    const allData = () => db.execute(query());
 
     const data = () => {
         
@@ -195,8 +197,10 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
     }
 
     const onDataChanged =() => {
-        
-        setAllData(db.execute(query()));
+        // triggers a change by updating the timestamp
+        setWidget({...widget(), definition: {...widget().definition, timestamp: Date.now()}});
+
+        // setAllData(db.execute(query()));
     };
 
     onMount(() => {
@@ -204,7 +208,7 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
             db.on("metadata-changed", onDataChanged);
         },110);
     })
-
+ 
     onCleanup(() => {
         db.off("metadata-changed", onDataChanged);
     })
