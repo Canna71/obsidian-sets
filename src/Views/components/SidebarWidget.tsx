@@ -1,4 +1,4 @@
-import { App, Menu, TFile, setIcon } from "obsidian";
+import { App, Menu, TFile, debounce, setIcon } from "obsidian";
 import { Accessor, Component, For, Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { WidgetDefinition } from "src/Settings";
 import SetsPlugin, { getSetsSettings } from "src/main";
@@ -196,12 +196,12 @@ const SidebarWidget: Component<SidebarWidgetProps> = (props) => {
         return limitResults(allData(), topResults());
     }
 
-    const onDataChanged =() => {
+    const onDataChanged = debounce(() => {
         // triggers a change by updating the timestamp
         setWidget({...widget(), definition: {...widget().definition, timestamp: Date.now()}});
 
         // setAllData(db.execute(query()));
-    };
+    },1000 + 1000*props.index);
 
     onMount(() => {
         setTimeout(() => {
