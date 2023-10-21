@@ -21,7 +21,7 @@ export const CardItem: Component<ItemProps> = (props) => {
                 <Match when={attribute.readonly}>
                     <div class="sets-view-field">{attribute.format(data)}</div>
                 </Match>
-                <Match when={(props.transclude || []).includes(attribute.key) && (`${attribute.getValue(data)}`.startsWith("[[")) }>
+                <Match when={(props.transclude || []).includes(attribute.key) && (`${attribute.getValue(data)}`.startsWith("[")) }>
                     <MarkdownText markdown={`!${attribute.getValue(data)}`} />
                 </Match>
                 <Match when={!attribute.isIntrinsic}>
