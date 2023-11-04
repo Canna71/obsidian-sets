@@ -53,7 +53,7 @@ In order to instantiate a view to query your vault, you enter a code block like 
 
 
 ~~~yaml
-```sets
+```set
 ```
 ~~~
 
