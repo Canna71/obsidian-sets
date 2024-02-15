@@ -229,7 +229,12 @@ export default class SetsPlugin extends Plugin {
     registerNewTypes() {
         registerPasswordPropertyType(this.app);
         // registerLinkPropertyType(this.app);
-        this.app.metadataTypeManager.savePropertyInfo();
+        if(this.app.metadataTypeManager.savePropertyInfo) {
+            this.app.metadataTypeManager.savePropertyInfo();
+        }
+        if(this.app.metadataTypeManager.updatePropertyInfoCache) {
+            this.app.metadataTypeManager.updatePropertyInfoCache();
+        }
     }
 
     onunload() {

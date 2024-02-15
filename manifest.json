@@ -1,7 +1,7 @@
 {
 	"id": "sets",
 	"name": "Sets",
-	"version": "1.0.13",
+	"version": "1.0.14",
 	"minAppVersion": "1.4.4",
 	"description": "Create, edit and search sets of notes like Notion or AnyType DBs",
 	"author": "Gabriele Cannata",

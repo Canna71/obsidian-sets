@@ -840,6 +840,7 @@ interface PropertyWidget {
 }
 
 interface MetadataTypeManager extends Events {
+    updatePropertyInfoCache(): unknown;
 	/**
 	 * Reference to App
 	 */
