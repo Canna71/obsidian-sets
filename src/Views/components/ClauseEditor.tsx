@@ -153,7 +153,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
                 widget.render(divValue!,
                   {key: prop()?.key,
                     type: prop()?.typeKey,
-                    value: props.clause[2] || widget.default()
+                    value: props.clause[2] //|| widget.default()
                 },
                 {
                     app,

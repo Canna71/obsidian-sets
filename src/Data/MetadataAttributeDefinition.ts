@@ -30,8 +30,9 @@ export class MetadataAttributeDefinition implements AttributeDefinition {
     getPropertyWidget() {
         const key = this._key;
         const propertyInfo = this._app.metadataTypeManager.getPropertyInfo(key);
-        const type = this._app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
-        const widget = this._app.metadataTypeManager.registeredTypeWidgets[type];
+        // const type = this._app.metadataTypeManager.getAssignedType(key) || propertyInfo?.type;
+        const widget = this._app.metadataTypeManager.registeredTypeWidgets[propertyInfo.type || propertyInfo.widget];
+        
         return widget;
     }
 
