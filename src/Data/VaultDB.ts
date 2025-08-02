@@ -6,7 +6,7 @@ import {
 
 } from "./Query";
 import { ObjectData } from "./ObjectData";
-import Observer from "@jalik/observer";
+import { Observer } from "@jalik/observer";
 import { MetadataAttributeDefinition } from "./MetadataAttributeDefinition";
 import { IntrinsicAttributeDefinition } from "./IntrinsicAttributeDefinition";
 import { AttributeDefinition } from "./AttributeDefinition";
@@ -93,7 +93,7 @@ export class VaultDB {
         this.dbInitialized = true;
         this._collectionCache = undefined;
         this._typesCache = undefined;
-        this.observer.notify("metadata-changed");
+        this.observer.emit("metadata-changed");
     }
 
     dispose() {
@@ -105,11 +105,11 @@ export class VaultDB {
     }
 
     on(event: DBEvent, observer: (...args: any[]) => void) {
-        this.observer.attach(event, observer);
+        this.observer.on(event, observer);
     }
 
     off(event: DBEvent, observer: (...args: any[]) => void) {
-        this.observer.detach(event, observer);
+        this.observer.off(event, observer);
     }
 
     fromClauses(
@@ -706,7 +706,7 @@ export class VaultDB {
 
     public generateWikiLink(file: TFile, source = "/") {
         // return app.fileManager.generateMarkdownLink(file,source)
-        const linkText = app.metadataCache.fileToLinktext(file, source);
+        const linkText = this.app.metadataCache.fileToLinktext(file, source);
 
         return `[[${linkText}]]`;
         // return `[[${escapeURI(linkText)}]]`;
