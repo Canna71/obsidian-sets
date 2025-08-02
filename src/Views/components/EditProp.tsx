@@ -2,6 +2,7 @@ import { Component, onMount } from "solid-js";
 import { AttributeDefinition } from "src/Data/AttributeDefinition";
 import { ObjectData } from "src/Data/ObjectData";
 
+
 export type EditPropBaseProps = {
     data?: ObjectData;
     attribute: AttributeDefinition;

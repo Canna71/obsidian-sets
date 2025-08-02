@@ -106,13 +106,13 @@ const BlockToolbar: Component<{ queryResult: QueryResult, attributes: AttributeD
     }
 
     onMount(() => {
-        filterBtn && setIcon(filterBtn, "filter")
-        fieldsBtn && setIcon(fieldsBtn, "list-plus")
-        fieldsBtn && setIcon(sortBtn, "arrow-up-down")
-        fieldsBtn && setIcon(refreshBtn, "refresh-cw")
-        fieldsBtn && setIcon(copyBtn, "copy")
-        fieldsBtn && galleryProps && setIcon(galleryProps, "settings-2")
-        fieldsBtn && addItemBtn && setIcon(addItemBtn, "plus-square")
+        filterBtn! && setIcon(filterBtn, "filter")
+        fieldsBtn! && setIcon(fieldsBtn, "list-plus")
+        sortBtn! && setIcon(sortBtn, "arrow-up-down")
+        refreshBtn! && setIcon(refreshBtn, "refresh-cw")
+        copyBtn! && setIcon(copyBtn, "copy")
+        fieldsBtn! && galleryProps! && setIcon(galleryProps, "settings-2")
+        fieldsBtn! && addItemBtn! && setIcon(addItemBtn, "plus-square")
     })
 
     const viewMode = () => {

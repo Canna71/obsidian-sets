@@ -22,7 +22,7 @@
     "esbuild-plugin-solid": "^0.5.0",
     "esbuild-plugin-svgr": "^1.0.1",
     "esbuild-sass-plugin": "^2.3.2",
-    "obsidian": "^1.4.4",
+    "obsidian": "1.8.7",
     "tslib": "latest",
     "typescript": "latest"
   },

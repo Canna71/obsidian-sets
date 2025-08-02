@@ -56,7 +56,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
     let btnDelete: HTMLDivElement;
 
     onMount(()=>{
-        setIcon(btnDelete, "x");
+        setIcon(btnDelete!, "x");
     })
 
     // app.metadataTypeManager.properties
@@ -96,15 +96,15 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         const p = prop();
         if(p){
             const icon = p.typeIcon;
-            setIcon(spanIcon, icon || "file-question")
+            setIcon(spanIcon!, icon || "file-question")
         }
     })
 
     createEffect(()=>{
         if(operatorsSelectIsVisible()){
             const options = mapBy("op", operators(), op=>op.displayName())
-            ddOps.empty()
-            new DropdownComponent(ddOps)
+            ddOps!.empty()
+            new DropdownComponent(ddOps!)
             .addOptions(options)
             .onChange((value:string)=>{
                 // TODO: check if we should reset the value
@@ -123,7 +123,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
         if(ddlDynamicValuesIsVisible()){
             const options = mapBy("id", dynamicValues(), dv=>dv.displayName())
             options[""] = "Value:"
-            ddDynamicValues.empty();
+            ddDynamicValues!.empty();
             let currentValue;
             if(props.clause[2] !== undefined && isDynamic(props.clause[2])) {
                 currentValue = props.clause[2];
@@ -132,7 +132,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
             }
             // const currentValue = isDynamic(props.clause[2]) ? props.clause[2]  !== undefined ? props.clause[2] : dynamicValues()[0].id
         
-            new DropdownComponent(ddDynamicValues)
+            new DropdownComponent(ddDynamicValues!)
             .addOptions(options)
             .onChange((value:string)=>{
                 // TODO: check if we should reset the value
@@ -149,7 +149,7 @@ export const ClauseEditor: Component<ClauseEditorProps> = (props) => {
             const attr = db.getAttributeDefinition(prop()!.key);
             const widget = attr.getPropertyWidget();
             if(widget){
-                divValue.empty();
+                divValue!.empty();
                 widget.render(divValue!,
                   {key: prop()?.key,
                     type: prop()?.typeKey,

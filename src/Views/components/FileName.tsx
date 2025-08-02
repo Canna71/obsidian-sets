@@ -116,7 +116,7 @@ const FileName: Component<FileNameProps> = (props) => {
 
     createEffect(() => {
         if (isEdit()) return;
-        pencil && setIcon(pencil, "pencil");
+        pencil! && setIcon(pencil, "pencil");
     })
 
     return <>

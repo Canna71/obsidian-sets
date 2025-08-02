@@ -20,3 +20,10 @@ declare module "solid-js" {
         
     }
 }
+
+declare module "obsidian" {
+    interface App {
+        // add custom properties or methods to the App interface if needed
+        // e.g. customMethod: () => void;
+    }
+}

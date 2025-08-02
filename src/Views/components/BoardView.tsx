@@ -32,7 +32,7 @@ const BoardView: Component<SetViewProps> = (props) => {
         if (addLaneBtn) {
             setIcon(addLaneBtn, "plus-square");
         }
-        requestAnimationFrame(() => { scroller.scroll(definition()?.transientState?.scroll || 0, 0); })
+        requestAnimationFrame(() => { scroller!.scroll(definition()?.transientState?.scroll || 0, 0); })
 
     })
 

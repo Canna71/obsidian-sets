@@ -269,7 +269,7 @@ export default class SetsPlugin extends Plugin {
 
         let leaf = this.app.workspace.getLeavesOfType(SETS_VIEW)[0];
         if (!leaf) {
-            await this.app.workspace.getRightLeaf(false).setViewState(
+            await this.app?.workspace.getRightLeaf(false)?.setViewState(
                 {
                     type: SETS_VIEW,
                     active: true,

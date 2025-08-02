@@ -17,7 +17,7 @@ const Collapsible: Component<CollapsibleProps> = (props) => {
 
     onMount(() => {
         // setIcon(collapse, "chevron-down");
-        setIcon(collapse, "right-triangle");
+        setIcon(collapse!, "right-triangle");
 
     });
 

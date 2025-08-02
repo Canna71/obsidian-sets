@@ -19,7 +19,7 @@ export const GalleryProps: Component<GalleryProps> = (props) => {
     let sliderEl: HTMLDivElement;
 
     onMount(() => {
-        new Setting(sliderEl)
+        new Setting(sliderEl!)
         .setName("Min width")
         .setDesc("Minimum width of each card in the gallery")
         .addSlider(s => {

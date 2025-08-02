@@ -16,7 +16,7 @@ const FilterEditor: Component<FilterEditorProps> = (props) => {
     let addBtn: HTMLDivElement;
 
     onMount(() => {
-        setIcon(addBtn, "plus");
+        setIcon(addBtn!, "plus");
     })
 
     const onSave = () => {
